@@ -52,7 +52,7 @@ class _DetailPageState extends State<DetailPage> {
                   RichText(
                       text: TextSpan(children: [
                     TextSpan(
-                        text: "Halo SKY ! \n",
+                        text: "Halo BBB ! \n",
                         style: GoogleFonts.outfit(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -126,7 +126,7 @@ class _DetailPageState extends State<DetailPage> {
                             padding: const EdgeInsets.all(8.0),
                             child: Card(
                               clipBehavior: Clip.antiAliasWithSaveLayer,
-                              color: Color.fromARGB(255, 196, 207, 233),
+                              color: const Color.fromARGB(255, 196, 207, 233),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
@@ -201,7 +201,19 @@ class _DetailPageState extends State<DetailPage> {
                   )
                 ],
               ),
-            )
+            ),
+            SizedBox(height: 50,),
+            Column(children: [
+              Text("Suhu Air", style: GoogleFonts.outfit(fontSize: 14, color: Colors.white),),
+              Container(
+                height: 50,
+                width: 50,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(image: AssetImage("3.png")),
+                  shape: BoxShape.circle,
+                ),
+              )
+            ],)
           ],
         )),
       ),
