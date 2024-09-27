@@ -2,6 +2,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwaa1/widget/custom_category.dart';
+import 'package:mwaa1/widget/custom_parameter.dart';
 
 class DetailPage extends StatefulWidget {
   const DetailPage({super.key});
@@ -202,21 +203,27 @@ class _DetailPageState extends State<DetailPage> {
                 ],
               ),
             ),
-            SizedBox(height: 50,),
-            Column(children: [
-              Text("Suhu Air", style: GoogleFonts.outfit(fontSize: 14, color: Colors.white),),
-              Container(
-                height: 50,
-                width: 50,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(image: AssetImage("3.png")),
-                  shape: BoxShape.circle,
+            const SizedBox(
+              height: 20,
+            ),
+            const Padding(
+              padding: EdgeInsets.only(left: 16, right: 16),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    CustomParameter(imagePath: "3.png", title: "Suhu Air",),
+                    CustomParameter(imagePath: "2.png", title: "PH Air",),
+                    CustomParameter(imagePath: "4.png", title: "Oksigen",),
+                    CustomParameter(imagePath: "1.png", title: "TDS",),
+                  ],
                 ),
-              )
-            ],)
+              ),
+            )
           ],
         )),
       ),
     );
   }
 }
+
