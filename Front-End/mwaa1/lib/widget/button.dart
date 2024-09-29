@@ -12,8 +12,8 @@ class MyButton extends StatelessWidget {
       onTap: () => showPopover(
         context: context,
         bodyBuilder: (context) => MenuItem(),
-        width: 250,
-        height: 150,
+        width: 280,
+        height: 300,
         direction: PopoverDirection.bottom
       ),
         child: Icon(Icons.more_horiz, color: darkblue,),

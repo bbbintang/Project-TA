@@ -16,3 +16,6 @@ TextStyle outfit20bold = GoogleFonts.outfit(
     
 TextStyle outfit15normal = GoogleFonts.outfit(
     fontSize: 15, fontWeight: FontWeight.normal, color: Colors.white);
+
+TextStyle outfit17normal = GoogleFonts.outfit(
+    fontSize: 17, fontWeight: FontWeight.normal, color: Colors.white);

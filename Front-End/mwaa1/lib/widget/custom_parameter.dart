@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:mwaa1/widget/theme.dart';
 
 class CustomParameter extends StatelessWidget {
