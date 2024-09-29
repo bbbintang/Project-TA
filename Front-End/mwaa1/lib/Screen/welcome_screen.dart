@@ -27,7 +27,7 @@ class WelcomeScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 40),
                     child: Text(
                       'Welcome To',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.poppins(
                         fontSize: 27.0,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -52,14 +52,14 @@ class WelcomeScreen extends StatelessWidget {
                   TextSpan(
                       text:
                           'Pantau Terus Kualitas dan Kondisi Air pada Pertambakan Mu! \n',
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.poppins(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.white)),
                   TextSpan(
                       text:
                           'MWA System merupakan sistem pengawasan dan pengoptimasi kualitas air berbasis Internet of Things',
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.poppins(
                           fontSize: 15,
                           fontWeight: FontWeight.normal,
                           color: Colors.white))
@@ -156,8 +156,8 @@ class WelcomeScreen extends StatelessWidget {
                       ),
                       Text(
                         'Login With Google',
-                        style: GoogleFonts.outfit(
-                            fontSize: 25.0, color: Colors.white),
+                        style: GoogleFonts.montserrat(
+                            fontSize: 20.0, color: Colors.white),
                       )
                     ],
                   )),

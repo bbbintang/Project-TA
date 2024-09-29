@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mwaa1/widget/theme.dart';
 
 class CustomCategory extends StatelessWidget {
   final String name;
@@ -23,7 +24,7 @@ class CustomCategory extends StatelessWidget {
           name,
           style: GoogleFonts.outfit(
               fontSize: 14, 
-              color: Color.fromARGB(255, 28, 88, 136),
+              color: darkblue,
               fontWeight: FontWeight.w500),
           textAlign: TextAlign.center,
         ),

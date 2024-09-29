@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mwaa1/widget/theme.dart';
 
 class CustomParameter extends StatelessWidget {
   final String imagePath;
@@ -42,20 +43,14 @@ class CustomParameter extends StatelessWidget {
                     ),
                     Text(
                       title,
-                      style: GoogleFonts.outfit(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                      style: outfit15normal.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(
                       height: 10,
                     ),
                     Text(
                       "...",
-                      style: GoogleFonts.outfit(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                      style: outfit20bold,
                     ),
                   ],
                 )

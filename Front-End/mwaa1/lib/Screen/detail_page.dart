@@ -1,8 +1,12 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mwaa1/widget/button.dart';
 import 'package:mwaa1/widget/custom_category.dart';
 import 'package:mwaa1/widget/custom_parameter.dart';
+import 'package:mwaa1/widget/menu_item.dart';
+import 'package:mwaa1/widget/theme.dart';
+import 'package:popover/popover.dart';
 
 class DetailPage extends StatefulWidget {
   const DetailPage({super.key});
@@ -54,16 +58,10 @@ class _DetailPageState extends State<DetailPage> {
                       text: TextSpan(children: [
                     TextSpan(
                         text: "Halo BBB ! \n",
-                        style: GoogleFonts.outfit(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white)),
+                        style: outfit20bold),
                     TextSpan(
                         text: "Pantau Terus Tambak Mu!",
-                        style: GoogleFonts.outfit(
-                            fontSize: 15,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.white)),
+                        style: outfit15normal),
                   ])),
                   const SizedBox(width: 10),
                   Container(
@@ -95,18 +93,20 @@ class _DetailPageState extends State<DetailPage> {
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.notifications_active_rounded,
-                                color: Color.fromARGB(255, 28, 88, 136),
+                                color: darkblue,
                               ),
                               const SizedBox(
                                 width: 10,
                               ),
                               Text(
                                 "Pengingat",
-                                style: GoogleFonts.outfit(
-                                    color:
-                                        const Color.fromARGB(255, 28, 88, 136)),
+                                style: outfit15normal.copyWith(color: darkblue),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.only(left: 175),
+                                child: MyButton(),
                               )
                             ],
                           ),
@@ -114,11 +114,7 @@ class _DetailPageState extends State<DetailPage> {
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: Text("Batas Ukur Parameter Air",
-                              style: GoogleFonts.outfit(
-                                  color: const Color.fromARGB(255, 28, 88, 136),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.5)),
+                              style: outfit20bold.copyWith(letterSpacing: 1.5, color: darkblue, fontSize: 17)),
                         ),
                         SizedBox(
                           width: double.infinity,
@@ -174,11 +170,7 @@ class _DetailPageState extends State<DetailPage> {
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: Text("Kategori",
-                              style: GoogleFonts.outfit(
-                                  color: const Color.fromARGB(255, 28, 88, 136),
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 2.5)),
+                              style: outfit20bold.copyWith(letterSpacing: 2.5, color: darkblue, fontSize: 17)),
                         ),
                         const Padding(
                           padding: EdgeInsets.only(left: 8.0, top: 5.0),
