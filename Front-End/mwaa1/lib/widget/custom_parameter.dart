@@ -4,10 +4,12 @@ import 'package:mwaa1/widget/theme.dart';
 class CustomParameter extends StatelessWidget {
   final String imagePath;
   final String title;
+  final double number;
   const CustomParameter({
     super.key,
     required this.imagePath,
     required this.title,
+    required this.number,
   });
 
   @override
@@ -19,7 +21,7 @@ class CustomParameter extends StatelessWidget {
         children: [
           Card(
             clipBehavior: Clip.antiAliasWithSaveLayer,
-            color: Colors.white.withOpacity(0.5),
+            color: Colors.white.withOpacity(0.6),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(45),
             ),
@@ -38,17 +40,17 @@ class CustomParameter extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(
-                      height: 10,
+                      height: 13,
                     ),
                     Text(
                       title,
-                      style: outfit15normal.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: outfit15normal.copyWith(fontSize: 17, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(
                       height: 10,
                     ),
                     Text(
-                      "...",
+                      number.toString(),
                       style: outfit20bold,
                     ),
                   ],

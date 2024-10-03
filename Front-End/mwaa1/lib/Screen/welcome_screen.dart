@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwaa1/Screen/regis_screen.dart';
-import 'package:mwaa1/authentication.dart';
+import 'package:mwaa1/Authentications/authentication.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});

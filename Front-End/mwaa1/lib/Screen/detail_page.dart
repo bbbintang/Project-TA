@@ -90,7 +90,7 @@ class _DetailPageState extends State<DetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(9.0),
                           child: Row(
                             children: [
                               Icon(
@@ -112,7 +112,7 @@ class _DetailPageState extends State<DetailPage> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
+                          padding: const EdgeInsets.only(left: 9.0),
                           child: Text("Batas Ukur Parameter Air",
                               style: outfit20bold.copyWith(letterSpacing: 1.5, color: darkblue, fontSize: 17)),
                         ),
@@ -168,12 +168,12 @@ class _DetailPageState extends State<DetailPage> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
+                          padding: const EdgeInsets.only(left: 9.0),
                           child: Text("Kategori",
                               style: outfit20bold.copyWith(letterSpacing: 2.5, color: darkblue, fontSize: 17)),
                         ),
                         const Padding(
-                          padding: EdgeInsets.only(left: 8.0, top: 5.0),
+                          padding: EdgeInsets.only(left: 10.0, top: 5.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -204,10 +204,10 @@ class _DetailPageState extends State<DetailPage> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    CustomParameter(imagePath: "3.png", title: "Suhu Air",),
-                    CustomParameter(imagePath: "2.png", title: "PH Air",),
-                    CustomParameter(imagePath: "4.png", title: "Oksigen",),
-                    CustomParameter(imagePath: "1.png", title: "TDS",),
+                    CustomParameter(imagePath: "3.png", title: "Suhu Air", number: 26.5,),
+                    CustomParameter(imagePath: "2.png", title: "PH Air", number: 7.5,),
+                    CustomParameter(imagePath: "4.png", title: "Oksigen", number: 5.5,),
+                    CustomParameter(imagePath: "1.png", title: "TDS", number: 215,),
                   ],
                 ),
               ),
