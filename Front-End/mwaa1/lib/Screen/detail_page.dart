@@ -1,4 +1,6 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwaa1/widget/button.dart';
@@ -16,8 +18,31 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
+  
+
   @override
   Widget build(BuildContext context) {
+
+  final _database = FirebaseDatabase.instanceFor(
+  app: Firebase.app(),
+  databaseURL: "https://mwas-95df5-default-rtdb.asia-southeast1.firebasedatabase.app/",
+).ref().child('Temperature');
+
+  final _database2 = FirebaseDatabase.instanceFor(
+  app: Firebase.app(),
+  databaseURL: "https://mwas-95df5-default-rtdb.asia-southeast1.firebasedatabase.app/",
+).ref().child('DO');
+
+  final _database3 = FirebaseDatabase.instanceFor(
+  app: Firebase.app(),
+  databaseURL: "https://mwas-95df5-default-rtdb.asia-southeast1.firebasedatabase.app/",
+).ref().child('TDS');
+
+  final _database4 = FirebaseDatabase.instanceFor(
+  app: Firebase.app(),
+  databaseURL: "https://mwas-95df5-default-rtdb.asia-southeast1.firebasedatabase.app/",
+).ref().child('pH');
+
     return Scaffold(
       backgroundColor: Colors.orange,
       bottomNavigationBar: CurvedNavigationBar(
@@ -128,7 +153,7 @@ class _DetailPageState extends State<DetailPage> {
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               elevation: 10,
-                              child: const Column(
+                              child:  Column(
                                 children: [
                                   Padding(
                                     padding: EdgeInsets.all(16.0),
@@ -152,8 +177,10 @@ class _DetailPageState extends State<DetailPage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       CustomCategory(
-                                        name: "Suhu : 26 - 38",
-                                      ),
+                                            name: "Suhu Air: 100",
+                                          ),
+                                        
+                                      
                                       SizedBox(
                                         width: 10,
                                       ),
@@ -198,16 +225,50 @@ class _DetailPageState extends State<DetailPage> {
             const SizedBox(
               height: 20,
             ),
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(left: 16, right: 16),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    CustomParameter(imagePath: "3.png", title: "Suhu Air", number: 26.5,),
-                    CustomParameter(imagePath: "2.png", title: "PH Air", number: 7.5,),
-                    CustomParameter(imagePath: "4.png", title: "Oksigen", number: 5.5,),
-                    CustomParameter(imagePath: "1.png", title: "TDS", number: 215,),
+                    StreamBuilder(
+                      stream: _database.onValue,
+                      builder: (context, snapshot) {
+                        var temperatur =
+                                (snapshot.data!.snapshot.value as num)
+                                    .toDouble();
+                        return CustomParameter(imagePath: "3.png", title: "Suhu Air", number: temperatur,);
+                      }
+                    ),
+                    StreamBuilder(
+                      stream: _database4.onValue,
+                      builder: (context, snapshot) {
+                        var pH =
+                                (snapshot.data!.snapshot.value as num)
+                                    .toDouble();
+                        return CustomParameter(imagePath: "2.png", title: "PH Air", number: pH,);
+                      }
+                    ),
+                    StreamBuilder(
+                      stream: _database2.onValue,
+                      builder: (context, snapshot) {
+                        var DO =
+                                (snapshot.data!.snapshot.value as num)
+                                    .toDouble();
+                        return CustomParameter(imagePath: "4.png", title: "Oksigen", number: DO,);
+                      }
+                    ),
+                    StreamBuilder(
+                      stream: _database3.onValue,
+                      builder: (context, snapshot) {
+                        var TDS =
+                                (snapshot.data!.snapshot.value as num)
+                                    .toDouble();
+                        return CustomParameter(imagePath: "1.png", title: "TDS", number: TDS,);
+                      }
+                    ),
+                    
+                    
                   ],
                 ),
               ),
