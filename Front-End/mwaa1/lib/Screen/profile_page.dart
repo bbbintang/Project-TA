@@ -13,6 +13,7 @@ class ProfilePage extends StatelessWidget {
       backgroundColor: Colors.orange,
       appBar: AppBar(
         backgroundColor: Colors.orange,
+<<<<<<< HEAD
         leading: IconButton(
             onPressed: () {},
             icon: const Icon(LineAwesomeIcons.angle_left_solid)),
@@ -46,6 +47,25 @@ class ProfilePage extends StatelessWidget {
               ],
             ),
           )
+=======
+        leading: Padding(
+          padding: const EdgeInsets.only(top: 12, left: 12),
+          child: IconButton(
+              onPressed: () {},
+              icon: const Icon(LineAwesomeIcons.angle_left_solid)),
+        ),
+        title: SizedBox(width: 160,),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(top: 12, right: 12),
+            child: Image.asset(
+            "LOGOaja.png",
+            height: 100,
+            width: 100,
+            alignment: Alignment.center,
+                    ),
+          ),
+>>>>>>> 2afbeeedb433225b87776dc66eb3097823321ab4
         ],
       ),
     );
