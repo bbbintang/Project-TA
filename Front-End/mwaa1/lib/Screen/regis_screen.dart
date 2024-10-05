@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mwaa1/Screen/detail_page.dart';
+import 'package:mwaa1/widget/theme.dart';
 
 class RegisScreen extends StatefulWidget {
   const RegisScreen({super.key});
@@ -106,19 +108,26 @@ class _RegisScreenState extends State<RegisScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Container(
-                  margin: EdgeInsets.all(15),
-                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 30),
-                  decoration: BoxDecoration(
-                    color: Color(0XFF0B6EFE),
-                    borderRadius: BorderRadius.circular(8)
-                  ),
-                  child: Text(
-                    "Selanjutnya",
-                    style: GoogleFonts.outfit(
-                      fontSize: 20, 
-                      color: Colors.white
-                    ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 30),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DetailPage()));
+                    },
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: Size(50, 50),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                        backgroundColor: bluelogin),
+                    child: Text("Selanjutnya",
+                        style: outfit17normal.copyWith(
+                            color: Colors.white,
+                            letterSpacing: 2.5,
+                            fontSize: 20)),
                   ),
                 )
               ],

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 //Color
 Color darkblue = Color.fromARGB(255, 28, 88, 136);
+Color bluelogin = Color(0XFF0B6EFE);
 
 //TextStyle
 TextStyle poppin20bold = GoogleFonts.poppins(
