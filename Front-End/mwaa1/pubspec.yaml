@@ -41,6 +41,7 @@ dependencies:
   firebase_auth: ^5.3.1
   popover: ^0.3.1
   line_awesome_flutter: ^3.0.1
+  firebase_database: ^11.1.4
 
 dev_dependencies:
   flutter_test:

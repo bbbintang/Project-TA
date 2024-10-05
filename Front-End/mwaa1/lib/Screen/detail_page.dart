@@ -153,7 +153,7 @@ class _DetailPageState extends State<DetailPage> {
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               elevation: 10,
-                              child:  Column(
+                              child:  const Column(
                                 children: [
                                   Padding(
                                     padding: EdgeInsets.all(16.0),
