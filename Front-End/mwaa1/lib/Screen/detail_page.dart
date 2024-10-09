@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mwaa1/widget/button.dart';
+import 'package:mwaa1/widget/button_detailpage.dart';
 import 'package:mwaa1/widget/custom_category.dart';
 import 'package:mwaa1/widget/custom_parameter.dart';
 import 'package:mwaa1/widget/menu_item.dart';
@@ -131,7 +131,7 @@ class _DetailPageState extends State<DetailPage> {
                               ),
                               const Padding(
                                 padding: EdgeInsets.only(left: 175),
-                                child: MyButton(),
+                                child: ButtonDetailPage(),
                               )
                             ],
                           ),
@@ -179,8 +179,6 @@ class _DetailPageState extends State<DetailPage> {
                                       CustomCategory(
                                             name: "Suhu Air: 100",
                                           ),
-                                        
-                                      
                                       SizedBox(
                                         width: 10,
                                       ),
