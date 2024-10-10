@@ -6,6 +6,7 @@ Color darkblue = Color.fromARGB(255, 28, 88, 136);
 Color bluelogin = Color(0XFF0B6EFE);
 Color grey = Color.fromARGB(255,189,189,189);
 Color whitegray = Color.fromARGB(255, 232,232,232);
+Color blueriwayat = Color.fromARGB(255,81,105,162);
 
 //TextStyle
 TextStyle poppin20bold = GoogleFonts.poppins(
@@ -24,4 +25,7 @@ TextStyle outfit17normal = GoogleFonts.outfit(
     fontSize: 17, fontWeight: FontWeight.normal, color: Colors.white);
 
 TextStyle montserrat17normal = GoogleFonts.montserrat(
+    fontSize: 17, fontWeight: FontWeight.normal, color: Colors.white);
+
+TextStyle opensans17normal = GoogleFonts.openSans(
     fontSize: 17, fontWeight: FontWeight.normal, color: Colors.white);

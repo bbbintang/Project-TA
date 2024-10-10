@@ -138,9 +138,10 @@ class CustomHistory extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(
-          height: 8,
-        )
+        Padding(
+          padding: const EdgeInsets.only(right: 16, left: 16),
+          child: Divider(),
+        ),
       ],
     );
   }

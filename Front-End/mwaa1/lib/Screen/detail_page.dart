@@ -265,8 +265,6 @@ class _DetailPageState extends State<DetailPage> {
                         return CustomParameter(imagePath: "1.png", title: "TDS", number: TDS,);
                       }
                     ),
-                    
-                    
                   ],
                 ),
               ),

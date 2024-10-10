@@ -12,7 +12,7 @@ class ButtonHistorypage extends StatelessWidget {
       onTap: () => showPopover(
         context: context,
         bodyBuilder: (context) => MenubuttonHistory(),
-        width: 280,
+        width: 300,
         height: 300,
         direction: PopoverDirection.bottom
       ),
