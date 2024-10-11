@@ -13,7 +13,7 @@ class ButtonHistorypage extends StatelessWidget {
         context: context,
         bodyBuilder: (context) => MenubuttonHistory(),
         width: 300,
-        height: 300,
+        height: 500,
         direction: PopoverDirection.bottom
       ),
         child: Icon(Icons.menu, color: grey, size: 30,),

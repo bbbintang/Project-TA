@@ -48,7 +48,7 @@ class HistoryPage extends StatelessWidget {
                         color: Colors.black, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
-                    width: 165,
+                    width: 170,
                   ),
                   ButtonHistorypage()
                 ],

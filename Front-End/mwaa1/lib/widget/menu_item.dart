@@ -71,6 +71,7 @@ class CustomTextField extends StatelessWidget {
             width: 50,
             height: 17,
             child: TextField(
+              showCursor: true,
               textAlign: TextAlign.center,
               decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(
