@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mwaa1/Screen/detail_page.dart';
+import 'package:mwaa1/Screen/control_page.dart';
+import 'package:mwaa1/Screen/home_page.dart';
 import 'package:mwaa1/widget/theme.dart';
 
 class RegisScreen extends StatefulWidget {
@@ -112,10 +113,8 @@ class _RegisScreenState extends State<RegisScreen> {
                   padding: const EdgeInsets.only(right: 30),
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DetailPage()));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => ControlPage()));
                     },
                     style: ElevatedButton.styleFrom(
                         minimumSize: Size(50, 50),

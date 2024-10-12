@@ -1,23 +1,19 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:mwaa1/widget/button_detailpage.dart';
 import 'package:mwaa1/widget/custom_category.dart';
 import 'package:mwaa1/widget/custom_parameter.dart';
-import 'package:mwaa1/widget/menu_item.dart';
 import 'package:mwaa1/widget/theme.dart';
-import 'package:popover/popover.dart';
 
-class DetailPage extends StatefulWidget {
-  const DetailPage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<DetailPage> createState() => _DetailPageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _DetailPageState extends State<DetailPage> {
+class _HomePageState extends State<HomePage> {
   
 
   @override
@@ -45,31 +41,8 @@ class _DetailPageState extends State<DetailPage> {
 
     return Scaffold(
       backgroundColor: Colors.orange,
-      bottomNavigationBar: CurvedNavigationBar(
-        //done
-        backgroundColor: Colors.orange,
-        color: Colors.orange.shade200,
-        animationDuration: const Duration(milliseconds: 300),
-        onTap: (index) {},
-        items: const [
-          Icon(
-            Icons.person,
-            color: Colors.white,
-            size: 30,
-          ),
-          Icon(
-            Icons.home,
-            color: Colors.white,
-            size: 50,
-          ),
-          Icon(
-            Icons.history_rounded,
-            color: Colors.white,
-            size: 30,
-          ),
-        ],
-      ),
       body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: SafeArea(
             child: Column(
           children: [

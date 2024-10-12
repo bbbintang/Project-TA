@@ -23,12 +23,11 @@ class _MenubuttonHistoryState extends State<MenubuttonHistory> {
           ),
           Center(
             child: Text(
-              "Riwayat",
+              "R I W A Y A T",
               style: opensans17normal.copyWith(
                   color: blueriwayat,
                   fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  letterSpacing: 1.0),
+                  fontSize: 18,),
             ),
           ),
           SizedBox(

@@ -12,7 +12,7 @@ class CustomBulan extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 50,
-      decoration: BoxDecoration(color: whitegray),
+      decoration: BoxDecoration(color: Colors.white54),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
@@ -140,7 +140,7 @@ class CustomHistory extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(right: 16, left: 16),
-          child: Divider(),
+          child: Divider(color: Colors.black45,),
         ),
       ],
     );
