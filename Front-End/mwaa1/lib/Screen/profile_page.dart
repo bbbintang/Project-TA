@@ -14,23 +14,17 @@ class ProfilePage extends StatelessWidget {
       backgroundColor: Colors.orange,
       appBar: AppBar(
         backgroundColor: Colors.orange,
-        title: Text(
-          "P R O F I L E",
-          style: montserrat17normal.copyWith(
-            color: Colors.black,
-            fontWeight: FontWeight.bold),
+        elevation: 1.0,
+        title: Center(
+          child: Image.asset(
+            "LOGOaja.png",
+            color: Colors.white,
+            height: 100,
+            width: 100,
+            alignment: Alignment.center,
+            fit: BoxFit.contain,
+          ),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Image.asset(
-              "LOGOaja.png",
-              color: Colors.black.withOpacity(0.5),
-              height: 100,
-              width: 100,
-            ),
-          )
-        ],
       ),
       body: Center(
         child: Column(

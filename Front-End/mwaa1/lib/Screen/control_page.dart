@@ -16,7 +16,7 @@ class ControlPage extends StatefulWidget {
 class _ControlPageState extends State<ControlPage> {
 
   //this keeps track of the current pages to display
-  int _selectedIndex = 1; 
+  int _selectedIndex = 0; 
 
   //this method updates the new selected index
   void _navigatedBottomBar(int index){
@@ -25,21 +25,15 @@ class _ControlPageState extends State<ControlPage> {
     });
   }
 
-  void _navtoHome(){
-    setState(() {
-      _selectedIndex = 1;
-    });
-  }
-
   final List _pages = [
-    //profile
-    ProfilePage(),
-
     //home
     HomePage(),
-
+    
     //history
     HistoryPage(),
+    
+    //profile
+    ProfilePage(),
   ];
   
   @override
@@ -53,23 +47,23 @@ class _ControlPageState extends State<ControlPage> {
         animationDuration: const Duration(milliseconds: 300),
         onTap: _navigatedBottomBar,
         items: [
-          //profile
-          Icon(
-            Icons.person,
-            color: Colors.white,
-            size: 30,
-          ),
-
           //home
           Icon(
             Icons.home,
             color: Colors.white,
-            size: 50,
+            size: 30,
           ),
 
           //history
           Icon(
             Icons.history_rounded,
+            color: Colors.white,
+            size: 30,
+          ),
+
+          //profile
+          Icon(
+            Icons.person,
             color: Colors.white,
             size: 30,
           ),

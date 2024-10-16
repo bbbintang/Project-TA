@@ -3,8 +3,8 @@ import 'package:mwaa1/widget/menu_item.dart';
 import 'package:mwaa1/widget/theme.dart';
 import 'package:popover/popover.dart';
 
-class ButtonDetailPage extends StatelessWidget {
-  const ButtonDetailPage({super.key});
+class ButtonHomePage extends StatelessWidget {
+  const ButtonHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {

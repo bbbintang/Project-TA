@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:mwaa1/widget/button_detailpage.dart';
+import 'package:mwaa1/widget/button_homepage.dart';
 import 'package:mwaa1/widget/custom_category.dart';
 import 'package:mwaa1/widget/custom_parameter.dart';
 import 'package:mwaa1/widget/theme.dart';
@@ -104,7 +104,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                               const Padding(
                                 padding: EdgeInsets.only(left: 175),
-                                child: ButtonDetailPage(),
+                                child: ButtonHomePage(),
                               )
                             ],
                           ),
