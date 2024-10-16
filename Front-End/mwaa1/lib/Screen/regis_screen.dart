@@ -14,6 +14,7 @@ class RegisScreen extends StatefulWidget {
 class _RegisScreenState extends State<RegisScreen> {
   String? selectedValue;
   String? pilihanValue;
+  var isChecked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +106,30 @@ class _RegisScreenState extends State<RegisScreen> {
                 hint: const Text("Pilih Jenis Tambak"),
               ),
             ),
-            SizedBox(height: 100), //buat checkbox
+            SizedBox(
+              height: 15,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Checkbox(
+                    value: isChecked,
+                    onChanged: (value) {
+                      setState(() {
+                        isChecked = value!;
+                      });
+                    },
+                    activeColor: Colors.orange[300],
+                  ),
+                  Text(
+                    "Pengaturan Sudah Sesuai",
+                    style: poppin15normal,
+                  )
+                ],
+              ),
+            ),
+            SizedBox(height: 50), //buat checkbox
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -113,8 +137,10 @@ class _RegisScreenState extends State<RegisScreen> {
                   padding: const EdgeInsets.only(right: 30),
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => ControlPage()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ControlPage()));
                     },
                     style: ElevatedButton.styleFrom(
                         minimumSize: Size(50, 50),
