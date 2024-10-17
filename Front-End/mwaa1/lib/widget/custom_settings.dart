@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mwaa1/Screen/AutoFeeder.dart';
 import 'package:mwaa1/widget/theme.dart';
 
 class CustomSettings extends StatelessWidget {
@@ -16,7 +17,11 @@ class CustomSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context, 
+          MaterialPageRoute(builder: (context) => Autofeeder(),));
+      },
       leading: Container(
         width: 40,
         height: 40,
