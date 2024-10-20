@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:mwaa1/Screen/AutoFeeder.dart';
 import 'package:mwaa1/Screen/control_page.dart';
@@ -15,6 +16,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
   runApp(MyApp());
 }
 
