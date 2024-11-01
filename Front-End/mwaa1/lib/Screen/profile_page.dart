@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:mwaa1/widget/custom_settings.dart';
+import 'package:mwaa1/widget/profile_menu.dart';
 import 'package:mwaa1/widget/theme.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -14,15 +14,24 @@ class ProfilePage extends StatelessWidget {
       backgroundColor: Colors.orange,
       appBar: AppBar(
         backgroundColor: Colors.orange,
+        automaticallyImplyLeading: false,
         elevation: 1.0,
-        title: Center(
-          child: Image.asset(
-            "LOGOaja.png",
-            color: Colors.white,
-            height: 100,
-            width: 100,
-            alignment: Alignment.center,
-            fit: BoxFit.contain,
+        title: Container(
+          width: double.infinity,
+          height: 75,
+          decoration: BoxDecoration(color: Colors.orange),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                "LOGOaja.png",
+                color: Colors.white,
+                height: 100,
+                width: 100,
+                alignment: Alignment.center,
+                fit: BoxFit.contain,
+              ),
+            ],
           ),
         ),
       ),
@@ -66,19 +75,9 @@ class ProfilePage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15),
                 ),
                 elevation: 10,
-                child: const Column(
-                  children: [
-                    CustomSettings(
-                        icon: LineAwesomeIcons.info_circle_solid,
-                        title: "Tentang kami"),
-                    CustomSettings(
-                        icon: LineAwesomeIcons.fish_solid, title: "Autofeeder"),
-                    CustomSettings(
-                        icon: LineAwesomeIcons.list_alt, title: "Variasi"),
-                  ],
+                child: ProfileMenu()
                 ),
               ),
-            ),
             const SizedBox(
               height: 25,
             ),

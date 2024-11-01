@@ -12,8 +12,8 @@ class ButtonHomePage extends StatelessWidget {
       onTap: () => showPopover(
         context: context,
         bodyBuilder: (context) => MenuItem(),
-        width: 280,
-        height: 300,
+        width: 335,
+        height: 500,
         direction: PopoverDirection.bottom
       ),
         child: Icon(Icons.more_horiz, color: darkblue,),

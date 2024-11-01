@@ -14,16 +14,24 @@ class HistoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1.3,
-        title: Center(
-          child: Image.asset(
-            "LOGOaja.png",
-            color: Colors.orange,
-            height: 100,
-            width: 100,
-            alignment: Alignment.center,
-            fit: BoxFit.contain,
+        backgroundColor: Colors.grey.shade200,
+        automaticallyImplyLeading: false,
+        title: Container(
+          width: double.infinity,
+          height: 75,
+          decoration: BoxDecoration(color: Colors.grey.shade200),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                "LOGOaja.png",
+                color: Colors.orange,
+                height: 100,
+                width: 100,
+                alignment: Alignment.center,
+                fit: BoxFit.contain,
+              ),
+            ],
           ),
         ),
       ),
@@ -47,9 +55,6 @@ class HistoryPage extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(
-              height: 8,
-            ),
             CustomBulan(bulanke: "Januari"),
             CustomHistory(
               jamke: "00.01",
@@ -68,6 +73,22 @@ class HistoryPage extends StatelessWidget {
               nilaiDO: 222,
             ),
             CustomBulan(bulanke: "Februari"),
+            CustomHistory(
+              jamke: "00.01",
+              tanggalke: "dd mm, yyyy",
+              nilaiSuhu: 222,
+              nilaiPH: 222,
+              nilaiTDS: 222,
+              nilaiDO: 222,
+            ),
+            CustomHistory(
+              jamke: "00.01",
+              tanggalke: "dd mm, yyyy",
+              nilaiSuhu: 222,
+              nilaiPH: 222,
+              nilaiTDS: 222,
+              nilaiDO: 222,
+            ),
             CustomHistory(
               jamke: "00.01",
               tanggalke: "dd mm, yyyy",
