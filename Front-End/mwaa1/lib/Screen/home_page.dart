@@ -6,6 +6,7 @@ import 'package:mwaa1/widget/custom_category.dart';
 import 'package:mwaa1/widget/custom_category2.dart';
 import 'package:mwaa1/widget/custom_parameter.dart';
 import 'package:mwaa1/widget/theme.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,27 +16,112 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  GoogleSignInAccount? _currentUser;
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+      'profile',
+    ],
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeGoogleSignIn();
+  }
+
+  Future<void> _initializeGoogleSignIn() async {
+    try {
+      // Check if user is already signed in
+      _currentUser = await _googleSignIn.signInSilently();
+      
+      // Listen for future sign in changes
+      _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
+        setState(() {
+          _currentUser = account;
+          print("Current user: ${_currentUser?.displayName}"); // Debug print
+        });
+      });
+
+      if (_currentUser == null) {
+        // If no silent sign in, try manual sign in
+        await _handleSignIn();
+      }
+    } catch (error) {
+      print("Error initializing Google Sign-In: $error");
+    }
+  }
+
+  Future<void> _handleSignIn() async {
+    try {
+      final account = await _googleSignIn.signIn();
+      setState(() {
+        _currentUser = account;
+        print("Signed in user: ${_currentUser?.displayName}"); // Debug print
+      });
+    } catch (error) {
+      print("Error signing in: $error");
+    }
+  }
+
+  Widget buildParameterWidget(AsyncSnapshot<DatabaseEvent> snapshot, String imagePath, String title) {
+    if (snapshot.hasError) {
+      return CustomParameter(
+        imagePath: imagePath,
+        title: title,
+        number: 0.0,
+      );
+    }
+
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (!snapshot.hasData || snapshot.data?.snapshot.value == null) {
+      return CustomParameter(
+        imagePath: imagePath,
+        title: title,
+        number: 0.0,
+      );
+    }
+
+    try {
+      final value = (snapshot.data!.snapshot.value as num).toDouble();
+      return CustomParameter(
+        imagePath: imagePath,
+        title: title,
+        number: value,
+      );
+    } catch (e) {
+      return CustomParameter(
+        imagePath: imagePath,
+        title: title,
+        number: 0.0,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final _database = FirebaseDatabase.instanceFor(
+    final database = FirebaseDatabase.instanceFor(
       app: Firebase.app(),
       databaseURL:
           "https://mwas-95df5-default-rtdb.asia-southeast1.firebasedatabase.app/",
     ).ref().child('Temperature');
 
-    final _database2 = FirebaseDatabase.instanceFor(
+    final database2 = FirebaseDatabase.instanceFor(
       app: Firebase.app(),
       databaseURL:
           "https://mwas-95df5-default-rtdb.asia-southeast1.firebasedatabase.app/",
     ).ref().child('DO');
 
-    final _database3 = FirebaseDatabase.instanceFor(
+    final database3 = FirebaseDatabase.instanceFor(
       app: Firebase.app(),
       databaseURL:
           "https://mwas-95df5-default-rtdb.asia-southeast1.firebasedatabase.app/",
     ).ref().child('TDS');
 
-    final _database4 = FirebaseDatabase.instanceFor(
+    final database4 = FirebaseDatabase.instanceFor(
       app: Firebase.app(),
       databaseURL:
           "https://mwas-95df5-default-rtdb.asia-southeast1.firebasedatabase.app/",
@@ -46,31 +132,50 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: SafeArea(
-            child: Column(
-          children: [
-            Padding(
-              //done
-              padding: const EdgeInsets.only(left: 30, top: 10, right: 25),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  RichText(
-                      text: TextSpan(children: [
-                    TextSpan(text: "Halo SKY ! \n", style: poppin20bold),
-                    TextSpan(
-                        text: "Pantau Terus Tambak Mu!", style: poppin15normal),
-                  ])),
-                  const SizedBox(width: 10),
-                  Container(
-                      alignment: Alignment.centerRight,
-                      child: Image.asset(
-                        "LOGOaja.png",
-                        height: 100,
-                        width: 100,
-                      )),
-                ],
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 30, top: 10, right: 25),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: _currentUser != null 
+                                ? "Halo ${_currentUser!.displayName}!\n"
+                                : "Halo User!\n",
+                            style: poppin20bold,
+                          ),
+                          TextSpan(
+                            text: "Pantau Terus Tambak Mu!", 
+                            style: poppin15normal
+                          ),
+                        ]
+                      )
+                    ),
+                    const SizedBox(width: 10),
+                    GestureDetector(
+                      onTap: _currentUser == null ? _handleSignIn : null,
+                      child: Container(
+                        alignment: Alignment.centerRight,
+                        child: _currentUser?.photoUrl != null
+                            ? CircleAvatar(
+                                backgroundImage: NetworkImage(_currentUser!.photoUrl!),
+                                radius: 20,
+                              )
+                            : Image.asset(
+                                "LOGOaja.png",
+                                height: 100,
+                                width: 100,
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+
             SizedBox(
               width: 330,
               height: 270,
@@ -224,61 +329,42 @@ class _HomePageState extends State<HomePage> {
               height: 20,
             ),
             Padding(
-              padding: EdgeInsets.only(left: 16, right: 16),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    StreamBuilder(
-                        stream: _database.onValue,
+                padding: const EdgeInsets.only(left: 16, right: 16),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      StreamBuilder<DatabaseEvent>(
+                        stream: database.onValue,
                         builder: (context, snapshot) {
-                          var temperatur =
-                              (snapshot.data!.snapshot.value as num).toDouble();
-                          return CustomParameter(
-                            imagePath: "3.png",
-                            title: "Suhu Air",
-                            number: temperatur,
-                          );
-                        }),
-                    StreamBuilder(
-                        stream: _database4.onValue,
+                          return buildParameterWidget(snapshot, "3.png", "Suhu Air");
+                        },
+                      ),
+                      StreamBuilder<DatabaseEvent>(
+                        stream: database4.onValue,
                         builder: (context, snapshot) {
-                          var pH =
-                              (snapshot.data!.snapshot.value as num).toDouble();
-                          return CustomParameter(
-                            imagePath: "2.png",
-                            title: "PH Air",
-                            number: pH,
-                          );
-                        }),
-                    StreamBuilder(
-                        stream: _database2.onValue,
+                          return buildParameterWidget(snapshot, "2.png", "PH Air");
+                        },
+                      ),
+                      StreamBuilder<DatabaseEvent>(
+                        stream: database2.onValue,
                         builder: (context, snapshot) {
-                          var DO =
-                              (snapshot.data!.snapshot.value as num).toDouble();
-                          return CustomParameter(
-                            imagePath: "4.png",
-                            title: "Oksigen",
-                            number: DO,
-                          );
-                        }),
-                    StreamBuilder(
-                        stream: _database3.onValue,
+                          return buildParameterWidget(snapshot, "4.png", "Oksigen");
+                        },
+                      ),
+                      StreamBuilder<DatabaseEvent>(
+                        stream: database3.onValue,
                         builder: (context, snapshot) {
-                          var TDS =
-                              (snapshot.data!.snapshot.value as num).toDouble();
-                          return CustomParameter(
-                            imagePath: "1.png",
-                            title: "TDS",
-                            number: TDS,
-                          );
-                        }),
-                  ],
+                          return buildParameterWidget(snapshot, "1.png", "TDS");
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            )
-          ],
-        )),
+            ],
+          ),
+        ),
       ),
     );
   }

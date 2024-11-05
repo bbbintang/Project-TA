@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mwaa1/Screen/AutoFeeder.dart';
 import 'package:mwaa1/widget/theme.dart';
-import 'package:popover/popover.dart';
 
 class AboutUsPage extends StatelessWidget {
   const AboutUsPage({super.key});
