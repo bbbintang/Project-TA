@@ -4,12 +4,30 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwaa1/Screen/regis_screen.dart';
 import 'package:mwaa1/Authentications/authentication.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
+  // Function to check login status
+  Future<void> checkLoginStatus(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    if (isLoggedIn) {
+      // If logged in, navigate directly to the registration screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const RegisScreen()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Check login status when the screen is built
+    checkLoginStatus(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
@@ -77,19 +95,23 @@ class WelcomeScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(5.0))),
                   onPressed: () async {
                     try {
-                      // wait for sign-in process
+                      // Wait for sign-in process
                       UserCredential? userCredential =
                           await AuthService().signInWithGoogle();
 
                       if (userCredential != null) {
-                        // only navigate if sign-in was successful
+                        // After successful login, save login status
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        await prefs.setBool('isLoggedIn', true);
+
+                        // Navigate to the registration screen
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => const RegisScreen()),
                         );
                       } else {
-                        // handle unsuccessful sign-in
+                        // Handle unsuccessful login
                         showCupertinoDialog(
                           context: context,
                           builder: (BuildContext context) =>
