@@ -1,12 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mwaa1/widget/profile_menu.dart';
 import 'package:mwaa1/widget/theme.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  GoogleSignInAccount? _currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _handleSignIn();
+  }
+
+  Future<void> _handleSignIn() async {
+    try {
+      final user = await _googleSignIn.signInSilently();
+      setState(() {
+        _currentUser = user;
+      });
+    } catch (error) {
+      print("Error signing in: $error");
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    String userName = _currentUser?.displayName ?? 'Azkiya Nafis Ikrimah';
+    String userEmail = _currentUser?.email ?? 'mwaaa@gmail.com';
     return Scaffold(
       backgroundColor: Colors.orange,
       appBar: AppBar(
@@ -49,11 +77,11 @@ class ProfilePage extends StatelessWidget {
               child: RichText(
                 text: TextSpan(children: [
                   TextSpan(
-                      text: 'Azkiya Nafis Ikrimah \n',
+                      text: '$userName\n',
                       style: outfit20bold.copyWith(
                           fontWeight: FontWeight.normal, fontSize: 18)),
                   TextSpan(
-                      text: 'mwaaa@gmail.com',
+                      text: userEmail,
                       style: outfit20bold.copyWith(
                           fontWeight: FontWeight.normal, fontSize: 18))
                 ]),
