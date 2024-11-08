@@ -6,11 +6,22 @@ import 'package:mwaa1/Screen/regis_screen.dart';
 import 'package:mwaa1/Authentications/authentication.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
+  @override
+  _WelcomeScreenState createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    checkLoginStatus();
+  }
+
   // Function to check login status
-  Future<void> checkLoginStatus(BuildContext context) async {
+  Future<void> checkLoginStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
@@ -25,9 +36,6 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Check login status when the screen is built
-    checkLoginStatus(context);
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
@@ -88,104 +96,82 @@ class WelcomeScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: ElevatedButton(
-                  iconAlignment: IconAlignment.start,
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0XFF0B6EFE),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0))),
-                  onPressed: () async {
-                    try {
-                      // Wait for sign-in process
-                      UserCredential? userCredential =
-                          await AuthService().signInWithGoogle();
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0XFF0B6EFE),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.0))),
+                onPressed: () async {
+                  try {
+                    // Wait for sign-in process
+                    UserCredential? userCredential =
+                        await AuthService().signInWithGoogle();
 
-                      if (userCredential != null) {
-                        // After successful login, save login status
-                        SharedPreferences prefs = await SharedPreferences.getInstance();
-                        await prefs.setBool('isLoggedIn', true);
+                    if (userCredential != null) {
+                      // After successful login, save login status
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      await prefs.setBool('isLoggedIn', true);
 
-                        // Navigate to the registration screen
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const RegisScreen()),
-                        );
-                      } else {
-                        // Handle unsuccessful login
-                        showCupertinoDialog(
-                          context: context,
-                          builder: (BuildContext context) =>
-                              CupertinoAlertDialog(
-                            title: const Text(
-                              'Error',
-                              style: TextStyle(
-                                fontFamily: "Inter",
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            content: const Text(
-                              'Login gagal. Silakan coba lagi.',
-                              style: TextStyle(
-                                fontFamily: "Inter",
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                            actions: <CupertinoDialogAction>[
-                              CupertinoDialogAction(
-                                isDefaultAction: true,
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                    } catch (e) {
-                      showCupertinoDialog(
-                        context: context,
-                        builder: (BuildContext context) => CupertinoAlertDialog(
-                          title: const Text(
-                            'Error',
-                            style: TextStyle(
-                              fontFamily: "Inter",
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          content: Text(
-                            'Error ketika login. Alasan: $e',
-                            style: const TextStyle(
-                              fontFamily: "Inter",
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                          actions: <CupertinoDialogAction>[
-                            CupertinoDialogAction(
-                              isDefaultAction: true,
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
+                      // Navigate to the registration screen
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RegisScreen()),
                       );
+                    } else {
+                      _showErrorDialog(context, 'Login gagal. Silakan coba lagi.');
                     }
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Image.asset(
-                        "logo_google.jpg",
-                        width: 25,
-                      ),
-                      Text(
-                        'Login With Google',
-                        style: GoogleFonts.montserrat(
-                            fontSize: 20.0, color: Colors.white),
-                      )
-                    ],
-                  )),
-            )
+                  } catch (e) {
+                    _showErrorDialog(context, 'Error ketika login. Alasan: $e');
+                  }
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Image.asset(
+                      "logo_google.jpg",
+                      width: 25,
+                    ),
+                    Text(
+                      'Login With Google',
+                      style: GoogleFonts.montserrat(
+                          fontSize: 20.0, color: Colors.white),
+                    )
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: const Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: "Inter",
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          message,
+          style: const TextStyle(
+            fontFamily: "Inter",
+            fontWeight: FontWeight.normal,
+          ),
+        ),
+        actions: <CupertinoDialogAction>[
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
       ),
     );
   }
