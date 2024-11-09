@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwaa1/Screen/control_page.dart';
-import 'package:mwaa1/Screen/home_page.dart';
+import 'package:mwaa1/Screen/Home%20Page/home_page.dart';
 import 'package:mwaa1/widget/theme.dart';
 
 class RegisScreen extends StatefulWidget {

@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:mwaa1/Screen/AutoFeeder.dart';
-import 'package:mwaa1/Screen/aboutus_page.dart';
-import 'package:mwaa1/Screen/variasi_page.dart';
+import 'package:mwaa1/Screen/Profile%20Page/Menu/AutoFeeder.dart';
+import 'package:mwaa1/Screen/Profile%20Page/Menu/aboutus_page.dart';
+import 'package:mwaa1/Screen/Profile%20Page/Menu/variasi_page.dart';
 import 'package:mwaa1/widget/theme.dart';
 
 class ProfileMenu extends StatelessWidget {

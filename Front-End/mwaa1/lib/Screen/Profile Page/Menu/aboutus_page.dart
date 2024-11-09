@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mwaa1/Screen/AutoFeeder.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:mwaa1/Screen/Profile%20Page/Menu/AutoFeeder.dart';
+import 'package:mwaa1/Screen/Profile%20Page/Menu/contact_page.dart';
+import 'package:mwaa1/Screen/Profile%20Page/Menu/faq_page.dart';
 import 'package:mwaa1/widget/theme.dart';
 import 'package:popover/popover.dart';
 
@@ -34,7 +37,7 @@ class AboutUsPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: 360,
+                height: 370,
                 child: Stack(
                   children: [
                     SizedBox(
@@ -66,7 +69,7 @@ class AboutUsPage extends StatelessWidget {
                       child: Text(
                         'MWA System atau Monitoring Warning and Action System merupakan sebuah produk yang dirancang untuk membantu memantau dan mengontrol kualitas air pada tambak udang',
                         style: poppin15normal.copyWith(
-                            color: Colors.black, letterSpacing: 1.0),
+                            color: Colors.black, letterSpacing: 1.0, fontSize: 17),
                         textAlign: TextAlign.justify,
                       ),
                     )
@@ -79,6 +82,60 @@ class AboutUsPage extends StatelessWidget {
                   color: Colors.blueGrey[100],
                   thickness: 1.5,
                 ),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FAQPage(),
+                      ));
+                },
+                leading: Container(
+                  margin: EdgeInsets.all(5),
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: Colors.white.withOpacity(0.1)),
+                  child: Icon(
+                    LineAwesomeIcons.question_circle,
+                    color: Colors.black,
+                    size: 30,
+                  ),
+                ),
+                title: Text(
+                  "FAQ",
+                  style: poppin15normal.copyWith(color: Colors.black, fontSize: 20),
+                ),
+                trailing: Icon(Icons.arrow_forward_ios_rounded, color: Colors.black,),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ContactPage(),
+                      ));
+                },
+                leading: Container(
+                  margin: EdgeInsets.all(5),
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: Colors.white.withOpacity(0.1)),
+                  child: Icon(
+                    LineAwesomeIcons.phone_volume_solid,
+                    color: Colors.black,
+                    size: 30,
+                  ),
+                ),
+                title: Text(
+                  "Contact Info",
+                  style: poppin15normal.copyWith(color: Colors.black, fontSize: 20),
+                ),
+                trailing: Icon(Icons.arrow_forward_ios_rounded, color: Colors.black,),
               ),
             ],
           ),

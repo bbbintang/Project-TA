@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mwaa1/Screen/regis_screen.dart';
+import 'package:mwaa1/Screen/Registrasi%20Page/regis_screen.dart';
 import 'package:mwaa1/Authentications/authentication.dart';
 
 class WelcomeScreen extends StatelessWidget {
