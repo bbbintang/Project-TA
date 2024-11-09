@@ -14,23 +14,36 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    checkLoginStatus();
-  }
+  final AuthService _authService = AuthService();
+  bool _isLoading = false;
 
-  // Function to check login status
-  Future<void> checkLoginStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+  Future<void> _handleGoogleSignIn() async {
+    setState(() {
+      _isLoading = true;
+    });
 
-    if (isLoggedIn) {
-      // If logged in, navigate directly to the registration screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const RegisScreen()),
-      );
+    try {
+      UserCredential? userCredential = await _authService.signInWithGoogle();
+
+      if (userCredential != null && mounted) {
+        // Navigate to the registration screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const RegisScreen()),
+        );
+      } else if (mounted) {
+        _showErrorDialog(context, 'Login gagal. Silakan coba lagi.');
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorDialog(context, 'Error ketika login. Alasan: $e');
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -97,34 +110,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               padding: const EdgeInsets.all(24.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0XFF0B6EFE),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5.0))),
-                onPressed: () async {
-                  try {
-                    // Wait for sign-in process
-                    UserCredential? userCredential =
-                        await AuthService().signInWithGoogle();
-
-                    if (userCredential != null) {
-                      // After successful login, save login status
-                      SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      await prefs.setBool('isLoggedIn', true);
-
-                      // Navigate to the registration screen
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const RegisScreen()),
-                      );
-                    } else {
-                      _showErrorDialog(context, 'Login gagal. Silakan coba lagi.');
-                    }
-                  } catch (e) {
-                    _showErrorDialog(context, 'Error ketika login. Alasan: $e');
-                  }
-                },
+                  backgroundColor: const Color(0XFF0B6EFE),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                ),
+                onPressed: _isLoading ? null : _handleGoogleSignIn,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -135,8 +126,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     Text(
                       'Login With Google',
                       style: GoogleFonts.montserrat(
-                          fontSize: 20.0, color: Colors.white),
-                    )
+                        fontSize: 20.0,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),

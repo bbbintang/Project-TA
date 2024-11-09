@@ -6,6 +6,74 @@ import 'package:mwaa1/widget/custom_category2.dart';
 import 'package:mwaa1/widget/custom_parameter.dart';
 import 'package:mwaa1/widget/theme.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class AuthService {
+  static final AuthService _instance = AuthService._internal();
+  factory AuthService() => _instance;
+  AuthService._internal();
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: ['email', 'profile'],
+  );
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Singleton instance of GoogleSignIn to be used across the app
+  GoogleSignIn get googleSignIn => _googleSignIn;
+
+  // Get current user
+  GoogleSignInAccount? get currentUser => _googleSignIn.currentUser;
+
+  Future<UserCredential?> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return null;
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+
+      // Save user data to SharedPreferences
+      await _saveUserData(googleUser);
+
+      return userCredential;
+    } catch (e) {
+      print('Error signing in with Google: $e');
+      return null;
+    }
+  }
+
+  Future<void> _saveUserData(GoogleSignInAccount user) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', true);
+    await prefs.setString('displayName', user.displayName ?? '');
+    await prefs.setString('photoUrl', user.photoUrl ?? '');
+    await prefs.setString('email', user.email);
+  }
+
+  Future<void> signOut() async {
+    await _googleSignIn.signOut();
+    await _auth.signOut();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+  }
+
+  Future<Map<String, String>> getUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    return {
+      'displayName': prefs.getString('displayName') ?? '',
+      'photoUrl': prefs.getString('photoUrl') ?? '',
+      'email': prefs.getString('email') ?? '',
+    };
+  }
+}
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,55 +83,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  GoogleSignInAccount? _currentUser;
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: [
-      'email',
-      'profile',
-    ],
-  );
+  Map<String, String> userData = {};
+  final AuthService _authService = AuthService();
 
   @override
   void initState() {
     super.initState();
-    _initializeGoogleSignIn();
+    _loadUserData();
   }
 
-  Future<void> _initializeGoogleSignIn() async {
-    try {
-      // Check if user is already signed in
-      _currentUser = await _googleSignIn.signInSilently();
-      
-      // Listen for future sign in changes
-      _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
-        setState(() {
-          _currentUser = account;
-          print("Current user: ${_currentUser?.displayName}"); // Debug print
-        });
-      });
-
-      if (_currentUser == null) {
-        // If no silent sign in, try manual sign in
-        await _handleSignIn();
-      }
-    } catch (error) {
-      print("Error initializing Google Sign-In: $error");
-    }
+  Future<void> _loadUserData() async {
+    final data = await _authService.getUserData();
+    setState(() {
+      userData = data;
+    });
   }
 
-  Future<void> _handleSignIn() async {
-    try {
-      final account = await _googleSignIn.signIn();
-      setState(() {
-        _currentUser = account;
-        print("Signed in user: ${_currentUser?.displayName}"); // Debug print
-      });
-    } catch (error) {
-      print("Error signing in: $error");
-    }
-  }
-
-  Widget buildParameterWidget(AsyncSnapshot<DatabaseEvent> snapshot, String imagePath, String title) {
+  Widget buildParameterWidget(
+      AsyncSnapshot<DatabaseEvent> snapshot, String imagePath, String title) {
     if (snapshot.hasError) {
       return CustomParameter(
         imagePath: imagePath,
@@ -139,195 +176,197 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: _currentUser != null 
-                                ? "Halo ${_currentUser!.displayName}!\n"
-                                : "Halo User!\n",
-                            style: poppin20bold,
-                          ),
-                          TextSpan(
-                            text: "Pantau Terus Tambak Mu!", 
-                            style: poppin15normal
-                          ),
-                        ]
-                      )
-                    ),
-                    const SizedBox(width: 10),
-                    GestureDetector(
-                      onTap: _currentUser == null ? _handleSignIn : null,
-                      child: Container(
-                        alignment: Alignment.centerRight,
-                        child: _currentUser?.photoUrl != null
-                            ? CircleAvatar(
-                                backgroundImage: NetworkImage(_currentUser!.photoUrl!),
-                                radius: 20,
-                              )
-                            : Image.asset(
-                                "LOGOaja.png",
-                                height: 100,
-                                width: 100,
-                              ),
+                        text: TextSpan(children: [
+                      TextSpan(
+                        text: userData['displayName']?.isNotEmpty == true
+                            ? "Halo ${userData['displayName']}!\n"
+                            : "Halo User!\n",
+                        style: poppin20bold,
                       ),
+                      TextSpan(
+                          text: "Pantau Terus Tambak Mu!",
+                          style: poppin15normal),
+                    ])),
+                    const SizedBox(width: 10),
+                    Container(
+                      alignment: Alignment.centerRight,
+                      child: userData['photoUrl']?.isNotEmpty == true
+                          ? CircleAvatar(
+                              backgroundImage:
+                                  NetworkImage(userData['photoUrl']!),
+                              radius: 20,
+                            )
+                          : Image.asset(
+                              "LOGOaja.png",
+                              height: 100,
+                              width: 100,
+                            ),
                     ),
                   ],
                 ),
               ),
-
-            SizedBox(
-              width: 330,
-              height: 270,
-              child: Stack(
-                children: [
-                  Card(
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    color: Colors.white.withOpacity(0.7),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    elevation: 10,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16, top: 16),
-                          child: Text("Batas Ukur Parameter Air",
-                              style: outfit20bold.copyWith(
-                                  letterSpacing: 1.5,
-                                  color: darkblue,
-                                  fontSize: 17)),
-                        ),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 140,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Card(
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              color: const Color.fromARGB(255, 196, 207, 233),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              elevation: 10,
-                              child: const Column(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.all(16.0),
-                                    child: Row(
+              SizedBox(
+                width: 330,
+                height: 270,
+                child: Stack(
+                  children: [
+                    Card(
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      color: Colors.white.withOpacity(0.7),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      elevation: 10,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16, top: 16),
+                            child: Text("Batas Ukur Parameter Air",
+                                style: outfit20bold.copyWith(
+                                    letterSpacing: 1.5,
+                                    color: darkblue,
+                                    fontSize: 17)),
+                          ),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 140,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Card(
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                                color: const Color.fromARGB(255, 196, 207, 233),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                elevation: 10,
+                                child: const Column(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.all(16.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          CustomCategory(
+                                            name1: "PH : ",
+                                            name2: "6 - 7",
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          CustomCategory(
+                                            name1: "TDS : ",
+                                            name2: "28 - 30",
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
                                         CustomCategory(
-                                          name1: "PH : ",
-                                          name2: "6 - 7",
+                                          name1: "Suhu Air: ",
+                                          name2: "100",
                                         ),
                                         SizedBox(
                                           width: 10,
                                         ),
                                         CustomCategory(
-                                          name1: "TDS : ",
-                                          name2: "28 - 30",
+                                          name1: "O2 : ",
+                                          name2: "> 3ml/gr",
                                         ),
                                       ],
                                     ),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      CustomCategory(
-                                        name1: "Suhu Air: ",
-                                        name2: "100",
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      CustomCategory(
-                                        name1: "O2 : ",
-                                        name2: "> 3ml/gr",
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16),
-                          child: Text("Kategori",
-                              style: outfit20bold.copyWith(
-                                  letterSpacing: 2.5,
-                                  color: darkblue,
-                                  fontSize: 17)),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(left: 10.0, top: 5.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              CustomCategory2(kategori: "Udang Vaname"),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              CustomCategory2(kategori: "Tambak Intensif")
-                            ],
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16),
+                            child: Text("Kategori",
+                                style: outfit20bold.copyWith(
+                                    letterSpacing: 2.5,
+                                    color: darkblue,
+                                    fontSize: 17)),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              height: 55,
-              width: 320,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.black.withOpacity(0.3)),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 8, right: 8),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      height: 45,
-                      width: 148,
-                      child: Card(
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        color: const Color.fromARGB(255, 196, 207, 233),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        elevation: 10,
-                        child: Center(child: Text("Alat 1", style: poppin15normal.copyWith(color: Colors.black),)),
-                      ),
-                    ),
-                    SizedBox(width: 5),
-                    SizedBox(
-                      height: 45,
-                      width: 148,
-                      child: Card(
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        color: const Color.fromARGB(255, 196, 207, 233),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        elevation: 10,
-                        child: Center(child: Text("Alat 2", style: poppin15normal.copyWith(color: Colors.black),)),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 10.0, top: 5.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                CustomCategory2(kategori: "Udang Vaname"),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                CustomCategory2(kategori: "Tambak Intensif")
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     )
                   ],
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Padding(
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                height: 55,
+                width: 320,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.black.withOpacity(0.3)),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8, right: 8),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        height: 45,
+                        width: 148,
+                        child: Card(
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          color: const Color.fromARGB(255, 196, 207, 233),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: 10,
+                          child: Center(
+                              child: Text(
+                            "Alat 1",
+                            style: poppin15normal.copyWith(color: Colors.black),
+                          )),
+                        ),
+                      ),
+                      SizedBox(width: 5),
+                      SizedBox(
+                        height: 45,
+                        width: 148,
+                        child: Card(
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          color: const Color.fromARGB(255, 196, 207, 233),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: 10,
+                          child: Center(
+                              child: Text(
+                            "Alat 2",
+                            style: poppin15normal.copyWith(color: Colors.black),
+                          )),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -336,19 +375,22 @@ class _HomePageState extends State<HomePage> {
                       StreamBuilder<DatabaseEvent>(
                         stream: database.onValue,
                         builder: (context, snapshot) {
-                          return buildParameterWidget(snapshot, "3.png", "Suhu Air");
+                          return buildParameterWidget(
+                              snapshot, "3.png", "Suhu Air");
                         },
                       ),
                       StreamBuilder<DatabaseEvent>(
                         stream: database4.onValue,
                         builder: (context, snapshot) {
-                          return buildParameterWidget(snapshot, "2.png", "PH Air");
+                          return buildParameterWidget(
+                              snapshot, "2.png", "PH Air");
                         },
                       ),
                       StreamBuilder<DatabaseEvent>(
                         stream: database2.onValue,
                         builder: (context, snapshot) {
-                          return buildParameterWidget(snapshot, "4.png", "Oksigen");
+                          return buildParameterWidget(
+                              snapshot, "4.png", "Oksigen");
                         },
                       ),
                       StreamBuilder<DatabaseEvent>(
