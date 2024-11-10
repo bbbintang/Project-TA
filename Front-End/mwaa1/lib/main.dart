@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mwaa1/Authentications/firebase_options.dart';
 import 'package:mwaa1/Screen/history_page.dart';
 import 'package:mwaa1/Screen/start_page.dart';
+import 'package:mwaa1/Screen/welcome_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,8 +24,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: StartPage(),
       routes: {
-  '/history': (context) => const HistoryPage(),
-},
+        '/history': (context) => const HistoryPage(),
+        '/welcome_screen': (context) => const WelcomeScreen(),
+      },
     );
   }
 }
