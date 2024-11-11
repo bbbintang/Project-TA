@@ -1,55 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
-class Tabbarpage extends StatefulWidget {
-  const Tabbarpage({super.key});
-
+class CenteredTabBar extends StatefulWidget {
   @override
-  State<Tabbarpage> createState() => _TabbarpageState();
+  _CenteredTabBarState createState() => _CenteredTabBarState();
 }
 
-class _TabbarpageState extends State<Tabbarpage> with TickerProviderStateMixin {
+class _CenteredTabBarState extends State<CenteredTabBar> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this); // 3 Tab
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    TabController tabController = TabController(length: 3, vsync: this);
-
     return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(
-            height: 50,
-          ),
-          Card(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            elevation: 5,
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12)),
+      appBar: AppBar(
+        title: Text("TabBar di Tengah Halaman"),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 300, // Lebar TabBar
               child: TabBar(
-                  indicator: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.orange),
-                  controller: tabController,
-                  labelPadding: EdgeInsets.symmetric(horizontal: 30),
-                  tabs: [
-                    Tab(
-                      child: Text(
-                        'Alat 1',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                    Tab(
-                      child: Text(
-                        'Alat 2',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                  ]),
+                controller: _tabController,
+                tabs: [
+                  Tab(icon: Icon(Icons.home), text: "Home"),
+                  Tab(icon: Icon(Icons.search), text: "Search"),
+                  Tab(icon: Icon(Icons.person), text: "Profile"),
+                ],
+                labelColor: Colors.blue,
+                unselectedLabelColor: Colors.grey,
+                indicatorColor: Colors.blue,
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: 20),
+            Container(
+              width: 300, // Lebar TabBarView agar sesuai dengan TabBar
+              height: 200, // Tinggi TabBarView
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  Center(child: Text("Home Page")),
+                  Center(child: Text("Search Page")),
+                  Center(child: Text("Profile Page")),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

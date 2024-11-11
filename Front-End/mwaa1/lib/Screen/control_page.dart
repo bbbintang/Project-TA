@@ -1,5 +1,6 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:mwaa1/Screen/Grafik%20Page/grafik_page.dart';
 import 'package:mwaa1/Screen/History%20Page/history_page.dart';
 import 'package:mwaa1/Screen/Home%20Page/home_page.dart';
 import 'package:mwaa1/Screen/Profile%20Page/profile_page.dart';
@@ -26,6 +27,9 @@ class _ControlPageState extends State<ControlPage> {
   final List _pages = [
     //home
     HomePage(),
+
+    //grafik
+    GrafikPage(),
     
     //history
     HistoryPage(),
@@ -48,6 +52,13 @@ class _ControlPageState extends State<ControlPage> {
           //home
           Icon(
             Icons.home,
+            color: Colors.white,
+            size: 30,
+          ),
+
+          //grafik
+          Icon(
+            Icons.bar_chart_rounded,
             color: Colors.white,
             size: 30,
           ),

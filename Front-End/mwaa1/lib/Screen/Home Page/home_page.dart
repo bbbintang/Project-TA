@@ -5,6 +5,7 @@ import 'package:mwaa1/Screen/Home%20Page/button_homepage.dart';
 import 'package:mwaa1/Screen/Home%20Page/custom_category.dart';
 import 'package:mwaa1/Screen/Home%20Page/custom_category2.dart';
 import 'package:mwaa1/Screen/Home%20Page/custom_parameter.dart';
+import 'package:mwaa1/Screen/Home%20Page/tabbar_page.dart';
 import 'package:mwaa1/widget/theme.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -83,14 +84,24 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   Map<String, String> userData = {};
   final AuthService _authService = AuthService();
+  late TabController _tabController; // Menambahkan TabController
 
   @override
   void initState() {
     super.initState();
+    _tabController =
+        TabController(length: 2, vsync: this); // Mengatur jumlah tab
     _loadUserData();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose(); // Pastikan untuk mendispose TabController
+    super.dispose();
   }
 
   Future<void> _loadUserData() async {
@@ -172,7 +183,8 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 30, top: 10, right: 25),
+                padding: const EdgeInsets.only(
+                    left: 30, right: 25, bottom: 5, top: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -315,94 +327,121 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: 20,
               ),
-              Container(
-                height: 55,
-                width: 320,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.black.withOpacity(0.3)),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        height: 45,
-                        width: 148,
-                        child: Card(
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          color: const Color.fromARGB(255, 196, 207, 233),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          elevation: 10,
-                          child: Center(
-                              child: Text(
-                            "Alat 1",
-                            style: poppin15normal.copyWith(color: Colors.black),
-                          )),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 50,
+                    width: 330, // Lebar TabBar
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      elevation: 8,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12)),
+                        child: TabBar(
+                          controller: _tabController,
+                          labelColor: darkblue,
+                          unselectedLabelColor: Colors.black,
+                          labelPadding: EdgeInsets.symmetric(horizontal: 20.0),
+                          tabs: [
+                            Tab(text: "Alat 1"),
+                            Tab(text: "Alat 2"),
+                          ],
+                          indicatorColor: Colors.blue,
                         ),
                       ),
-                      SizedBox(width: 5),
-                      SizedBox(
-                        height: 45,
-                        width: 148,
-                        child: Card(
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          color: const Color.fromARGB(255, 196, 207, 233),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  SizedBox(
+                    width: 330, // Lebar TabBarView agar sesuai dengan TabBar
+                    height: 200, // Tinggi TabBarView
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8, right: 8),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                StreamBuilder<DatabaseEvent>(
+                                  stream: database.onValue,
+                                  builder: (context, snapshot) {
+                                    return buildParameterWidget(
+                                        snapshot, "3.png", "Suhu Air");
+                                  },
+                                ),
+                                StreamBuilder<DatabaseEvent>(
+                                  stream: database4.onValue,
+                                  builder: (context, snapshot) {
+                                    return buildParameterWidget(
+                                        snapshot, "2.png", "PH Air");
+                                  },
+                                ),
+                                StreamBuilder<DatabaseEvent>(
+                                  stream: database2.onValue,
+                                  builder: (context, snapshot) {
+                                    return buildParameterWidget(
+                                        snapshot, "4.png", "Oksigen");
+                                  },
+                                ),
+                                StreamBuilder<DatabaseEvent>(
+                                  stream: database3.onValue,
+                                  builder: (context, snapshot) {
+                                    return buildParameterWidget(
+                                        snapshot, "1.png", "TDS");
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                          elevation: 10,
-                          child: Center(
-                              child: Text(
-                            "Alat 2",
-                            style: poppin15normal.copyWith(color: Colors.black),
-                          )),
                         ),
-                      )
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8, right: 8),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                StreamBuilder<DatabaseEvent>(
+                                  stream: database.onValue,
+                                  builder: (context, snapshot) {
+                                    return buildParameterWidget(
+                                        snapshot, "3.png", "Suhu Air");
+                                  },
+                                ),
+                                StreamBuilder<DatabaseEvent>(
+                                  stream: database4.onValue,
+                                  builder: (context, snapshot) {
+                                    return buildParameterWidget(
+                                        snapshot, "2.png", "PH Air");
+                                  },
+                                ),
+                                StreamBuilder<DatabaseEvent>(
+                                  stream: database2.onValue,
+                                  builder: (context, snapshot) {
+                                    return buildParameterWidget(
+                                        snapshot, "4.png", "Oksigen");
+                                  },
+                                ),
+                                StreamBuilder<DatabaseEvent>(
+                                  stream: database3.onValue,
+                                  builder: (context, snapshot) {
+                                    return buildParameterWidget(
+                                        snapshot, "1.png", "TDS");
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      StreamBuilder<DatabaseEvent>(
-                        stream: database.onValue,
-                        builder: (context, snapshot) {
-                          return buildParameterWidget(
-                              snapshot, "3.png", "Suhu Air");
-                        },
-                      ),
-                      StreamBuilder<DatabaseEvent>(
-                        stream: database4.onValue,
-                        builder: (context, snapshot) {
-                          return buildParameterWidget(
-                              snapshot, "2.png", "PH Air");
-                        },
-                      ),
-                      StreamBuilder<DatabaseEvent>(
-                        stream: database2.onValue,
-                        builder: (context, snapshot) {
-                          return buildParameterWidget(
-                              snapshot, "4.png", "Oksigen");
-                        },
-                      ),
-                      StreamBuilder<DatabaseEvent>(
-                        stream: database3.onValue,
-                        builder: (context, snapshot) {
-                          return buildParameterWidget(snapshot, "1.png", "TDS");
-                        },
-                      ),
-                    ],
-                  ),
-                ),
+                ],
               ),
             ],
           ),

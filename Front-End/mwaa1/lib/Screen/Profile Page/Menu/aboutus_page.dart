@@ -13,12 +13,16 @@ class AboutUsPage extends StatelessWidget {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          automaticallyImplyLeading: false,
-          elevation: 1.0,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+        backgroundColor: Colors.grey.shade200,
+        automaticallyImplyLeading: true,
+        title: Container(
+          width: double.infinity,
+          height: 75,
+          decoration: BoxDecoration(color: Colors.grey.shade200),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              SizedBox(width: 60,),
               Image.asset(
                 "LOGOaja.png",
                 color: Colors.orange,
@@ -30,13 +34,14 @@ class AboutUsPage extends StatelessWidget {
             ],
           ),
         ),
+      ),
         body: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: 370,
+                height: 410,
                 child: Stack(
                   children: [
                     SizedBox(
@@ -54,7 +59,7 @@ class AboutUsPage extends StatelessWidget {
                         )),
                     Padding(
                       padding:
-                          const EdgeInsets.only(left: 50, right: 50, top: 8),
+                          const EdgeInsets.only(left: 50, right: 50, top: 20),
                       child: Image.asset(
                         'MWA.png',
                         color: Colors.orange,
@@ -62,7 +67,7 @@ class AboutUsPage extends StatelessWidget {
                       ),
                     ),
                     Positioned(
-                      top: 220,
+                      top: 250,
                       left: 16,
                       right: 16,
                       child: Text(
