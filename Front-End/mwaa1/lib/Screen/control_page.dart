@@ -1,7 +1,5 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:mwaa1/Screen/History%20Page/history_page.dart';
 import 'package:mwaa1/Screen/Home%20Page/home_page.dart';
 import 'package:mwaa1/Screen/Profile%20Page/profile_page.dart';

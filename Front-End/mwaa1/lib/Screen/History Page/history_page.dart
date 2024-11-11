@@ -1,10 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:mwaa1/Screen/Home%20Page/button_homepage.dart';
-import 'package:mwaa1/Screen/History%20Page/button_historypage.dart';
-import 'package:mwaa1/Screen/History%20Page/custom_history.dart';
+import 'package:mwaa1/widget/custom_history.dart';
 import 'package:mwaa1/widget/theme.dart';
 
 class HistoryPage extends StatelessWidget {

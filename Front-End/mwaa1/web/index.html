@@ -24,6 +24,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="mwaa1">
+  <meta name="google-signin-client_id" content="348996085369-o3giq3ohcsu0ldne30tectefqklrum51.apps.googleusercontent.com">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
@@ -31,8 +32,29 @@
 
   <title>mwaa1</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Add these scripts for Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-auth.js"></script>
+
+  <script>
+    // Your Firebase configuration object from Firebase Console
+    const firebaseConfig = {
+      apiKey: "AIzaSyBC88S7JJlqL8q5VfP1Ep_E_juszodNIoI",
+      authDomain: "mwas-95df5.firebaseapp.com",
+      projectId: "mwas-95df5",
+      storageBucket: "mwas-95df5.appspot.com",
+      messagingSenderId: "348996085369",
+      appId: "1:348996085369:web:f418ec4d2759a9b97cd6a8",
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
+  <script src="main.dart.js" type="application/javascript"></script>
 </body>
 </html>

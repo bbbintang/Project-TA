@@ -4,7 +4,6 @@ import 'package:mwaa1/Screen/Profile%20Page/Menu/AutoFeeder.dart';
 import 'package:mwaa1/Screen/Profile%20Page/Menu/contact_page.dart';
 import 'package:mwaa1/Screen/Profile%20Page/Menu/faq_page.dart';
 import 'package:mwaa1/widget/theme.dart';
-import 'package:popover/popover.dart';
 
 class AboutUsPage extends StatelessWidget {
   const AboutUsPage({super.key});

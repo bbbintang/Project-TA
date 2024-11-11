@@ -4,9 +4,48 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwaa1/Screen/Registrasi%20Page/regis_screen.dart';
 import 'package:mwaa1/Authentications/authentication.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
+
+  @override
+  _WelcomeScreenState createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  final AuthService _authService = AuthService();
+  bool _isLoading = false;
+
+  Future<void> _handleGoogleSignIn() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      UserCredential? userCredential = await _authService.signInWithGoogle();
+
+      if (userCredential != null && mounted) {
+        // Navigate to the registration screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const RegisScreen()),
+        );
+      } else if (mounted) {
+        _showErrorDialog(context, 'Login gagal. Silakan coba lagi.');
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorDialog(context, 'Error ketika login. Alasan: $e');
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,100 +109,62 @@ class WelcomeScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: ElevatedButton(
-                  iconAlignment: IconAlignment.start,
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0XFF0B6EFE),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0))),
-                  onPressed: () async {
-                    try {
-                      // wait for sign-in process
-                      UserCredential? userCredential =
-                          await AuthService().signInWithGoogle();
-
-                      if (userCredential != null) {
-                        // only navigate if sign-in was successful
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const RegisScreen()),
-                        );
-                      } else {
-                        // handle unsuccessful sign-in
-                        showCupertinoDialog(
-                          context: context,
-                          builder: (BuildContext context) =>
-                              CupertinoAlertDialog(
-                            title: const Text(
-                              'Error',
-                              style: TextStyle(
-                                fontFamily: "Inter",
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            content: const Text(
-                              'Login gagal. Silakan coba lagi.',
-                              style: TextStyle(
-                                fontFamily: "Inter",
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                            actions: <CupertinoDialogAction>[
-                              CupertinoDialogAction(
-                                isDefaultAction: true,
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                    } catch (e) {
-                      showCupertinoDialog(
-                        context: context,
-                        builder: (BuildContext context) => CupertinoAlertDialog(
-                          title: const Text(
-                            'Error',
-                            style: TextStyle(
-                              fontFamily: "Inter",
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          content: Text(
-                            'Error ketika login. Alasan: $e',
-                            style: const TextStyle(
-                              fontFamily: "Inter",
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                          actions: <CupertinoDialogAction>[
-                            CupertinoDialogAction(
-                              isDefaultAction: true,
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Image.asset(
-                        "logo_google.jpg",
-                        width: 25,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0XFF0B6EFE),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                ),
+                onPressed: _isLoading ? null : _handleGoogleSignIn,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Image.asset(
+                      "logo_google.jpg",
+                      width: 25,
+                    ),
+                    Text(
+                      'Login With Google',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 20.0,
+                        color: Colors.white,
                       ),
-                      Text(
-                        'Login With Google',
-                        style: GoogleFonts.montserrat(
-                            fontSize: 20.0, color: Colors.white),
-                      )
-                    ],
-                  )),
-            )
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: const Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: "Inter",
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          message,
+          style: const TextStyle(
+            fontFamily: "Inter",
+            fontWeight: FontWeight.normal,
+          ),
+        ),
+        actions: <CupertinoDialogAction>[
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
       ),
     );
   }
