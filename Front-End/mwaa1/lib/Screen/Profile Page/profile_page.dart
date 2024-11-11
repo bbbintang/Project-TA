@@ -34,6 +34,69 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  Future<void> _showSignOutConfirmation() async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Sign Out'),
+          content: const Text('Are you sure you want to sign out?'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(
+                'Cancel',
+                style: outfit17normal.copyWith(color: Colors.grey),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(
+                'Sign Out',
+                style: outfit17normal.copyWith(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    ).then((confirmed) async {
+      if (confirmed == true) {
+        await _handleSignOut();
+      }
+    });
+  }
+
+  Future<void> _handleSignOut() async {
+    try {
+      // Sign out from Google
+      await _googleSignIn.signOut();
+      
+      // Clear SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+      
+      // Navigate to sign in page and remove all previous routes
+      if (!mounted) return;
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/welcome_screen', // Replace with your sign-in page route
+        (Route<dynamic> route) => false,
+      );
+    } catch (error) {
+      print('Error signing out: $error');
+      // Optionally show error message to user
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error signing out. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,7 +184,9 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(
               height: 25,
             ),
-            SizedBox(
+            GestureDetector(
+              onTap: _showSignOutConfirmation,
+              child: SizedBox(
                 width: 200,
                 height: 50,
                 child: Card(
@@ -142,7 +207,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                ))
+                ),
+              ),
+            )
           ],
         ),
       ),

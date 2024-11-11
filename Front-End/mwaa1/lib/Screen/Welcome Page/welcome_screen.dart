@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwaa1/Screen/Registrasi%20Page/regis_screen.dart';
 import 'package:mwaa1/Authentications/authentication.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
