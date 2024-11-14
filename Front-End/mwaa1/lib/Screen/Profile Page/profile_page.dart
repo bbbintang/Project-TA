@@ -103,26 +103,16 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: Colors.orange,
       appBar: AppBar(
         backgroundColor: Colors.orange,
-        automaticallyImplyLeading: false,
-        elevation: 1.0,
-        title: Container(
-          width: double.infinity,
-          height: 75,
-          decoration: BoxDecoration(color: Colors.orange),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                "LOGOaja.png",
-                color: Colors.white,
-                height: 100,
-                width: 100,
-                alignment: Alignment.center,
-                fit: BoxFit.contain,
-              ),
-            ],
-          ),
+        title: Image.asset(
+          "LOGOaja.png",
+          color: Colors.white,
+          height: 100,
+          width: 100,
+          alignment: Alignment.center,
+          fit: BoxFit.contain,
         ),
+        centerTitle: true,
+        elevation: 1.0,
       ),
       body: Center(
         child: Column(

@@ -7,6 +7,19 @@ class GrafikPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        title: Image.asset(
+          "LOGOaja.png",
+          color: Colors.orange,
+          height: 100,
+          width: 100,
+          alignment: Alignment.center,
+          fit: BoxFit.contain,
+        ),
+        centerTitle: true,
+        elevation: 1.0,
+      ),
+    );
   }
 }

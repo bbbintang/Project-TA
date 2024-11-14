@@ -28,7 +28,7 @@ class _ControlPageState extends State<ControlPage> {
     //home
     HomePage(),
 
-    //grafik
+    //Location
     GrafikPage(),
     
     //history
@@ -56,9 +56,9 @@ class _ControlPageState extends State<ControlPage> {
             size: 30,
           ),
 
-          //grafik
+          //location
           Icon(
-            Icons.bar_chart_rounded,
+            Icons.location_pin,
             color: Colors.white,
             size: 30,
           ),
