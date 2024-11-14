@@ -177,19 +177,6 @@ class _HomePageState extends State<HomePage>
 
     return Scaffold(
       backgroundColor: Colors.orange,
-      appBar: AppBar(
-        backgroundColor: Colors.orange,
-        title: Image.asset(
-          "LOGOaja.png",
-          color: Colors.white,
-          height: 100,
-          width: 100,
-          alignment: Alignment.center,
-          fit: BoxFit.contain,
-        ),
-        centerTitle: true,
-        elevation: 1.0,
-      ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: SafeArea(
@@ -197,11 +184,7 @@ class _HomePageState extends State<HomePage>
             children: [
               Padding(
                 padding: const EdgeInsets.only(
-                  left: 30,
-                  right: 25,
-                  bottom: 5,
-                  top: 10
-                ),
+                    left: 30, right: 25, bottom: 5, top: 30),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -226,13 +209,11 @@ class _HomePageState extends State<HomePage>
                                   NetworkImage(userData['photoUrl']!),
                               radius: 20,
                             )
-                          : ClipOval(
-                            child: Image.asset(
-                                "profile.jpeg",
-                                height: 50,
-                                width: 50,
-                              ),
-                          ),
+                          : Image.asset(
+                              "LOGOaja.png",
+                              height: 100,
+                              width: 100,
+                            ),
                     ),
                   ],
                 ),
@@ -349,22 +330,29 @@ class _HomePageState extends State<HomePage>
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    child: Container(
-                      height: 40,
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10)),
-                          color: Color.fromARGB(255, 196, 207, 233)),
-                      child: TabBar(
+                  SizedBox(
+                    height: 50,
+                    width: 330, // Lebar TabBar
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      elevation: 8,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12)),
+                        child: TabBar(
                           controller: _tabController,
-                          indicatorSize: TabBarIndicatorSize.tab,
-                          tabs: const [
-                            TabItem(title: 'Alat 1'),
-                            TabItem(title: 'Alat 2'),
-                          ]),
+                          labelColor: darkblue,
+                          unselectedLabelColor: Colors.black,
+                          labelPadding: EdgeInsets.symmetric(horizontal: 20.0),
+                          tabs: [
+                            Tab(text: "Alat 1"),
+                            Tab(text: "Alat 2"),
+                          ],
+                          indicatorColor: Colors.blue,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(height: 20),

@@ -28,7 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _userName = prefs.getString('displayName') ?? 'Azkiya Nafis Ikrimah';
+      _userName = prefs.getString('displayName') ?? 'Login Yuk';
       _userEmail = prefs.getString('email') ?? 'mwaaa@gmail.com';
       _userPhotoUrl = prefs.getString('photoUrl') ?? '';
     });
@@ -113,6 +113,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         centerTitle: true,
         elevation: 1.0,
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Column(
@@ -144,6 +145,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Padding(
               padding: const EdgeInsets.only(top: 16),
               child: RichText(
+                textAlign: TextAlign.center,
                 text: TextSpan(children: [
                   TextSpan(
                       text: '$_userName\n',
@@ -152,7 +154,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   TextSpan(
                       text: _userEmail,
                       style: outfit20bold.copyWith(
-                          fontWeight: FontWeight.normal, fontSize: 18))
+                          fontWeight: FontWeight.normal, fontSize: 18)),
                 ]),
               ),
             ),

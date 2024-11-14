@@ -1,6 +1,6 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:mwaa1/Screen/Grafik%20Page/grafik_page.dart';
+import 'package:mwaa1/Screen/Location%20Page/Location_page.dart';
 import 'package:mwaa1/Screen/History%20Page/history_page.dart';
 import 'package:mwaa1/Screen/Home%20Page/home_page.dart';
 import 'package:mwaa1/Screen/Profile%20Page/profile_page.dart';
@@ -29,7 +29,7 @@ class _ControlPageState extends State<ControlPage> {
     HomePage(),
 
     //Location
-    GrafikPage(),
+    LocationPage(),
     
     //history
     HistoryPage(),

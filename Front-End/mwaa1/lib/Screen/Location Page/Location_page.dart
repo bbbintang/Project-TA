@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class GrafikPage extends StatelessWidget {
-  const GrafikPage({super.key});
+class LocationPage extends StatelessWidget {
+  const LocationPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +19,7 @@ class GrafikPage extends StatelessWidget {
         ),
         centerTitle: true,
         elevation: 1.0,
+        automaticallyImplyLeading: false,
       ),
     );
   }
