@@ -1,25 +1,11 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
-class TabItem extends StatelessWidget {
-  final String title;
-
-  const TabItem({
-    super.key,
-    required this.title,
-  });
+class TabbarPage extends StatelessWidget {
+  const TabbarPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Tab(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            title,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
-    );
+    return const Placeholder();
   }
 }

@@ -12,7 +12,7 @@ class CustomBulan extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 50,
-      decoration: BoxDecoration(color: Colors.white54),
+      decoration: BoxDecoration(),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(

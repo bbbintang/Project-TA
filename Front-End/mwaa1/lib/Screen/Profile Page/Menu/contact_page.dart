@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mwaa1/widget/theme.dart';
 
 class ContactPage extends StatelessWidget {
   const ContactPage({super.key});

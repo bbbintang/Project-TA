@@ -1,11 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:mwaa1/Screen/Home%20Page/button_homepage.dart';
 import 'package:mwaa1/Screen/Home%20Page/custom_category.dart';
 import 'package:mwaa1/Screen/Home%20Page/custom_category2.dart';
 import 'package:mwaa1/Screen/Home%20Page/custom_parameter.dart';
-import 'package:mwaa1/Screen/Home%20Page/tabbar_page.dart';
 import 'package:mwaa1/widget/theme.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -189,17 +187,19 @@ class _HomePageState extends State<HomePage>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     RichText(
-                        text: TextSpan(children: [
-                      TextSpan(
-                        text: userData['displayName']?.isNotEmpty == true
-                            ? "Halo ${userData['displayName']}!\n"
-                            : "Halo User!\n",
-                        style: poppin20bold,
-                      ),
-                      TextSpan(
-                          text: "Pantau Terus Tambak Mu!",
-                          style: poppin15normal),
-                    ])),
+                      text: TextSpan(children: [
+                        TextSpan(
+                          text: userData['displayName']?.isNotEmpty == true
+                              ? "Halo ${userData['displayName']}!\n"
+                              : "Halo User!\n",
+                          style: poppin20bold,
+                        ),
+                        TextSpan(
+                            text: "Pantau Terus Tambak Mu!",
+                            style: poppin15normal),
+                      ]),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     const SizedBox(width: 10),
                     Container(
                       alignment: Alignment.centerRight,

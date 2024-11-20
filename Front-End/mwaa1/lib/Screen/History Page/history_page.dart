@@ -29,28 +29,6 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.grey.shade200,
-        automaticallyImplyLeading: false,
-        title: Container(
-          width: double.infinity,
-          height: 75,
-          decoration: BoxDecoration(color: Colors.grey.shade200),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                "LOGOaja.png",
-                color: Colors.orange,
-                height: 100,
-                width: 100,
-                alignment: Alignment.center,
-                fit: BoxFit.contain,
-              ),
-            ],
-          ),
-        ),
-      ),
       body: StreamBuilder<QuerySnapshot>(
         // Mengambil semua dokumen dari koleksi ESP32 dan mengurutkannya berdasarkan waktu
         stream: FirebaseFirestore.instance
@@ -94,21 +72,6 @@ class _HistoryPageState extends State<HistoryPage> {
             child: SafeArea(
               child: Column(
                 children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: 10, left: 16, right: 16),
-                    child: Row(
-                      children: [
-                        Text(
-                          "Riwayat Data",
-                          style: montserrat17normal.copyWith(
-                              color: Colors.black, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(width: 170),
-                        ButtonHistorypage()
-                      ],
-                    ),
-                  ),
                   // Display grouped data by month
                   ...groupedData.entries.map((entry) {
                     return Column(

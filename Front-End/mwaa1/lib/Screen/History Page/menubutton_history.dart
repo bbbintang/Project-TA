@@ -23,7 +23,7 @@ class _MenubuttonHistoryState extends State<MenubuttonHistory> {
           ),
           Center(
             child: Text(
-              "R I W A Y A T",
+              "Periode Riwayat",
               style: opensans17normal.copyWith(
                   color: blueriwayat,
                   fontWeight: FontWeight.bold,
@@ -31,15 +31,7 @@ class _MenubuttonHistoryState extends State<MenubuttonHistory> {
             ),
           ),
           SizedBox(
-            height: 16,
-          ),
-          Text("Periode Riwayat",
-              style: poppin15normal.copyWith(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.0)),
-          SizedBox(
-            height: 16,
+            height: 20,
           ),
           Text("Dari Tanggal",
               style: poppin15normal.copyWith(color: Colors.black)),
