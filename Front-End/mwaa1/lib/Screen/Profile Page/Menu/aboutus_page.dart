@@ -12,28 +12,17 @@ class AboutUsPage extends StatelessWidget {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-        backgroundColor: Colors.grey.shade200,
-        automaticallyImplyLeading: true,
-        title: Container(
-          width: double.infinity,
-          height: 75,
-          decoration: BoxDecoration(color: Colors.grey.shade200),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(width: 60,),
-              Image.asset(
-                "LOGOaja.png",
-                color: Colors.orange,
-                height: 100,
-                width: 100,
-                alignment: Alignment.center,
-                fit: BoxFit.contain,
-              ),
-            ],
+          title: Image.asset(
+            "assets/LOGOaja.png",
+            color: Colors.orange,
+            height: 100,
+            width: 100,
+            alignment: Alignment.center,
+            fit: BoxFit.contain,
           ),
+          centerTitle: true,
+          elevation: 1.0,
         ),
-      ),
         body: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -60,7 +49,7 @@ class AboutUsPage extends StatelessWidget {
                       padding:
                           const EdgeInsets.only(left: 50, right: 50, top: 20),
                       child: Image.asset(
-                        'MWA.png',
+                        'assets/MWA.png',
                         color: Colors.orange,
                         height: 250,
                       ),
@@ -72,7 +61,9 @@ class AboutUsPage extends StatelessWidget {
                       child: Text(
                         'MWA System atau Monitoring Warning and Action System merupakan sebuah produk yang dirancang untuk membantu memantau dan mengontrol kualitas air pada tambak udang',
                         style: poppin15normal.copyWith(
-                            color: Colors.black, letterSpacing: 1.0, fontSize: 17),
+                            color: Colors.black,
+                            letterSpacing: 1.0,
+                            fontSize: 17),
                         textAlign: TextAlign.justify,
                       ),
                     )
@@ -109,9 +100,13 @@ class AboutUsPage extends StatelessWidget {
                 ),
                 title: Text(
                   "FAQ",
-                  style: poppin15normal.copyWith(color: Colors.black, fontSize: 20),
+                  style: poppin15normal.copyWith(
+                      color: Colors.black, fontSize: 20),
                 ),
-                trailing: Icon(Icons.arrow_forward_ios_rounded, color: Colors.black,),
+                trailing: Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: Colors.black,
+                ),
               ),
               ListTile(
                 onTap: () {
@@ -136,9 +131,13 @@ class AboutUsPage extends StatelessWidget {
                 ),
                 title: Text(
                   "Contact Info",
-                  style: poppin15normal.copyWith(color: Colors.black, fontSize: 20),
+                  style: poppin15normal.copyWith(
+                      color: Colors.black, fontSize: 20),
                 ),
-                trailing: Icon(Icons.arrow_forward_ios_rounded, color: Colors.black,),
+                trailing: Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: Colors.black,
+                ),
               ),
             ],
           ),

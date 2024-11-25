@@ -24,10 +24,10 @@ class FAQPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE7E8E3),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('FAQ'),
-        backgroundColor: const Color(0xFFE7E8E3),
+        backgroundColor: Colors.white,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

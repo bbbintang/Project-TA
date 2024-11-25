@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mwaa1/Screen/Home%20Page/menu_item.dart';
 import 'package:mwaa1/widget/theme.dart';
 
@@ -11,6 +12,8 @@ class MenubuttonHistory extends StatefulWidget {
 
 class _MenubuttonHistoryState extends State<MenubuttonHistory> {
   bool _isObscure = true;
+  TextEditingController dateControllerAwal = TextEditingController();
+  TextEditingController dateControllerAkhir = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -25,9 +28,10 @@ class _MenubuttonHistoryState extends State<MenubuttonHistory> {
             child: Text(
               "Periode Riwayat",
               style: opensans17normal.copyWith(
-                  color: blueriwayat,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,),
+                color: blueriwayat,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
             ),
           ),
           SizedBox(
@@ -36,13 +40,26 @@ class _MenubuttonHistoryState extends State<MenubuttonHistory> {
           Text("Dari Tanggal",
               style: poppin15normal.copyWith(color: Colors.black)),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(top: 16, right: 8, left: 8),
             child: TextField(
+              readOnly: true,
+              controller: dateControllerAwal,
               decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                suffixIcon: Icon(Icons.calendar_month_outlined),
-              ),
-              style: TextStyle(fontSize: 14),
+                  border: OutlineInputBorder(),
+                  labelText: 'Enter Date',
+                  suffixIcon: Icon(Icons.calendar_month_rounded)),
+              onTap: () async {
+                DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2020),
+                    lastDate: DateTime(2099));
+                if (pickedDate != null) {
+                  String formattedDate =
+                      DateFormat('yyy-MM-dd').format(pickedDate);
+                  dateControllerAwal.text = formattedDate;
+                }
+              },
             ),
           ),
           SizedBox(
@@ -51,13 +68,26 @@ class _MenubuttonHistoryState extends State<MenubuttonHistory> {
           Text("Sampai Tanggal",
               style: poppin15normal.copyWith(color: Colors.black)),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(top: 16, right: 8, left: 8),
             child: TextField(
+              readOnly: true,
+              controller: dateControllerAkhir,
               decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                suffixIcon: Icon(Icons.calendar_month_outlined),
-              ),
-              style: TextStyle(fontSize: 14),
+                  border: OutlineInputBorder(),
+                  labelText: 'Enter Date',
+                  suffixIcon: Icon(Icons.calendar_month_rounded)),
+              onTap: () async {
+                DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2020),
+                    lastDate: DateTime(2099));
+                if (pickedDate != null) {
+                  String formattedDate =
+                      DateFormat('yyy-MM-dd').format(pickedDate);
+                  dateControllerAkhir.text = formattedDate;
+                }
+              },
             ),
           ),
           SizedBox(
@@ -72,48 +102,31 @@ class _MenubuttonHistoryState extends State<MenubuttonHistory> {
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _isObscure = !_isObscure;
-                    });
-                  }, 
-                  icon: Icon(_isObscure? Icons.visibility : Icons.visibility_off)),
+                    onPressed: () {
+                      setState(() {
+                        _isObscure = !_isObscure;
+                      });
+                    },
+                    icon: Icon(
+                        _isObscure ? Icons.visibility : Icons.visibility_off)),
               ),
               style: TextStyle(fontSize: 14),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-            child: Row(
-              children: [
-                ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                        minimumSize: Size(80, 30),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25)),
-                        backgroundColor: bluelogin),
-                    child: Text(
-                      "Batal",
-                      style: outfit15normal.copyWith(color: Colors.white, letterSpacing: 1.0),
-                    )
-                ),
-                SizedBox(width: 60,),
-                ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                        minimumSize: Size(80, 30),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25)),
-                        backgroundColor: bluelogin),
-                    child: Text(
-                      "Selesai",
-                      style: outfit15normal.copyWith(color: Colors.white),
-                    ))
-              ],
-            ),
+            padding: const EdgeInsets.only(top: 16),
+            child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                    minimumSize: Size(300, 30),
+                    elevation: 10,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25)),
+                    backgroundColor: bluelogin),
+                child: Text(
+                  "Selesai",
+                  style: outfit15normal.copyWith(color: Colors.white),
+                )),
           )
         ],
       ),

@@ -74,7 +74,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                   ),
                   Image.asset(
-                    "MWA.png",
+                    "assets/MWA.png",
                     height: 300,
                     width: 250,
                   ),
@@ -119,7 +119,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Image.asset(
-                      "logo_google.jpg",
+                      "assets/logo_google.jpg",
                       width: 25,
                     ),
                     Text(

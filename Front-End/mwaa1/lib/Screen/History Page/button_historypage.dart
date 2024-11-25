@@ -16,7 +16,7 @@ class ButtonHistorypage extends StatelessWidget {
         height: 470,
         direction: PopoverDirection.bottom
       ),
-        child: CircleAvatar(child: Icon(Icons.download_rounded, color: grey, size: 30,)),
+        child: CircleAvatar(child: Icon(Icons.download_rounded, color: Colors.grey[600], size: 30,)),
       );
   }
 }

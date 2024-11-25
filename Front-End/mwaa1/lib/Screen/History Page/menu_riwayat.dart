@@ -13,9 +13,10 @@ class MenuRiwayat extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
+            backgroundColor: Colors.orange,
             title: Image.asset(
-              "LOGOaja.png",
-              color: Colors.orange,
+              "assets/LOGOaja.png",
+              color: Colors.white,
               height: 100,
               width: 100,
               alignment: Alignment.center,

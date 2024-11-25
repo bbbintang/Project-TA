@@ -196,7 +196,7 @@ class _HomePageState extends State<HomePage>
                         ),
                         TextSpan(
                             text: "Pantau Terus Tambak Mu!",
-                            style: poppin15normal),
+                            style: poppin15normal.copyWith(fontSize: 16)),
                       ]),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -210,7 +210,7 @@ class _HomePageState extends State<HomePage>
                               radius: 20,
                             )
                           : Image.asset(
-                              "LOGOaja.png",
+                              "assets/LOGOaja.png",
                               height: 100,
                               width: 100,
                             ),
@@ -372,28 +372,28 @@ class _HomePageState extends State<HomePage>
                                   stream: database.onValue,
                                   builder: (context, snapshot) {
                                     return buildParameterWidget(
-                                        snapshot, "3.png", "Suhu Air");
+                                        snapshot, "assets/3.png", "Suhu Air");
                                   },
                                 ),
                                 StreamBuilder<DatabaseEvent>(
                                   stream: database4.onValue,
                                   builder: (context, snapshot) {
                                     return buildParameterWidget(
-                                        snapshot, "2.png", "PH Air");
+                                        snapshot, "assets/2.png", "PH Air");
                                   },
                                 ),
                                 StreamBuilder<DatabaseEvent>(
                                   stream: database2.onValue,
                                   builder: (context, snapshot) {
                                     return buildParameterWidget(
-                                        snapshot, "4.png", "Oksigen");
+                                        snapshot, "assets/4.png", "Oksigen");
                                   },
                                 ),
                                 StreamBuilder<DatabaseEvent>(
                                   stream: database3.onValue,
                                   builder: (context, snapshot) {
                                     return buildParameterWidget(
-                                        snapshot, "1.png", "TDS");
+                                        snapshot, "assets/1.png", "TDS");
                                   },
                                 ),
                               ],
@@ -410,28 +410,28 @@ class _HomePageState extends State<HomePage>
                                   stream: database.onValue,
                                   builder: (context, snapshot) {
                                     return buildParameterWidget(
-                                        snapshot, "3.png", "Suhu Air");
+                                        snapshot, "assets/3.png", "Suhu Air");
                                   },
                                 ),
                                 StreamBuilder<DatabaseEvent>(
                                   stream: database4.onValue,
                                   builder: (context, snapshot) {
                                     return buildParameterWidget(
-                                        snapshot, "2.png", "PH Air");
+                                        snapshot, "assets/2.png", "PH Air");
                                   },
                                 ),
                                 StreamBuilder<DatabaseEvent>(
                                   stream: database2.onValue,
                                   builder: (context, snapshot) {
                                     return buildParameterWidget(
-                                        snapshot, "4.png", "Oksigen");
+                                        snapshot, "assets/4.png", "Oksigen");
                                   },
                                 ),
                                 StreamBuilder<DatabaseEvent>(
                                   stream: database3.onValue,
                                   builder: (context, snapshot) {
                                     return buildParameterWidget(
-                                        snapshot, "1.png", "TDS");
+                                        snapshot, "assets/1.png", "TDS");
                                   },
                                 ),
                               ],

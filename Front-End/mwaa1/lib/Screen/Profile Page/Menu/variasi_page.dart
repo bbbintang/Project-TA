@@ -19,18 +19,16 @@ class _VariasiPageState extends State<VariasiPage> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 1.0,
-          title: Center(
-            child: Image.asset(
-              "LOGOaja.png",
-              color: Colors.orange,
-              height: 100,
-              width: 100,
-              alignment: Alignment.center,
-              fit: BoxFit.contain,
-            ),
+          title: Image.asset(
+            "assets/LOGOaja.png",
+            color: Colors.orange,
+            height: 100,
+            width: 100,
+            alignment: Alignment.center,
+            fit: BoxFit.contain,
           ),
+          centerTitle: true,
+          elevation: 1.0,
         ),
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -53,8 +51,8 @@ class _VariasiPageState extends State<VariasiPage> {
                     top: 30, left: 16, right: 16, bottom: 10),
                 child: Text(
                   "Jenis Udang",
-                  style:
-                      poppin15normal.copyWith(color: Colors.black, fontSize: 17),
+                  style: poppin15normal.copyWith(
+                      color: Colors.black, fontSize: 17),
                 ),
               ),
               SizedBox(
@@ -90,8 +88,8 @@ class _VariasiPageState extends State<VariasiPage> {
                     top: 30, left: 16, right: 16, bottom: 16),
                 child: Text(
                   'Jenis Tambak',
-                  style:
-                      poppin15normal.copyWith(color: Colors.black, fontSize: 17),
+                  style: poppin15normal.copyWith(
+                      color: Colors.black, fontSize: 17),
                 ),
               ),
               Container(
@@ -152,8 +150,8 @@ class _VariasiPageState extends State<VariasiPage> {
                     top: 10, left: 16, right: 16, bottom: 16),
                 child: Text(
                   'Kata Sandi',
-                  style:
-                      poppin15normal.copyWith(color: Colors.black, fontSize: 17),
+                  style: poppin15normal.copyWith(
+                      color: Colors.black, fontSize: 17),
                 ),
               ),
               Padding(
@@ -181,7 +179,9 @@ class _VariasiPageState extends State<VariasiPage> {
                 padding: const EdgeInsets.only(top: 60),
                 child: Row(
                   children: [
-                    SizedBox(width: 230,),
+                    SizedBox(
+                      width: 230,
+                    ),
                     ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(

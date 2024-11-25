@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mwaa1/Authentications/firebase_options.dart';
 import 'package:mwaa1/Screen/History%20Page/history_page.dart';
 import 'package:mwaa1/Screen/History%20Page/menu_riwayat.dart';
+import 'package:mwaa1/Screen/Registrasi%20Page/regis_screen.dart';
 import 'package:mwaa1/Screen/Welcome%20Page/welcome_screen.dart';
 import 'package:mwaa1/Screen/control_page.dart';
 
@@ -26,8 +27,14 @@ class MyApp extends StatelessWidget {
       home: ControlPage(),
       initialRoute: '/',
       routes: {
-        '/welcome_screen' : (context) => WelcomeScreen(),
+        '/welcome_screen': (context) => WelcomeScreen(),
       },
+      theme: ThemeData(
+          scaffoldBackgroundColor: Colors.orange,
+          elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blueAccent[400],
+          ))),
     );
   }
 }

@@ -100,11 +100,10 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.orange,
       appBar: AppBar(
         backgroundColor: Colors.orange,
         title: Image.asset(
-          "LOGOaja.png",
+          "assets/LOGOaja.png",
           color: Colors.white,
           height: 100,
           width: 100,
@@ -129,14 +128,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return Image.asset(
-                            "profile.jpeg",
+                            "assets/profile.jpeg",
                             height: 170,
                             width: 170,
                           );
                         },
                       )
                     : Image.asset(
-                        "profile.jpeg",
+                        "assets/profile.jpeg",
                         height: 170,
                         width: 170,
                       ),

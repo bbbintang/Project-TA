@@ -28,7 +28,7 @@ class _RegisScreenState extends State<RegisScreen> {
           children: [
             Center(
               child: Image.asset(
-                "MWA.png",
+                "assets/MWA.png",
                 height: 200,
               ),
             ),
@@ -36,10 +36,7 @@ class _RegisScreenState extends State<RegisScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Text(
                 'Jenis Udang',
-                style: GoogleFonts.outfit(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                style: outfit15normal.copyWith(fontWeight: FontWeight.bold)
               ),
             ),
             Container(
@@ -70,10 +67,7 @@ class _RegisScreenState extends State<RegisScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Text(
                 'Jenis Tambak',
-                style: GoogleFonts.outfit(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                style: outfit15normal.copyWith(fontWeight: FontWeight.bold)
               ),
             ),
             Container(
@@ -123,7 +117,7 @@ class _RegisScreenState extends State<RegisScreen> {
                   ),
                   Text(
                     "Pengaturan Sudah Sesuai",
-                    style: poppin15normal,
+                    style: montserrat17normal.copyWith(fontSize: 15),
                   )
                 ],
               ),
@@ -143,14 +137,13 @@ class _RegisScreenState extends State<RegisScreen> {
                     },
                     style: ElevatedButton.styleFrom(
                         minimumSize: Size(50, 50),
-                        elevation: 0,
+                        elevation: 10,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                         backgroundColor: bluelogin),
                     child: Text("Selanjutnya",
-                        style: outfit17normal.copyWith(
+                        style: montserrat17normal.copyWith(
                             color: Colors.white,
-                            letterSpacing: 2.5,
                             fontSize: 20)),
                   ),
                 )

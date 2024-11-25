@@ -52,6 +52,7 @@ class CustomParameter extends StatelessWidget {
                     Text(
                       number.toString(),
                       style: outfit20bold,
+                      overflow: TextOverflow.fade,
                     ),
                   ],
                 )

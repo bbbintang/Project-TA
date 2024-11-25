@@ -20,27 +20,16 @@ class _AutofeederState extends State<Autofeeder> {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
       appBar: AppBar(
-        backgroundColor: Colors.grey.shade200,
-        automaticallyImplyLeading: true,
-        title: Container(
-          width: double.infinity,
-          height: 75,
-          decoration: BoxDecoration(color: Colors.grey.shade200),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(width: 60,),
-              Image.asset(
-                "LOGOaja.png",
-                color: Colors.orange,
-                height: 100,
-                width: 100,
-                alignment: Alignment.center,
-                fit: BoxFit.contain,
-              ),
-            ],
-          ),
+        title: Image.asset(
+          "assets/LOGOaja.png",
+          color: Colors.orange,
+          height: 100,
+          width: 100,
+          alignment: Alignment.center,
+          fit: BoxFit.contain,
         ),
+        centerTitle: true,
+        elevation: 1.0,
       ),
       body: SingleChildScrollView(
         child: Column(

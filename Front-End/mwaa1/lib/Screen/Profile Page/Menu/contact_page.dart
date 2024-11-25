@@ -6,10 +6,10 @@ class ContactPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE7E8E3),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Contact Info'),
-        backgroundColor: const Color(0xFFE7E8E3),
+        backgroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         child: Column(

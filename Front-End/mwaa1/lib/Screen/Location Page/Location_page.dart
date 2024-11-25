@@ -7,6 +7,21 @@ class LocationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.orange,
+        title: Image.asset(
+          "assets/LOGOaja.png",
+          color: Colors.white,
+          height: 100,
+          width: 100,
+          alignment: Alignment.center,
+          fit: BoxFit.contain,
+        ),
+        centerTitle: true,
+        elevation: 1.0,
+        automaticallyImplyLeading: false,
+      ),
+    );
   }
 }
