@@ -1,13 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:mwaa1/Screen/Home%20Page/button_homepage.dart';
-import 'package:mwaa1/Screen/History%20Page/button_historypage.dart';
 import 'package:mwaa1/Screen/History%20Page/custom_history.dart';
-import 'package:mwaa1/widget/theme.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -17,6 +12,7 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
+  // ignore: unused_field
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Map<String, List<DocumentSnapshot>> groupedData = {};
 
@@ -95,10 +91,10 @@ class _HistoryPageState extends State<HistoryPage> {
                             nilaiTDS: (data['TDS']?.toDouble() ?? 0.0),
                             nilaiDO: (data['DO']?.toDouble() ?? 0.0),
                           );
-                        }).toList(),
+                        }),
                       ],
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),
