@@ -1,32 +1,95 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class GrafikFix extends StatelessWidget {
-  final data = LineData();
+class GrafikFix extends StatefulWidget {
+  const GrafikFix({super.key});
+
+  @override
+  _GrafikFixState createState() => _GrafikFixState();
+}
+
+class _GrafikFixState extends State<GrafikFix> {
+  List<FlSpot> spots = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _listenToSensorData(); //untuk firestore
+  }
+
+  void _listenToSensorData() {
+    FirebaseFirestore.instance
+        .collection('Alat1') // collection di firestore
+        .get()
+        .then((QuerySnapshot snapshot){
+          for (var doc in snapshot.docs){
+            FirebaseFirestore.instance
+        .collection('Alat1')
+        .doc(doc.id) // Dokumen spesifik
+        .collection('temperature') // sub-collection 'data' untuk riwayat
+        .orderBy('timestamp', descending: false)
+        .snapshots()
+        .listen((QuerySnapshot subSnapshot) {
+      List<FlSpot> newSpots = [];
+        
+      for (var subDoc in subSnapshot.docs) {
+        Map<String, dynamic> docData = doc.data() as Map<String, dynamic>;
+        
+        // Pastikan dokumen memiliki field yang diperlukan
+        if (docData.containsKey('x') && docData.containsKey('y')) {
+          newSpots.add(FlSpot(
+            (docData['x'] as num).toDouble(), 
+            (docData['y'] as num).toDouble()
+          ));
+        }
+      }
+
+      // Urutkan spots berdasarkan x
+      newSpots.sort((a, b) => a.x.compareTo(b.x));
+
+      setState(() {
+        spots.addAll(newSpots);
+      });
+        }
+        );
+}
+}
+        ); onError: (error) {
+      print("Error listening to sensor data: $error");
+    };
+    }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        SizedBox(
-          height: 6000,
-          width: 5000,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  AspectRatio(
-                    aspectRatio: 1.5,
-                    child: _isiContainer(
-                        'Suhu', data.bottomTitleSuhu, data.leftTitleSuhu),
-                  )
-                ],
-              ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Grafik'),
+        backgroundColor: Colors.blueAccent,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Grafik Suhu Realtime",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-          ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: CustomCard(
+                child: LineChart(
+                  _dekorasiChart(
+                    LineData().bottomTitleSuhu,
+                    LineData().leftTitleSuhu,
+                    ),
+                  )
+              ),
+              ),
+          ],
         )
-      ],
+      ),
     );
   }
 }
@@ -44,7 +107,7 @@ class CustomCard extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Color.fromARGB(255, 253, 241, 216).withOpacity(0.5)),
+          color: Color.fromARGB(255, 255, 255, 255).withOpacity(0.7)),
       child: child);
   }
 }
@@ -74,6 +137,7 @@ Widget _isiContainer(
 
 LineChartData _dekorasiChart(
     Map<int, String> bottomTitles, Map<int, String> leftTitles) {
+  var spots;
   return LineChartData(
       minX: 0,
       maxX: 120,
@@ -89,7 +153,7 @@ LineChartData _dekorasiChart(
             isCurved: true,
             gradient: const LinearGradient(colors: [
               Color.fromARGB(255, 120, 163, 235),
-              Color.fromARGB(255, 251, 194, 235),
+              Color.fromARGB(255, 21, 255, 33),
             ]),
             barWidth: 5,
             belowBarData: BarAreaData(
@@ -99,9 +163,9 @@ LineChartData _dekorasiChart(
                     end: Alignment.bottomCenter,
                     colors: [
                       Color.fromARGB(255, 120, 163, 235).withOpacity(0.5),
-                      Color.fromARGB(255, 251, 194, 235).withOpacity(0.3),
+                      Color.fromARGB(255, 21, 255, 33).withOpacity(0.3),
                     ])),
-            spots: LineData().spots),
+            spots: spots, ),
       ]);
 }
 
@@ -133,24 +197,6 @@ Widget _TitleWidget(Map<int, String> titles, double value) {
 }
 
 class LineData {
-  final spots = [
-    FlSpot(1.68, 21.04),
-    FlSpot(2.84, 26.23),
-    FlSpot(5.19, 19.82),
-    FlSpot(6.01, 24.49),
-    FlSpot(7.81, 19.82),
-    FlSpot(9.49, 23.50),
-    FlSpot(12.26, 19.57),
-    FlSpot(15.63, 20.90),
-    FlSpot(20.39, 39.20),
-    FlSpot(23.69, 75.62),
-    FlSpot(26.21, 46.58),
-    FlSpot(29.87, 42.97),
-    FlSpot(32.49, 46.54),
-    FlSpot(35.09, 40.72),
-    FlSpot(38.74, 43.18),
-  ];
-
   final leftTitleSuhu = {
     0: '0°C',
     20: '20°C',
@@ -176,23 +222,5 @@ class LineData {
     120: '12:00',
     130: '13:00',
     140: '14:00',
-  };
-
-  final leftTitleAir = {
-    0: '0ml',
-    20: '200ml',
-    40: '400ml',
-    60: '600ml',
-    80: '800ml',
-    100: '1000ml'
-  };
-
-  final bottomTitleAir = {
-    0: '00:00',
-    10: '01:00',
-    20: '02:00',
-    30: '03:00',
-    40: '04:00',
-    50: '05:00',
   };
 }

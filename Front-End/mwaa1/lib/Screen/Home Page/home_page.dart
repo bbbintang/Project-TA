@@ -76,7 +76,13 @@ class AuthService {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final String Suhu;
+  final String pH;
+  final String DO;
+  final String TDS;
+  final String Udang;
+  final String Tambak;
+  const HomePage({Key? key, required this.Suhu, required this.pH, required this.DO, required this.TDS, required this.Udang, required this.Tambak}):super(key:key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -253,24 +259,24 @@ class _HomePageState extends State<HomePage>
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 elevation: 10,
-                                child: const Column(
+                                child: Column(
                                   children: [
                                     Padding(
-                                      padding: EdgeInsets.all(16.0),
+                                      padding: const EdgeInsets.all(16.0),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
                                           CustomCategory(
                                             name1: "PH : ",
-                                            name2: "6 - 7",
+                                            name2: widget.pH,
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 10,
                                           ),
                                           CustomCategory(
                                             name1: "TDS : ",
-                                            name2: "28 - 30",
+                                            name2: widget.TDS,
                                           ),
                                         ],
                                       ),
@@ -281,14 +287,14 @@ class _HomePageState extends State<HomePage>
                                       children: [
                                         CustomCategory(
                                           name1: "Suhu Air: ",
-                                          name2: "100",
+                                          name2: widget.Suhu,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 10,
                                         ),
                                         CustomCategory(
                                           name1: "O2 : ",
-                                          name2: "> 3ml/gr",
+                                          name2: widget.DO,
                                         ),
                                       ],
                                     ),
@@ -305,16 +311,17 @@ class _HomePageState extends State<HomePage>
                                     color: darkblue,
                                     fontSize: 17)),
                           ),
-                          const Padding(
-                            padding: EdgeInsets.only(left: 10.0, top: 5.0),
+                          
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10.0, top: 5.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                CustomCategory2(kategori: "Udang Vaname"),
-                                SizedBox(
+                                CustomCategory2(kategori: widget.Udang),
+                                const SizedBox(
                                   width: 10,
                                 ),
-                                CustomCategory2(kategori: "Tambak Intensif")
+                                CustomCategory2(kategori: widget.Tambak)
                               ],
                             ),
                           ),

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:mwaa1/Screen/Profile%20Page/profile_menu.dart';
 import 'package:mwaa1/widget/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';

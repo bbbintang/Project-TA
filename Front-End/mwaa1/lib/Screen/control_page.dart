@@ -2,11 +2,12 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:mwaa1/Screen/History%20Page/menu_riwayat.dart';
 import 'package:mwaa1/Screen/Location%20Page/Location_page.dart';
-import 'package:mwaa1/Screen/History%20Page/history_page.dart';
 import 'package:mwaa1/Screen/Home%20Page/home_page.dart';
 import 'package:mwaa1/Screen/Profile%20Page/profile_page.dart';
 
 class ControlPage extends StatefulWidget {
+  
+  
   const ControlPage({super.key});
 
   @override
@@ -25,9 +26,9 @@ class _ControlPageState extends State<ControlPage> {
     });
   }
 
-  final List _pages = [
+  final List<Widget> _pages = [
     //home
-    HomePage(),
+    HomePage (Suhu: '', pH: '', TDS: '', Udang: '', DO: '', Tambak: '',),
 
     //Location
     LocationPage(),
