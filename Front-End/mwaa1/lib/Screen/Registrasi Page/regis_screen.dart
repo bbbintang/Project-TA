@@ -20,6 +20,7 @@ class _RegisScreenState extends State<RegisScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
+        automaticallyImplyLeading: false,
       ),
       backgroundColor: Colors.orange,
       body: SingleChildScrollView(

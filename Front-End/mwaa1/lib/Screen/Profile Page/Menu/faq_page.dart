@@ -128,7 +128,7 @@ class _FAQItemWidgetState extends State<FAQItemWidget>
                   Expanded(
                     child: Text(
                       widget.faqItem.question,
-                      style: poppin15normal.copyWith(color: Colors.black)
+                      style: poppin15normal.copyWith(color: Colors.black, fontWeight: FontWeight.w600)
                     ),
                   ),
                   RotationTransition(
