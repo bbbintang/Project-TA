@@ -28,6 +28,7 @@ class FAQPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('FAQ'),
         backgroundColor: Colors.white,
+        elevation: 1.0,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
