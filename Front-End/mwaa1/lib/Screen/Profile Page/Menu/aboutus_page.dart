@@ -124,13 +124,13 @@ class AboutUsPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(100),
                       color: Colors.white.withOpacity(0.1)),
                   child: Icon(
-                    LineAwesomeIcons.phone_volume_solid,
+                    LineAwesomeIcons.exclamation_circle_solid,
                     color: Colors.black,
                     size: 30,
                   ),
                 ),
                 title: Text(
-                  "Contact Info",
+                  "Info Aplikasi",
                   style: poppin15normal.copyWith(
                       color: Colors.black, fontSize: 20),
                 ),

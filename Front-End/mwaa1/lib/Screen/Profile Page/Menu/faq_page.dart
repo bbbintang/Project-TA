@@ -28,6 +28,7 @@ class FAQPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('FAQ'),
         backgroundColor: Colors.white,
+        elevation: 1.0,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,7 +129,7 @@ class _FAQItemWidgetState extends State<FAQItemWidget>
                   Expanded(
                     child: Text(
                       widget.faqItem.question,
-                      style: poppin15normal.copyWith(color: Colors.black)
+                      style: poppin15normal.copyWith(color: Colors.black, fontWeight: FontWeight.w600)
                     ),
                   ),
                   RotationTransition(
