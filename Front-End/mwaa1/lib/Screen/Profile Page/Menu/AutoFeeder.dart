@@ -43,14 +43,14 @@ class _AutofeederState extends State<Autofeeder> {
                 textAlign: TextAlign.center,
                 text: TextSpan(children: [
                   TextSpan(
-                      text: 'AutoFeeder\n',
+                      text: 'Autorator\n',
                       style: poppin20bold.copyWith(
                         color: Colors.black87,
                         letterSpacing: 1.3,
                         fontSize: 25,
                       )),
                   TextSpan(
-                      text: 'Pemberi Pakan Otomatis \n\n\n',
+                      text: 'Automatic Aerator \n\n\n',
                       style: poppin15normal.copyWith(color: Colors.black54)),
                   TextSpan(
                       text:

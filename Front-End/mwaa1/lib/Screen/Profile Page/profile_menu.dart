@@ -61,7 +61,7 @@ class ProfileMenu extends StatelessWidget {
             ),
           ),
           title: Text(
-            "Autofeeder",
+            "Auto-Aerator",
             style: outfit17normal.copyWith(color: Colors.black),
           ),
         ),

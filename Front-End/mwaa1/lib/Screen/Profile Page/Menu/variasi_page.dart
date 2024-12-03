@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mwaa1/widget/theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class VariasiPage extends StatefulWidget {
   const VariasiPage({super.key});
@@ -9,13 +11,41 @@ class VariasiPage extends StatefulWidget {
 }
 
 class _VariasiPageState extends State<VariasiPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   String? selectedValue;
   String? pilihanValue;
   var isChecked = false;
   bool _isObscure = true;
 
+Future<User?> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        // Pengguna membatalkan login
+        return null;
+      }
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+
+      return userCredential.user;
+    } catch (e) {
+      print("Error during Google Sign-In: $e");
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    String? enteredPassword;
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -102,7 +132,6 @@ class _VariasiPageState extends State<VariasiPage> {
                   value: pilihanValue,
                   items: [
                     "Tradisional",
-                    "Semi Intensif",
                     "Intensif",
                     "Super Intensif"
                   ]

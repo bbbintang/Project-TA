@@ -82,7 +82,7 @@ class HomePage extends StatefulWidget {
   final String TDS;
   final String Udang;
   final String Tambak;
-  const HomePage({Key? key, required this.Suhu, required this.pH, required this.DO, required this.TDS, required this.Udang, required this.Tambak}):super(key:key);
+  const HomePage({super.key, required this.Suhu, required this.pH, required this.DO, required this.TDS, required this.Udang, required this.Tambak});
 
   @override
   State<HomePage> createState() => _HomePageState();

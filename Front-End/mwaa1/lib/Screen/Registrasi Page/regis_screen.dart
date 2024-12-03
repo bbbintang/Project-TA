@@ -20,6 +20,7 @@ class _RegisScreenState extends State<RegisScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
+        automaticallyImplyLeading: false,
       ),
       backgroundColor: Colors.orange,
       body: SingleChildScrollView(
@@ -203,7 +204,7 @@ class _RegisScreenState extends State<RegisScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => HomePage(
+                              builder: (context) => ControlPage(
                                 Suhu: S,
                                 pH : P,
                                 TDS : T,

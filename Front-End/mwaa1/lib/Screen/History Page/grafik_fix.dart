@@ -23,41 +23,36 @@ class _GrafikFixState extends State<GrafikFix> {
         .collection('Alat1') // collection di firestore
         .get()
         .then((QuerySnapshot snapshot){
+          List<FlSpot> allSpots = [];
+          
           for (var doc in snapshot.docs){
             FirebaseFirestore.instance
         .collection('Alat1')
         .doc(doc.id) // Dokumen spesifik
         .collection('temperature') // sub-collection 'data' untuk riwayat
         .orderBy('timestamp', descending: false)
-        .snapshots()
-        .listen((QuerySnapshot subSnapshot) {
-      List<FlSpot> newSpots = [];
-        
-      for (var subDoc in subSnapshot.docs) {
-        Map<String, dynamic> docData = doc.data() as Map<String, dynamic>;
-        
-        // Pastikan dokumen memiliki field yang diperlukan
-        if (docData.containsKey('x') && docData.containsKey('y')) {
-          newSpots.add(FlSpot(
-            (docData['x'] as num).toDouble(), 
-            (docData['y'] as num).toDouble()
-          ));
-        }
-      }
-
-      // Urutkan spots berdasarkan x
-      newSpots.sort((a, b) => a.x.compareTo(b.x));
-
+        .get()
+        .then((QuerySnapshot subSnapshot){
+          for (var subDoc in subSnapshot.docs){
+            final data = subDoc.data() as Map<String, dynamic>;
+            if (data.containsKey('x') && data.containsKey('y')) {
+              allSpots.add(
+                FlSpot(
+                  (data['x'] as num).toDouble(),
+                  (data['y'] as num).toDouble(),
+                ),
+              );
+            }
+          }
       setState(() {
-        spots.addAll(newSpots);
+        spots = allSpots
+        ..sort((a, b) => a.x.compareTo(b.x));
       });
-        }
-        );
+        });
 }
-}
-        ); onError: (error) {
+}). catchError((error) {
       print("Error listening to sensor data: $error");
-    };
+    });
     }
 
   @override
@@ -137,12 +132,13 @@ Widget _isiContainer(
 
 LineChartData _dekorasiChart(
     Map<int, String> bottomTitles, Map<int, String> leftTitles) {
+  // ignore: prefer_typing_uninitialized_variables
   var spots;
   return LineChartData(
-      minX: 0,
-      maxX: 120,
-      minY: -5,
-      maxY: 105,
+      minX: spots.isNotEmpty ? spots.first.x : 0,
+      maxX: spots.isNotEmpty ? spots.last.x : 120,
+      minY: spots.isNotEmpty ? spots.map((e) => e.y).reduce((a, b) => a < b ? a : b) : -5,
+      maxY: spots.isNotEmpty ? spots.map((e) => e.y).reduce((a, b) => a > b ? a : b) : 105,
       gridData: FlGridData(show: false),
       borderData: FlBorderData(
         show: false,
