@@ -11,7 +11,7 @@ class StartPage extends StatelessWidget {
     return AnimatedSplashScreen(
       splash: Column(
         children: [
-          Image.asset("LOGOaja.png", scale: 2.5,),
+          Image.asset("assets/LOGOaja.png", scale: 2.5,),
         ],
       ), 
       nextScreen: WelcomeScreen(),

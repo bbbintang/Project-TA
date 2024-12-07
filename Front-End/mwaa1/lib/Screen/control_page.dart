@@ -39,12 +39,14 @@ class _ControlPageState extends State<ControlPage> {
 Widget build(BuildContext context){
   final List<Widget> _pages = [
     //home
-    HomePage (Suhu: widget.Suhu,
-        pH: widget.pH,
-        DO: widget.DO,
-        TDS: widget.TDS,
-        Udang: widget.Udang,
-        Tambak: widget.Tambak,),
+    HomePage (
+      Suhu: widget.Suhu,
+      pH: widget.pH,
+      DO: widget.DO,
+      TDS: widget.TDS,
+      Udang: widget.Udang,
+      Tambak: widget.Tambak
+    ),
 
     //Location
     LocationPage(),

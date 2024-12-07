@@ -56,7 +56,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       backgroundColor: Colors.orange,
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Center(
               child: Stack(
@@ -66,11 +67,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     padding: const EdgeInsets.only(top: 40),
                     child: Text(
                       'Welcome To',
-                      style: GoogleFonts.poppins(
-                        fontSize: 27.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                      style: TextStyle(
+                          fontSize: 27,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -82,38 +82,37 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 8.0),
             Padding(
-              padding: const EdgeInsets.only(right: 30.0, left: 30.0),
-              child: RichText(
-                textAlign: TextAlign.start,
-                text: TextSpan(children: [
-                  TextSpan(
-                      text:
-                          'Pantau Terus Kualitas dan Kondisi Air pada Pertambakan Mu! \n',
-                      style: GoogleFonts.poppins(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white)),
-                  TextSpan(
-                      text:
-                          'MWA System merupakan sistem pengawasan dan pengoptimasi kualitas air berbasis Internet of Things',
-                      style: GoogleFonts.poppins(
-                          fontSize: 15,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white))
-                ]),
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: Column(
+                children: [
+                  Text(
+                    'Pantau Terus Kualitas dan Kondisi Air pada Pertambakan Mu!',
+                    style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                  SizedBox(height: 5,),
+                  Text(
+                      'MWA System merupakan sistem pengawasan dan pengoptimasi kualitas \nair berbasis Internet of Things',
+                      style: TextStyle(fontSize: 15, color: Colors.white54),
+                    )
+                ],
               ),
             ),
-            const SizedBox(height: 56.0),
-            Padding(
-              padding: const EdgeInsets.all(30.0),
+            const SizedBox(height: 80),
+            SizedBox(
+              width: 300,
+              height: 50,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0XFF0B6EFE),
+                  backgroundColor: Colors.white70,
+                  foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5.0),
+                    borderRadius: BorderRadius.circular(10),
                   ),
+                  elevation: 10
                 ),
                 onPressed: _isLoading ? null : _handleGoogleSignIn,
                 child: Row(
@@ -121,14 +120,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   children: [
                     Image.asset(
                       "assets/logo_google.jpg",
-                      width: 25,
+                      width: 30,
                     ),
                     Text(
                       'Login With Google',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 20.0,
-                        color: Colors.white,
-                      ),
+                      style: TextStyle(fontSize: 17),
                     ),
                   ],
                 ),

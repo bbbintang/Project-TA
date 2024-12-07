@@ -5,6 +5,7 @@ import 'package:mwaa1/Authentications/firebase_options.dart';
 import 'package:mwaa1/Screen/Registrasi%20Page/regis_screen.dart';
 import 'package:mwaa1/Screen/Welcome%20Page/welcome_screen.dart';
 import 'package:mwaa1/Screen/control_page.dart';
+import 'package:mwaa1/Screen/start_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: StartPage( ),
+      home: StartPage(),
       initialRoute: '/',
       routes: {
         '/welcome_screen': (context) => WelcomeScreen(),

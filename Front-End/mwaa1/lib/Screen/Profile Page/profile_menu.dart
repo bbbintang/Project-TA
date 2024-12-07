@@ -5,15 +5,22 @@ import 'package:mwaa1/Screen/Profile%20Page/Menu/aboutus_page.dart';
 import 'package:mwaa1/Screen/Profile%20Page/Menu/variasi_page.dart';
 import 'package:mwaa1/widget/theme.dart';
 
-class ProfileMenu extends StatelessWidget {
-
+class ProfileMenu extends StatefulWidget {
   const ProfileMenu({
     super.key,
   });
 
   @override
+  State<ProfileMenu> createState() => _ProfileMenuState();
+}
+
+class _ProfileMenuState extends State<ProfileMenu> {
+  bool statusSwitch = false;
+
+  @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ListTile(
           onTap: () {
@@ -40,14 +47,11 @@ class ProfileMenu extends StatelessWidget {
             style: outfit17normal.copyWith(color: Colors.black),
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Divider(color: Colors.black45),
+        ),
         ListTile(
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Autofeeder(),
-                ));
-          },
           leading: Container(
             margin: EdgeInsets.all(5),
             width: 40,
@@ -64,6 +68,19 @@ class ProfileMenu extends StatelessWidget {
             "Auto-Aerator",
             style: outfit17normal.copyWith(color: Colors.black),
           ),
+          trailing: Switch(
+            value: statusSwitch,
+            onChanged: (value) {
+              setState(() {
+                statusSwitch = !statusSwitch; //menandakan keadaan berubah
+              });
+              print(statusSwitch);
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Divider(color: Colors.black45),
         ),
         ListTile(
           onTap: () {
