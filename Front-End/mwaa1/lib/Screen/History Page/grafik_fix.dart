@@ -14,46 +14,45 @@ class _GrafikFixState extends State<GrafikFix> {
 
   @override
   void initState() {
-    super.initState();
-    _listenToSensorData(); //untuk firestore
-  }
+    super.initState(); 
+    }
 
-  void _listenToSensorData() {
-    FirebaseFirestore.instance
-        .collection('Alat1') // collection di firestore
-        .get()
-        .then((QuerySnapshot snapshot){
+  // Fungsi untuk mendengarkan perubahan data secara real-time
+  Stream<List<FlSpot>> _listenToSensorData() {
+    return FirebaseFirestore.instance
+        .collection('Alat1') // Koleksi di Firestore
+        .snapshots() // Menggunakan snapshots agar data selalu update
+        .asyncMap((QuerySnapshot snapshot) async {
           List<FlSpot> allSpots = [];
+
+          // Loop melalui semua dokumen di koleksi 'Alat1'
+          for (var doc in snapshot.docs) {
+            QuerySnapshot subSnapshot = await FirebaseFirestore.instance
+                .collection('Alat1')
+                .doc(doc.id) // Dokumen spesifik
+                .collection('temperature') // Sub-koleksi 'temperature'
+                .orderBy('timestamp', descending: false) // Urutkan berdasarkan timestamp
+                .get();
+          for (var subDoc in subSnapshot.docs) {
+            final data = subDoc.data() as Map<String, dynamic>;   
           
-          for (var doc in snapshot.docs){
-            FirebaseFirestore.instance
-        .collection('Alat1')
-        .doc(doc.id) // Dokumen spesifik
-        .collection('temperature') // sub-collection 'data' untuk riwayat
-        .orderBy('timestamp', descending: false)
-        .get()
-        .then((QuerySnapshot subSnapshot){
-          for (var subDoc in subSnapshot.docs){
-            final data = subDoc.data() as Map<String, dynamic>;
-            if (data.containsKey('x') && data.containsKey('y')) {
-              allSpots.add(
-                FlSpot(
-                  (data['x'] as num).toDouble(),
-                  (data['y'] as num).toDouble(),
-                ),
-              );
-            }
+          if (data.containsKey('x') && data.containsKey('y')) {
+                // Mengambil nilai x (timestamp) dan y (nilai data, misalnya suhu)
+                var timestamp = (data['y'] as Timestamp).toDate(); // Konversi Timestamp ke DateTime
+                double xValue = timestamp.millisecondsSinceEpoch.toDouble(); // Waktu dalam milidetik
+                double yValue = (data['x'] as num).toDouble(); // Nilai suhu atau data lainnya
+
+                // Tambahkan titik ke daftar allSpots
+                allSpots.add(FlSpot(xValue, yValue));
           }
-      setState(() {
-        spots = allSpots
-        ..sort((a, b) => a.x.compareTo(b.x));
-      });
+          }
+          }
+          // Mengurutkan spots berdasarkan nilai x (waktu)
+          allSpots.sort((a, b) => a.x.compareTo(b.x)); // Urutkan berdasarkan x (waktu)
+          return allSpots; // Kembalikan daftar titik untuk grafik
         });
 }
-}). catchError((error) {
-      print("Error listening to sensor data: $error");
-    });
-    }
+
 
   @override
   Widget build(BuildContext context) {
@@ -73,17 +72,35 @@ class _GrafikFixState extends State<GrafikFix> {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: CustomCard(
+              child: StreamBuilder<List<FlSpot>>(
+                stream: _listenToSensorData(), // Menggunakan StreamBuilder untuk data real-time
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return const Center(child: Text('Terjadi kesalahan'));
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('Tidak ada data'));
+                  }
+
+                  // Mendapatkan data titik dari Firestore
+                  List<FlSpot> spots = snapshot.data!;
+                  print("Spots: $spots");
+
+                  return CustomCard(
                 child: LineChart(
-                  _dekorasiChart(
-                    LineData().bottomTitleSuhu,
-                    LineData().leftTitleSuhu,
-                    ),
-                  )
+                  _dekorasiChart(spots, LineData().bottomTitleSuhu, LineData().leftTitleSuhu),
+                  ),
+                  );
+                },
               ),
-              ),
+            ),
           ],
-        )
+        ),
       ),
     );
   }
@@ -98,7 +115,7 @@ class CustomCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(20),
-      height: 400,
+      height: 500,
       width: double.infinity,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
@@ -108,7 +125,7 @@ class CustomCard extends StatelessWidget {
 }
 
 Widget _isiContainer(
-    String title, Map<int, String> bottomTitles, Map<int, String> leftTitles) {
+    String title, Map<int, String> bottomTitles, Map<int, String> leftTitles, List<FlSpot> spots) {
   return SizedBox(
     height: 200,
     width: double.infinity,
@@ -124,33 +141,29 @@ Widget _isiContainer(
         SizedBox(
           height: 20,
         ),
-        Expanded(child: LineChart(_dekorasiChart(bottomTitles, leftTitles)))
+        Expanded(child: LineChart(_dekorasiChart(spots, bottomTitles, leftTitles),),)
       ],
     )),
   );
 }
 
 LineChartData _dekorasiChart(
-    Map<int, String> bottomTitles, Map<int, String> leftTitles) {
-  // ignore: prefer_typing_uninitialized_variables
-  var spots;
+    List<FlSpot> spots, Map<int, String> bottomTitles, Map<int, String> leftTitles) {
   return LineChartData(
-      minX: spots.isNotEmpty ? spots.first.x : 0,
-      maxX: spots.isNotEmpty ? spots.last.x : 120,
-      minY: spots.isNotEmpty ? spots.map((e) => e.y).reduce((a, b) => a < b ? a : b) : -5,
-      maxY: spots.isNotEmpty ? spots.map((e) => e.y).reduce((a, b) => a > b ? a : b) : 105,
-      gridData: FlGridData(show: false),
-      borderData: FlBorderData(
-        show: false,
-      ),
-      titlesData: _ketentuanData(bottomTitles, leftTitles),
-      lineBarsData: [
-        LineChartBarData(
-            isCurved: true,
+    minX: spots.isNotEmpty ? spots.first.x : 0,
+    maxX: spots.isNotEmpty ? spots.last.x : 120,
+    minY: spots.isNotEmpty ? spots.map((e) => e.y).reduce((a, b) => a < b ? a : b) : -5,
+    maxY: spots.isNotEmpty ? spots.map((e) => e.y).reduce((a, b) => a > b ? a : b) : 105,
+    gridData: FlGridData(show: false),
+    borderData: FlBorderData(show: false),
+    titlesData: _ketentuanData(bottomTitles, leftTitles),
+    lineBarsData: [
+      LineChartBarData(
+        isCurved: true,
             gradient: const LinearGradient(colors: [
               Color.fromARGB(255, 120, 163, 235),
               Color.fromARGB(255, 21, 255, 33),
-            ]),
+            ],),
             barWidth: 5,
             belowBarData: BarAreaData(
                 show: true,

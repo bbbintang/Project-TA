@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mwaa1/Screen/Home%20Page/home_page.dart';
 import 'package:mwaa1/Screen/control_page.dart';
 import 'package:mwaa1/widget/theme.dart';
 
 class RegisScreen extends StatefulWidget {
-  const RegisScreen({super.key});
+  const RegisScreen({super.key, required String Udang, required String Tambak});
 
   @override
   State<RegisScreen> createState() => _RegisScreenState();
@@ -134,87 +133,20 @@ class _RegisScreenState extends State<RegisScreen> {
                       if (selectedValue != null &&
                           pilihanValue != null &&
                           isChecked) {
-                        String S = ""; // Nilai Suhu 
-                        String P = ""; // Nilai Ph
-                        String T = ""; // Nilai TDS
-                        String D = ""; // Nilai DO
-    
-
-                        // Logika if-else berdasarkan pilihan
-                        if (selectedValue == "Vaname" &&
-                            pilihanValue == "Tradisional") {
-                          S = "20.20";
-                          T = "11.1";
-                          P = "30.3";
-                          D = "4.14";
-                        } else if (selectedValue == "Vaname" &&
-                            pilihanValue == "Intensif") {
-                          S = "2.20";
-                          T = "15.0";
-                          P = "30.8";
-                          D = "4.44";
-                        } else if (selectedValue == "Vaname" &&
-                            pilihanValue == "Super Intensif") {
-                          S = "20.28";
-                          T = "11.20";
-                          P = "35.2";
-                          D = "55.5";
-                        } else if (selectedValue == "Udang Galah" &&
-                            pilihanValue == "Tradisional") {
-                          S = "20.20";
-                          T = "11.1";
-                          P = "30.3";
-                          D = "4.14";
-                        } else if (selectedValue == "Udang Galah" &&
-                            pilihanValue == "Intensif") {
-                          S = "20";
-                          T = "11";
-                          P = "3";
-                          D = "4";
-                        } else if (selectedValue == "Udang Galah" &&
-                            pilihanValue == "Super Intensif") {
-                          S = "25";
-                          T = "15";
-                          P = "33";
-                          D = "40";
-                        } else if (selectedValue == "Udang Windu" &&
-                            pilihanValue == "Tradisional") {
-                          S = "20.20";
-                          T = "11.1";
-                          P = "30.3";
-                          D = "4.14";
-                        } else if (selectedValue == "Udang Windu" &&
-                            pilihanValue == "Intensif") {
-                          S = "27";
-                          T = "12";
-                          P = "39";
-                          D = "14";
-                        } else if (selectedValue == "Udang Windu" &&
-                            pilihanValue == "Super Intensif") {
-                          S = "50";
-                          T = "30";
-                          P = "20";
-                          D = "50";
-                        } else {
-                          S = "Tak ada Nilai";
-                          D = "Tak ada Nilai";
-                          T = "Tak ada Nilai";
-                          P = "Tak ada Nilai";
-                          }
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ControlPage(
-                                Suhu: S,
-                                pH : P,
-                                TDS : T,
-                                DO : D,
-                                Udang : selectedValue!,
-                                Tambak : pilihanValue!,
-                              ),
+                            builder: (context) => ControlPage(
+                              Suhu: "",  // Nilai Suhu kosong karena dihitung di ControlPage
+                              pH: "",     // Nilai pH kosong karena dihitung di ControlPage
+                              DO: "",     // Nilai DO kosong karena dihitung di ControlPage
+                              TDS: "",    // Nilai TDS kosong karena dihitung di ControlPage
+                              Udang: selectedValue!,
+                              Tambak: pilihanValue!,
                             ),
-                          );
-                          } else {
+                          ),
+                        );
+                      } else {
                         // Tampilkan pesan jika data belum lengkap
                         showDialog(
                           context: context,

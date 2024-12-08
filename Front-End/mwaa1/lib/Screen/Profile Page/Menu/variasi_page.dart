@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mwaa1/Screen/Home%20Page/home_page.dart';
+import 'package:mwaa1/Screen/Registrasi%20Page/regis_screen.dart';
+import 'package:mwaa1/Screen/control_page.dart';
 import 'package:mwaa1/widget/theme.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class VariasiPage extends StatefulWidget {
   const VariasiPage({super.key});
@@ -11,41 +12,13 @@ class VariasiPage extends StatefulWidget {
 }
 
 class _VariasiPageState extends State<VariasiPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
   String? selectedValue;
   String? pilihanValue;
   var isChecked = false;
   bool _isObscure = true;
 
-Future<User?> signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        // Pengguna membatalkan login
-        return null;
-      }
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      final UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
-
-      return userCredential.user;
-    } catch (e) {
-      print("Error during Google Sign-In: $e");
-      return null;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    String? enteredPassword;
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -212,7 +185,19 @@ Future<User?> signInWithGoogle() async {
                       width: 230,
                     ),
                     ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          if (selectedValue != null && pilihanValue != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ControlPage(
+            Udang: selectedValue!,
+            Tambak: pilihanValue!, Suhu: '', DO: '', pH: '', TDS: '',
+          ),
+        ),
+      );
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
                             minimumSize: Size(80, 30),
                             elevation: 1.0,

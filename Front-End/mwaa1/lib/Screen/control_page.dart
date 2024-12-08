@@ -29,6 +29,32 @@ class _ControlPageState extends State<ControlPage> {
   //this keeps track of the current pages to display
   int _selectedIndex = 0; 
 
+  // Method to calculate values based on Udang and Tambak selection
+  Map<String, String> getWaterParameters(String udang, String tambak) {
+    String S = "Tak ada Nilai", P = "Tak ada Nilai", T = "Tak ada Nilai", D = "Tak ada Nilai";
+
+    if (udang == "Vaname" && tambak == "Tradisional") {
+      S = "20.20"; T = "11.1"; P = "30.3"; D = "4.14";
+    } else if (udang == "Vaname" && tambak == "Intensif") {
+      S = "2.20"; T = "15.0"; P = "30.8"; D = "4.44";
+    } else if (udang == "Vaname" && tambak == "Super Intensif") {
+      S = "20.28"; T = "11.20"; P = "35.2"; D = "55.5";
+    } else if (udang == "Udang Galah" && tambak == "Tradisional") {
+      S = "20.20"; T = "11.1"; P = "30.3"; D = "4.14";
+    } else if (udang == "Udang Galah" && tambak == "Intensif") {
+      S = "20"; T = "11"; P = "3"; D = "4";
+    } else if (udang == "Udang Galah" && tambak == "Super Intensif") {
+      S = "25"; T = "15"; P = "33"; D = "40";
+    } else if (udang == "Udang Windu" && tambak == "Tradisional") {
+      S = "20.20"; T = "11.1"; P = "30.3"; D = "4.14";
+    } else if (udang == "Udang Windu" && tambak == "Intensif") {
+      S = "27"; T = "12"; P = "39"; D = "14";
+    } else if (udang == "Udang Windu" && tambak == "Super Intensif") {
+      S = "50"; T = "30"; P = "20"; D = "50";
+    }
+
+    return {'Suhu': S, 'TDS': T, 'pH': P, 'DO': D};
+  }
   //this method updates the new selected index
   void _navigatedBottomBar(int index){
     setState(() {
@@ -36,15 +62,19 @@ class _ControlPageState extends State<ControlPage> {
     });
   }
 @override
-Widget build(BuildContext context){
-  final List<Widget> _pages = [
+Widget build(BuildContext context) {
+    // Use the method to calculate the parameters
+    var waterParameters = getWaterParameters(widget.Udang, widget.Tambak);
+  final List<Widget> pages = [
     //home
-    HomePage (Suhu: widget.Suhu,
-        pH: widget.pH,
-        DO: widget.DO,
-        TDS: widget.TDS,
+    HomePage(
+        Suhu: waterParameters['Suhu']!,
+        pH: waterParameters['pH']!,
+        DO: waterParameters['DO']!,
+        TDS: waterParameters['TDS']!,
         Udang: widget.Udang,
-        Tambak: widget.Tambak,),
+        Tambak: widget.Tambak,
+      ),
 
     //Location
     LocationPage(),
@@ -57,7 +87,7 @@ Widget build(BuildContext context){
   ];
 
 return Scaffold(
-      body: _pages[_selectedIndex],
+      body: pages[_selectedIndex],
       backgroundColor: Colors.orange,
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.orange,

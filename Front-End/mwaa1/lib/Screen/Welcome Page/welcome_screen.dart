@@ -28,7 +28,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         // Navigate to the registration screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const RegisScreen()),
+          MaterialPageRoute(builder: (context) => const RegisScreen(Udang: '', Tambak: '',)),
         );
       } else if (mounted) {
         _showErrorDialog(context, 'Login gagal. Silakan coba lagi.');
@@ -116,7 +116,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                 ),
                 onPressed: _isLoading ? null : _handleGoogleSignIn,
-                child: Row(
+                child: _isLoading
+        ? CircularProgressIndicator(color: Colors.white)
+        : Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Image.asset(
