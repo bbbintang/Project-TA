@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mwaa1/Screen/History%20Page/grafik_page.dart';
 import 'package:mwaa1/Screen/History%20Page/history_page.dart';
-import 'package:mwaa1/Screen/Location%20Page/tab_item.dart';
+import 'package:mwaa1/Screen/History%20Page/tab_item.dart';
 
 class MenuRiwayat extends StatelessWidget {
   const MenuRiwayat({super.key});

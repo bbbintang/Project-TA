@@ -21,7 +21,6 @@ class _RegisScreenState extends State<RegisScreen> {
         backgroundColor: Colors.orange,
         automaticallyImplyLeading: false,
       ),
-      backgroundColor: Colors.orange,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,17 +32,22 @@ class _RegisScreenState extends State<RegisScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.only(left: 20, bottom: 15),
               child: Text(
                 'Jenis Udang',
-                style: outfit15normal.copyWith(fontWeight: FontWeight.bold)
+                style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                    letterSpacing: 0.5),
               ),
             ),
             Container(
               margin: const EdgeInsets.only(right: 15, left: 15),
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
               decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                  color: Colors.white.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(10)),
               child: DropdownButton<String?>(
                 value: selectedValue,
                 items: ["Vaname", "Udang Galah", "Udang Windu"]
@@ -64,24 +68,25 @@ class _RegisScreenState extends State<RegisScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.only(left: 20, bottom: 15, top: 15),
               child: Text(
                 'Jenis Tambak',
-                style: outfit15normal.copyWith(fontWeight: FontWeight.bold)
+                style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                    letterSpacing: 0.5),
               ),
             ),
             Container(
               margin: const EdgeInsets.only(right: 15, left: 15),
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
               decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                  color: Colors.white.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(10)),
               child: DropdownButton<String?>(
                 value: pilihanValue,
-                items: [
-                  "Tradisional",
-                  "Intensif",
-                  "Super Intensif"
-                ]
+                items: ["Tradisional", "Intensif", "Super Intensif"]
                     .map<DropdownMenuItem<String?>>((e) => DropdownMenuItem(
                           value: e,
                           child: Text(e.toString()),
@@ -109,14 +114,15 @@ class _RegisScreenState extends State<RegisScreen> {
                     value: isChecked,
                     onChanged: (value) {
                       setState(() {
-                        isChecked = value?? false;
+                        isChecked = value ?? false;
                       });
                     },
-                    activeColor: Colors.orange[300],
+                    activeColor: Colors.deepOrange,
                   ),
                   Text(
                     "Pengaturan Sudah Sesuai",
-                    style: montserrat17normal.copyWith(fontSize: 15),
+                    style: TextStyle(
+                        fontSize: 17, color: Colors.white, letterSpacing: 0.5),
                   )
                 ],
               ),
@@ -160,24 +166,26 @@ class _RegisScreenState extends State<RegisScreen> {
                                 child: const Text("Ok"),
                               ),
                             ],
+                              backgroundColor: Colors.grey[350],
+                            ),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white70,
+                          foregroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                        minimumSize: Size(50, 50),
-                        elevation: 10,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                        backgroundColor: bluelogin),
-                    child: Text("Selanjutnya",
-                        style: montserrat17normal.copyWith(
-                            color: Colors.white,
-                            fontSize: 20)),
+                          elevation: 10),
+                      child: Text(
+                        "Selanjutnya",
+                        style: TextStyle(fontSize: 17, letterSpacing: 0.8),
+                      ),
+                    ),
                   ),
-                )
-              ],
-            )
+                ],
+              ),
           ],
         ),
       ),

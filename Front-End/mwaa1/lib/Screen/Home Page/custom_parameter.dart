@@ -25,7 +25,6 @@ class CustomParameter extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(45),
             ),
-            elevation: 10,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

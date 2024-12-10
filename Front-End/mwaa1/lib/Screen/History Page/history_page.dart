@@ -12,94 +12,150 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  // ignore: unused_field
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  Map<String, List<DocumentSnapshot>> groupedData = {};
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String? selectedMonth; // Variable to store selected month
+  List<String> months = [
+    'Semua Bulan',
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember'
+  ];
 
   @override
   void initState() {
     super.initState();
     initializeDateFormatting('id_ID', null);
+    selectedMonth = months[0]; // Default selection for the dropdown
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<QuerySnapshot>(
-        // Mengambil semua dokumen dari koleksi ESP32 dan mengurutkannya berdasarkan waktu
-        stream: FirebaseFirestore.instance
-            .collection('ESP32')
-            .orderBy('waktu', descending: true)
-            .snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text('Tidak ada data'));
-          }
-
-          // Debug: Print jumlah dokumen
-          print('Number of documents: ${snapshot.data!.docs.length}');
-
-          // Group data by month
-          groupedData.clear();
-          for (var doc in snapshot.data!.docs) {
-            final data = doc.data() as Map<String, dynamic>;
-
-            // Skip if waktu field doesn't exist
-            if (!data.containsKey('waktu')) continue;
-
-            final timestamp = (data['waktu'] as Timestamp).toDate();
-            final monthKey = DateFormat('MMMM', 'id_ID').format(timestamp);
-
-            if (!groupedData.containsKey(monthKey)) {
-              groupedData[monthKey] = [];
-            }
-            groupedData[monthKey]!.add(doc);
-          }
-
-          return SingleChildScrollView(
-            child: SafeArea(
-              child: Column(
-                children: [
-                  // Display grouped data by month
-                  ...groupedData.entries.map((entry) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomBulan(bulanke: entry.key),
-                        ...entry.value.map((doc) {
-                          final data = doc.data() as Map<String, dynamic>;
-                          final timestamp =
-                              (data['waktu'] as Timestamp).toDate();
-
-                          // Debug: Print individual document data
-                          print('Document data: $data');
-
-                          return CustomHistory(
-                            jamke: DateFormat('HH:mm').format(timestamp),
-                            tanggalke:
-                                DateFormat('dd MMM, yyyy').format(timestamp),
-                            nilaiSuhu: (data['Suhu']?.toDouble() ?? 0.0),
-                            nilaiPH: (data['pH']?.toDouble() ?? 0.0),
-                            nilaiTDS: (data['TDS']?.toDouble() ?? 0.0),
-                            nilaiDO: (data['DO']?.toDouble() ?? 0.0),
-                          );
-                        }),
-                      ],
-                    );
-                  }),
-                ],
-              ),
+      appBar: AppBar(),
+      body: Column(
+        children: [
+          // Dropdown for selecting month
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: DropdownButton<String>(
+              value: selectedMonth,
+              icon: const Icon(Icons.arrow_drop_down),
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedMonth = newValue;
+                });
+              },
+              items: months.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
             ),
-          );
-        },
+          ),
+          // Display the history data
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('Alat1')
+                  .orderBy('timestamp', descending: true)
+                  .snapshots(),
+              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text('Tidak ada data'));
+                }
+
+                // Debug: Print jumlah dokumen
+                print('Number of documents: ${snapshot.data!.docs.length}');
+
+                // Filter data based on selectedMonth
+                List<DocumentSnapshot> filteredData = snapshot.data!.docs.where((doc) {
+                  final data = doc.data() as Map<String, dynamic>;
+                  if (!data.containsKey('timestamp')) return false;
+
+                  final timestamp = (data['timestamp'] as Timestamp).toDate();
+                  final monthKey = DateFormat('MMMM', 'id_ID').format(timestamp);
+
+                  // Jika "Semua Bulan" dipilih, tampilkan semua data
+                  if (selectedMonth == 'Semua Bulan') {
+                    return true;
+                  }
+                  return monthKey == selectedMonth;
+                }).toList();
+
+                // Jika tidak ada data setelah filter
+                if (filteredData.isEmpty) {
+                  return Center(
+                    child: Text(
+                      "Tidak ada data di bulan ini",
+                      style: TextStyle(fontSize: 16, color: const Color.fromARGB(255, 255, 255, 255)),
+                    ),
+                  );
+                }
+
+                // Group data by month
+                Map<String, List<DocumentSnapshot>> groupedData = {};
+                for (var doc in filteredData) {
+                  final data = doc.data() as Map<String, dynamic>;
+                  final timestamp = (data['timestamp'] as Timestamp).toDate();
+                  final monthKey = DateFormat('MMMM', 'id_ID').format(timestamp);
+
+                  if (!groupedData.containsKey(monthKey)) {
+                    groupedData[monthKey] = [];
+                  }
+                  groupedData[monthKey]!.add(doc);
+                }
+
+                // Display grouped data
+                return SingleChildScrollView(
+                  child: SafeArea(
+                    child: Column(
+                      children: groupedData.entries.map((entry) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomBulan(bulanke: entry.key), // Display month header
+                            ...entry.value.map((doc) {
+                              final data = doc.data() as Map<String, dynamic>;
+                              final timestamp =
+                                  (data['timestamp'] as Timestamp).toDate();
+
+                              return CustomHistory(
+                                jamke: DateFormat('HH:mm').format(timestamp),
+                                tanggalke: DateFormat('dd MMM, yyyy').format(timestamp),
+                                nilaiSuhu: (data['Suhu']?.toDouble() ?? 0.0),
+                                nilaiPH: (data['pH']?.toDouble() ?? 0.0),
+                                nilaiTDS: (data['TDS']?.toDouble() ?? 0.0),
+                                nilaiDO: (data['DO']?.toDouble() ?? 0.0),
+                              );
+                            }).toList(),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -160,7 +160,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             SizedBox(
               width: 300,
-              height: 180,
+              height: 215,
               child: Card(
                   clipBehavior: Clip.antiAliasWithSaveLayer,
                   color: const Color.fromARGB(255, 196, 207, 233),

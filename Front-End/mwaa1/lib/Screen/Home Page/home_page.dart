@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mwaa1/Screen/Home%20Page/custom_category.dart';
 import 'package:mwaa1/Screen/Home%20Page/custom_category2.dart';
 import 'package:mwaa1/Screen/Home%20Page/custom_parameter.dart';
+import 'package:mwaa1/Screen/Location%20Page/Location_page.dart';
 import 'package:mwaa1/widget/theme.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -82,17 +83,25 @@ class HomePage extends StatefulWidget {
   final String TDS;
   final String Udang;
   final String Tambak;
-  const HomePage({super.key, required this.Suhu, required this.pH, required this.DO, required this.TDS, required this.Udang, required this.Tambak});
+  const HomePage(
+      {super.key,
+      required this.Suhu,
+      required this.pH,
+      required this.DO,
+      required this.TDS,
+      required this.Udang,
+      required this.Tambak});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Map<String, String> userData = {};
   final AuthService _authService = AuthService();
   late TabController _tabController; // Menambahkan TabController
+  AnimationController? _controller; //animasi gambar maps
+  Animation<double>? _animation;
 
   @override
   void initState() {
@@ -100,11 +109,26 @@ class _HomePageState extends State<HomePage>
     _tabController =
         TabController(length: 2, vsync: this); // Mengatur jumlah tab
     _loadUserData();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 3),
+    );
+
+    _animation = Tween<double>(begin: 1.0, end: 1.5).animate(_controller!)
+      ..addListener(
+        () {
+          setState(() {});
+        },
+      );
+
+    _controller!.forward();
   }
 
   @override
   void dispose() {
     _tabController.dispose(); // Pastikan untuk mendispose TabController
+    _controller!.forward();
     super.dispose();
   }
 
@@ -217,8 +241,8 @@ class _HomePageState extends State<HomePage>
                             )
                           : Image.asset(
                               "assets/LOGOaja.png",
-                              height: 100,
-                              width: 100,
+                              height: 85,
+                              width: 85,
                             ),
                     ),
                   ],
@@ -240,7 +264,7 @@ class _HomePageState extends State<HomePage>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(left: 16, top: 16),
+                            padding: const EdgeInsets.only(left: 20, top: 16),
                             child: Text("Batas Ukur Parameter Air",
                                 style: outfit20bold.copyWith(
                                     letterSpacing: 1.5,
@@ -260,40 +284,39 @@ class _HomePageState extends State<HomePage>
                                 ),
                                 elevation: 10,
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          CustomCategory(
-                                            name1: "PH : ",
-                                            name2: widget.pH,
-                                          ),
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          CustomCategory(
-                                            name1: "TDS : ",
-                                            name2: widget.TDS,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
                                         CustomCategory(
-                                          name1: "Suhu Air: ",
+                                          name1: "PH : ",
+                                          name2: widget.pH,
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        CustomCategory(
+                                          name1: "TDS : ",
+                                          name2: widget.TDS,
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 15),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        CustomCategory(
+                                          name1: "Suhu Air : ",
                                           name2: widget.Suhu,
                                         ),
                                         const SizedBox(
                                           width: 10,
                                         ),
                                         CustomCategory(
-                                          name1: "O2 : ",
+                                          name1: "Oksigen : ",
                                           name2: widget.DO,
                                         ),
                                       ],
@@ -304,26 +327,25 @@ class _HomePageState extends State<HomePage>
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 16),
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Text("Kategori",
                                 style: outfit20bold.copyWith(
                                     letterSpacing: 2.5,
                                     color: darkblue,
                                     fontSize: 17)),
                           ),
-                          
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10.0, top: 5.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                CustomCategory2(kategori: widget.Udang),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                CustomCategory2(kategori: widget.Tambak)
-                              ],
-                            ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CustomCategory2(kategori: widget.Udang),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              CustomCategory2(kategori: widget.Tambak)
+                            ],
                           ),
                         ],
                       ),
@@ -331,8 +353,44 @@ class _HomePageState extends State<HomePage>
                   ],
                 ),
               ),
+              SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LocationPage(),
+                        ));
+                  },
+                  child: Container(
+                    height: 100,
+                    width: 310,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 10,
+                              spreadRadius: 5)
+                        ]),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Transform.scale(
+                        scale: _animation!.value,
+                        alignment: Alignment.center,
+                        child: Image.asset(
+                          'assets/maps2.jpeg',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(
-                height: 20,
+                height: 10,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,

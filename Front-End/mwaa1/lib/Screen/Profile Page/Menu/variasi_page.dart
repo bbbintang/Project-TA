@@ -186,7 +186,32 @@ class _VariasiPageState extends State<VariasiPage> {
                     ),
                     ElevatedButton(
                         onPressed: () {
-                          if (selectedValue != null && pilihanValue != null) {
+                        if (selectedValue == null && pilihanValue == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Pastikan semua pilihan telah diisi dan ceklis pengaturan sesuai"),
+                            ),
+                          );
+                        } else if (selectedValue == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Pilih Jenis Udang mu!"),
+                            ),
+                          );
+                        } 
+                        else if (pilihanValue == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Pilih Jenis Tambak mu!"),
+                            ),
+                          );
+                          } else if (!isChecked) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Harap Centang pengaturan sudah sesuai"),
+                            ),
+                          );
+                        } else {
       Navigator.push(
         context,
         MaterialPageRoute(
