@@ -14,7 +14,8 @@ class CustomCategory extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 125,
+      width: 130,
+      height: 35,
       child: Card(
         clipBehavior: Clip.antiAliasWithSaveLayer,
         color: const Color.fromARGB(255, 220, 234, 241),

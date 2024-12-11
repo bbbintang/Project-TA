@@ -37,6 +37,7 @@ class _VariasiPageState extends State<VariasiPage> {
           scrollDirection: Axis.vertical,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               SizedBox(
                 height: 20,
@@ -103,11 +104,7 @@ class _VariasiPageState extends State<VariasiPage> {
                     borderRadius: BorderRadius.circular(10)),
                 child: DropdownButton<String?>(
                   value: pilihanValue,
-                  items: [
-                    "Tradisional",
-                    "Intensif",
-                    "Super Intensif"
-                  ]
+                  items: ["Tradisional", "Intensif", "Super Intensif"]
                       .map<DropdownMenuItem<String?>>((e) => DropdownMenuItem(
                             value: e,
                             child: Text(e.toString()),
@@ -124,9 +121,6 @@ class _VariasiPageState extends State<VariasiPage> {
                   hint: const Text("Pilih Jenis Tambak"),
                 ),
               ),
-              SizedBox(
-                height: 15,
-              ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
@@ -138,7 +132,7 @@ class _VariasiPageState extends State<VariasiPage> {
                           isChecked = value!;
                         });
                       },
-                      activeColor: Colors.orange[300],
+                      activeColor: Colors.blue[900],
                     ),
                     Text(
                       "Pengaturan Sudah Sesuai",
@@ -148,86 +142,59 @@ class _VariasiPageState extends State<VariasiPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                    top: 10, left: 16, right: 16, bottom: 16),
-                child: Text(
-                  'Kata Sandi',
-                  style: poppin15normal.copyWith(
-                      color: Colors.black, fontSize: 17),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 16, left: 16),
-                child: TextField(
-                  obscureText: _isObscure,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.grey[300],
-                    border: OutlineInputBorder(),
-                    suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _isObscure = !_isObscure;
-                          });
-                        },
-                        icon: Icon(_isObscure
-                            ? Icons.visibility
-                            : Icons.visibility_off)),
-                  ),
-                  style: TextStyle(fontSize: 14),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 60),
+                padding: const EdgeInsets.only(right: 16),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    SizedBox(
-                      width: 230,
-                    ),
                     ElevatedButton(
                         onPressed: () {
-                        if (selectedValue == null && pilihanValue == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Pastikan semua pilihan telah diisi dan ceklis pengaturan sesuai"),
-                            ),
-                          );
-                        } else if (selectedValue == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Pilih Jenis Udang mu!"),
-                            ),
-                          );
-                        } 
-                        else if (pilihanValue == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Pilih Jenis Tambak mu!"),
-                            ),
-                          );
+                          if (selectedValue == null && pilihanValue == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    "Pastikan semua pilihan telah diisi dan ceklis pengaturan sesuai"),
+                              ),
+                            );
+                          } else if (selectedValue == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Pilih Jenis Udang mu!"),
+                              ),
+                            );
+                          } else if (pilihanValue == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Pilih Jenis Tambak mu!"),
+                              ),
+                            );
                           } else if (!isChecked) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Harap Centang pengaturan sudah sesuai"),
-                            ),
-                          );
-                        } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ControlPage(
-            Udang: selectedValue!,
-            Tambak: pilihanValue!, Suhu: '', DO: '', pH: '', TDS: '',
-          ),
-        ),
-      );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    "Harap Centang pengaturan sudah sesuai"),
+                              ),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ControlPage(
+                                  Udang: selectedValue!,
+                                  Tambak: pilihanValue!,
+                                  Suhu: '',
+                                  DO: '',
+                                  pH: '',
+                                  TDS: '',
+                                ),
+                              ),
+                            );
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                            minimumSize: Size(80, 30),
-                            elevation: 1.0,
+                            minimumSize: Size(330, 40),
+                            elevation: 10,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25)),
+                                borderRadius: BorderRadius.circular(10)),
                             backgroundColor: bluelogin),
                         child: Text(
                           "Selesai",

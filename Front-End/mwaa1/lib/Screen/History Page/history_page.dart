@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:mwaa1/Screen/History%20Page/custom_history.dart';
+import 'package:mwaa1/Screen/History%20Page/button_historypage.dart';
+import 'package:mwaa1/Screen/History%20Page/custom_BulanTanggal.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -12,7 +13,7 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String? selectedMonth; // Variable to store selected month
   List<String> months = [
     'Semua Bulan',
@@ -40,26 +41,38 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Dropdown for selecting month
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: DropdownButton<String>(
-              value: selectedMonth,
-              icon: const Icon(Icons.arrow_drop_down),
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedMonth = newValue;
-                });
-              },
-              items: months.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+            padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 3),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Dropdown for selecting month
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white.withOpacity(0.6)),
+                  child: DropdownButton<String>(
+                    value: selectedMonth,
+                    icon: const Icon(Icons.arrow_drop_down),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedMonth = newValue;
+                      });
+                    },
+                    items: months.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                ButtonHistorypage()
+              ],
             ),
           ),
           // Display the history data
@@ -86,12 +99,14 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
                 print('Number of documents: ${snapshot.data!.docs.length}');
 
                 // Filter data based on selectedMonth
-                List<DocumentSnapshot> filteredData = snapshot.data!.docs.where((doc) {
+                List<DocumentSnapshot> filteredData =
+                    snapshot.data!.docs.where((doc) {
                   final data = doc.data() as Map<String, dynamic>;
                   if (!data.containsKey('timestamp')) return false;
 
                   final timestamp = (data['timestamp'] as Timestamp).toDate();
-                  final monthKey = DateFormat('MMMM', 'id_ID').format(timestamp);
+                  final monthKey =
+                      DateFormat('MMMM', 'id_ID').format(timestamp);
 
                   // Jika "Semua Bulan" dipilih, tampilkan semua data
                   if (selectedMonth == 'Semua Bulan') {
@@ -105,7 +120,9 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
                   return Center(
                     child: Text(
                       "Tidak ada data di bulan ini",
-                      style: TextStyle(fontSize: 16, color: const Color.fromARGB(255, 255, 255, 255)),
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: const Color.fromARGB(255, 255, 255, 255)),
                     ),
                   );
                 }
@@ -115,7 +132,8 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
                 for (var doc in filteredData) {
                   final data = doc.data() as Map<String, dynamic>;
                   final timestamp = (data['timestamp'] as Timestamp).toDate();
-                  final monthKey = DateFormat('MMMM', 'id_ID').format(timestamp);
+                  final monthKey =
+                      DateFormat('MMMM', 'id_ID').format(timestamp);
 
                   if (!groupedData.containsKey(monthKey)) {
                     groupedData[monthKey] = [];
@@ -131,7 +149,8 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CustomBulan(bulanke: entry.key), // Display month header
+                            CustomBulan(
+                                bulanke: entry.key), // Display month header
                             ...entry.value.map((doc) {
                               final data = doc.data() as Map<String, dynamic>;
                               final timestamp =
@@ -139,7 +158,8 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
                               return CustomHistory(
                                 jamke: DateFormat('HH:mm').format(timestamp),
-                                tanggalke: DateFormat('dd MMM, yyyy').format(timestamp),
+                                tanggalke: DateFormat('dd MMM, yyyy')
+                                    .format(timestamp),
                                 nilaiSuhu: (data['Suhu']?.toDouble() ?? 0.0),
                                 nilaiPH: (data['pH']?.toDouble() ?? 0.0),
                                 nilaiTDS: (data['TDS']?.toDouble() ?? 0.0),

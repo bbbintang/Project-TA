@@ -19,6 +19,7 @@ class _MenubuttonHistoryState extends State<MenubuttonHistory> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           SizedBox(
             height: 8,
@@ -34,7 +35,7 @@ class _MenubuttonHistoryState extends State<MenubuttonHistory> {
             ),
           ),
           SizedBox(
-            height: 20,
+            height: 10,
           ),
           Text("Dari Tanggal",
               style: poppin15normal.copyWith(color: Colors.black)),
@@ -62,7 +63,7 @@ class _MenubuttonHistoryState extends State<MenubuttonHistory> {
             ),
           ),
           SizedBox(
-            height: 16,
+            height: 10,
           ),
           Text("Sampai Tanggal",
               style: poppin15normal.copyWith(color: Colors.black)),
@@ -89,29 +90,6 @@ class _MenubuttonHistoryState extends State<MenubuttonHistory> {
               },
             ),
           ),
-          SizedBox(
-            height: 16,
-          ),
-          Text("Kata Sandi",
-              style: poppin15normal.copyWith(color: Colors.black)),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              obscureText: _isObscure,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _isObscure = !_isObscure;
-                      });
-                    },
-                    icon: Icon(
-                        _isObscure ? Icons.visibility : Icons.visibility_off)),
-              ),
-              style: TextStyle(fontSize: 14),
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.only(top: 16),
             child: ElevatedButton(
@@ -120,7 +98,7 @@ class _MenubuttonHistoryState extends State<MenubuttonHistory> {
                     minimumSize: Size(300, 30),
                     elevation: 10,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25)),
+                        borderRadius: BorderRadius.circular(10)),
                     backgroundColor: bluelogin),
                 child: Text(
                   "Selesai",

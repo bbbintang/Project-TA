@@ -12,10 +12,14 @@ class CustomBulan extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 50,
-      decoration: BoxDecoration(),
+      decoration: BoxDecoration(
+        color: Colors.white54
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
               bulanke,

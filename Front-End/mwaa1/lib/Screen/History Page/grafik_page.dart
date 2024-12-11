@@ -11,17 +11,6 @@ class GrafikPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 10, left: 16, right: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(width: 50,),
-                  ButtonHistorypage(),
-                ],
-              ),
-            ),
-            SizedBox(height: 20,),
             GrafikFix()
           ],
         ),

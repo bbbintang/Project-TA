@@ -77,7 +77,7 @@ Widget build(BuildContext context) {
       ),
 
     //Location
-    LocationPage(),
+    LocationPage(isFromButton: false,),
     
     //history
     MenuRiwayat(),

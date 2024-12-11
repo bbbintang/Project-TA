@@ -12,7 +12,7 @@ class ButtonHistorypage extends StatelessWidget {
         context: context,
         bodyBuilder: (context) => MenubuttonHistory(),
         width: 300,
-        height: 470,
+        height: 370,
         direction: PopoverDirection.bottom
       ),
         child: CircleAvatar(child: Icon(Icons.download_rounded, color: Colors.grey[600], size: 30,)),

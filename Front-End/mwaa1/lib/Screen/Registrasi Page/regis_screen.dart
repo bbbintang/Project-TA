@@ -117,7 +117,7 @@ class _RegisScreenState extends State<RegisScreen> {
                         isChecked = value ?? false;
                       });
                     },
-                    activeColor: Colors.deepOrange,
+                    activeColor: Colors.blue[900],
                   ),
                   Text(
                     "Pengaturan Sudah Sesuai",
