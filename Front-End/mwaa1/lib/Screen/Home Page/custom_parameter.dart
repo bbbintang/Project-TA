@@ -5,11 +5,13 @@ class CustomParameter extends StatelessWidget {
   final String imagePath;
   final String title;
   final double number;
+  final Color valueColor;
   const CustomParameter({
     super.key,
     required this.imagePath,
     required this.title,
-    required this.number,
+    required this.number, 
+    required this.valueColor,
   });
 
   @override
@@ -50,7 +52,7 @@ class CustomParameter extends StatelessWidget {
                     ),
                     Text(
                       number.toString(),
-                      style: outfit20bold,
+                      style: outfit20bold.copyWith(fontSize: 20, color: valueColor),
                       overflow: TextOverflow.fade,
                     ),
                   ],
