@@ -150,8 +150,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           fontWeight: FontWeight.normal, fontSize: 18)),
                   TextSpan(
                       text: _userEmail,
-                      style: outfit20bold.copyWith(
-                          fontWeight: FontWeight.normal, fontSize: 18)),
+                      style: outfit17normal.copyWith(
+                          fontWeight: FontWeight.normal, fontSize: 16)),
                 ]),
               ),
             ),
@@ -190,7 +190,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Text(
                       "LogOut",
                       style: outfit17normal.copyWith(
-                          color: Colors.black,
+                          color: Colors.white,
                           letterSpacing: 2.5,
                           fontWeight: FontWeight.w500),
                       textAlign: TextAlign.center,

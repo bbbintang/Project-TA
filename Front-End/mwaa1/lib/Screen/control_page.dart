@@ -34,7 +34,7 @@ class _ControlPageState extends State<ControlPage> {
     String S = "Tak ada Nilai", P = "Tak ada Nilai", T = "Tak ada Nilai", D = "Tak ada Nilai";
 
     if (udang == "Vaname" && tambak == "Tradisional") {
-      S = "20.20"; T = "11.1"; P = "30.3"; D = "4.14";
+      S = "20.20 - 30"; T = "11.1 - 12"; P = "30.3 - 40"; D = "4.14 - 7";
     } else if (udang == "Vaname" && tambak == "Intensif") {
       S = "2.20"; T = "15.0"; P = "30.8"; D = "4.44";
     } else if (udang == "Vaname" && tambak == "Super Intensif") {

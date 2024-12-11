@@ -44,6 +44,7 @@ class CustomHistory extends StatelessWidget {
   final double nilaiPH;
   final double nilaiTDS;
   final double nilaiDO;
+  
 
   const CustomHistory(
       {super.key,
@@ -52,7 +53,8 @@ class CustomHistory extends StatelessWidget {
       required this.nilaiSuhu,
       required this.nilaiPH,
       required this.nilaiTDS,
-      required this.nilaiDO});
+      required this.nilaiDO, 
+      });
 
   @override
   Widget build(BuildContext context) {
