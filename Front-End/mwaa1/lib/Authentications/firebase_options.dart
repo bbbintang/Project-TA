@@ -56,6 +56,7 @@ class DefaultFirebaseOptions {
     projectId: 'mwas-95df5',
     authDomain: 'mwas-95df5.firebaseapp.com',
     storageBucket: 'mwas-95df5.appspot.com',
+    databaseURL: 'https://mwas-95df5-default-rtdb.firebaseio.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -64,5 +65,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '348996085369',
     projectId: 'mwas-95df5',
     storageBucket: 'mwas-95df5.appspot.com',
+    databaseURL: 'https://mwas-95df5-default-rtdb.firebaseio.com',
   );
 }

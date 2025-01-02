@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:mwaa1/Screen/Profile%20Page/Menu/AutoFeeder.dart';
 import 'package:mwaa1/Screen/Profile%20Page/Menu/aboutus_page.dart';
 import 'package:mwaa1/Screen/Profile%20Page/Menu/variasi_page.dart';
@@ -16,6 +18,49 @@ class ProfileMenu extends StatefulWidget {
 
 class _ProfileMenuState extends State<ProfileMenu> {
   bool statusSwitch = false;
+  final DatabaseReference _database = FirebaseDatabase.instanceFor(
+      app: Firebase.app(),
+      databaseURL:
+          "https://mwas-95df5-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    ).ref();
+
+  @override
+  void initState() {
+    super.initState();
+    print('Initializing aerator listener'); // Debug print
+    // Listen to changes in the aerator value
+    _database.child('aerator').onValue.listen(
+    (event) {
+      final value = event.snapshot.value;
+      if (value != null) {
+        setState(() {
+          statusSwitch = event.snapshot.value as bool; // Pastikan boolean
+          print('aerator telah terinisialisasi');
+        });
+      }
+    },
+    onError: (error) {
+      print('Error listening to aerator changes: $error');
+    },
+  );
+  }
+
+  void _toggleAerator(bool value) {
+    print('Attempting to toggle aerator to: $value'); // Debug print
+    // Update the value in Firebase
+    _database.child('aerator').set(value).then((_) {
+      print('Successfully updated aerator value'); // Debug print
+      setState(() {
+        statusSwitch = value;
+      });
+    }).catchError((error) {
+      // Handle any errors
+      print('Error updating aerator: $error'); // Debug print
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating aerator: $error')),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,12 +115,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
           ),
           trailing: Switch(
             value: statusSwitch,
-            onChanged: (value) {
-              setState(() {
-                statusSwitch = !statusSwitch; //menandakan keadaan berubah
-              });
-              print(statusSwitch);
-            },
+            onChanged: _toggleAerator,
           ),
         ),
         Padding(
