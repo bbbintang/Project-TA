@@ -169,19 +169,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       Color valueColor;
     
     if (title == "Suhu Air") {
-      if (value < 20.0 || value > 30.0) {
+      if (value < 27 || value > 32) {
         valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
       } else {
         valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika suhu dalam rentang normal
       }
     } else if (title == "PH Air") {
-      if (value < 7.0 || value > 8.0) {
+      if (value < 7.5 || value > 8.5) {
         valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
       } else {
         valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika pH dalam rentang normal
       }
     } else if (title == "Oksigen") {
-      if (value < 4.0) {
+      if (value < 3.5) {
         valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
       } else {
         valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika DO dalam rentang normal

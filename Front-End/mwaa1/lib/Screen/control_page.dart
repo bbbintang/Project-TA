@@ -34,11 +34,11 @@ class _ControlPageState extends State<ControlPage> {
     String S = "Tak ada Nilai", P = "Tak ada Nilai", T = "Tak ada Nilai", D = "Tak ada Nilai";
 
     if (udang == "Vaname" && tambak == "Tradisional") {
-      S = "20.20 - 30"; T = "11.1 - 12"; P = "30.3 - 40"; D = "4.14 - 7";
+      S = "28-32°C"; T = "11.1 - 12"; P = "7,5-8,5"; D = ">3,0";
     } else if (udang == "Vaname" && tambak == "Intensif") {
-      S = "2.20"; T = "15.0"; P = "30.8"; D = "4.44";
+      S = ">27°C"; T = "15.0"; P = "7,5-8,5.8"; D = ">4 mg/l";
     } else if (udang == "Vaname" && tambak == "Super Intensif") {
-      S = "20.28"; T = "11.20"; P = "35.2"; D = "55.5";
+      S = "29-32°C"; T = "11.20"; P = "7,5-8,5.2"; D = ">4 mg/l";
     } else if (udang == "Udang Galah" && tambak == "Tradisional") {
       S = "20.20"; T = "11.1"; P = "30.3"; D = "4.14";
     } else if (udang == "Udang Galah" && tambak == "Intensif") {
