@@ -1,56 +1,191 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class GrafikFix extends StatelessWidget {
-  final data = LineData();
-
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        SizedBox(
-          height: 6000,
-          width: 5000,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  AspectRatio(
-                    aspectRatio: 1.5,
-                    child: _isiContainer(
-                        'Suhu', data.bottomTitleSuhu, data.leftTitleSuhu),
+    return FutureBuilder<QuerySnapshot>(
+      future: FirebaseFirestore.instance.collection('Alat1').get(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return Center(child: Text("Error: ${snapshot.error}"));
+        }
+
+        if (snapshot.hasData) {
+          final data = snapshot.data!.docs;
+
+          return FutureBuilder<List<List<FlSpot>>>(
+            future: Future.wait([
+              _fetchSensorData(data, 'pH'),
+              _fetchSensorData(data, 'TDS'),
+              _fetchSensorData(data, 'DO'),
+              _fetchSensorData(data, 'temperature'),
+            ]),
+            builder: (context, sensorSnapshot) {
+              if (sensorSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (sensorSnapshot.hasError) {
+                return Center(child: Text("Error: ${sensorSnapshot.error}"));
+              }
+
+              if (sensorSnapshot.hasData) {
+                final phSpots = sensorSnapshot.data![0];
+                final tdsSpots = sensorSnapshot.data![1];
+                final doSpots = sensorSnapshot.data![2];
+                final suhuSpots = sensorSnapshot.data![3];
+
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        _buildGraph('pH', phSpots, '', 'pH'),
+                        const SizedBox(height: 20),
+                        _buildGraph('TDS', tdsSpots, 'ppm', 'TDS'),
+                        const SizedBox(height: 20),
+                        _buildGraph('DO', doSpots, 'mg/L', 'DO'),
+                        const SizedBox(height: 20),
+                        _buildGraph('Temperature', suhuSpots, '°C', 'temperature'),
+                      ],
+                    ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  AspectRatio(
-                    aspectRatio: 1.5,
-                    child: _isiContainer(
-                        'PH', data.bottomTitleDO, data.leftTitleDO),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  AspectRatio(
-                    aspectRatio: 1.5,
-                    child: _isiContainer(
-                        'TDS', data.bottomTitleDO, data.leftTitleDO),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  AspectRatio(
-                    aspectRatio: 1.5,
-                    child: _isiContainer(
-                        'DO', data.bottomTitleDO, data.leftTitleDO),
-                  )
-                ],
+                );
+              }
+
+              return const Center(child: Text("No data available"));
+            },
+          );
+        }
+
+        return const Center(child: Text("No data available"));
+      },
+    );
+  }
+
+// Fetch data for each sensor from Firestore
+Future<List<FlSpot>> _fetchSensorData(List<QueryDocumentSnapshot> docs, String sensorType) async {
+  List<FlSpot> spots = [];
+
+  final now = DateTime.now();
+  final sixHoursAgo = now.subtract(const Duration(hours: 6)); // Waktu 6 jam yang lalu
+
+  for (var doc in docs) {
+    final data = doc.data() as Map<String, dynamic>;
+    final timestamp = data['timestamp']?.toDate() as DateTime?;
+
+    if (timestamp == null || timestamp.isBefore(sixHoursAgo)) {
+      continue; // Lewati data yang lebih lama dari 6 jam
+    }
+
+    final value = data[sensorType]?.toDouble() ?? 0.0;
+
+    // Mengkonversi timestamp menjadi millisecondsSinceEpoch dan menyimpannya sebagai sumbu X
+    final xValue = timestamp.millisecondsSinceEpoch.toDouble();
+
+    spots.add(FlSpot(xValue, value));
+  }
+
+  return spots;
+}
+
+
+  Widget _buildGraph(String title, List<FlSpot> spots, String unit, String sensorType) {
+    double maxY = _getMaxYForSensor(sensorType);
+
+    return AspectRatio(
+      aspectRatio: 1.5,
+      child: CustomCard(
+        child: Column(
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
             ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: LineChart(
+                LineChartData(
+                  minX: spots.isNotEmpty ? spots.first.x : 0,
+                  maxX: spots.isNotEmpty ? spots.last.x : 1000,
+                  minY: 0,
+                  maxY: maxY,
+                  gridData: FlGridData(show: false),
+                  borderData: FlBorderData(show: true),
+                  titlesData: _buildTitles(unit),
+                  lineBarsData: [
+                    LineChartBarData(
+                      isCurved: true,
+                      spots: spots,
+                      barWidth: 4,
+                      color: Colors.blue,
+                      belowBarData: BarAreaData(show: false),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+// Fungsi untuk menentukan maxY berdasarkan sensor type
+double _getMaxYForSensor(String sensorType) {
+  switch (sensorType) {
+    case 'pH':
+      return 14.0;  // Batas maksimal untuk pH
+    case 'TDS':
+      return 500.0;  // Batas maksimal untuk TDS
+    case 'DO':
+      return 5000.0;  // Batas maksimal untuk DO
+    case 'temperature':
+      return 50.0;  // Batas maksimal untuk Temperature
+    default:
+      return 100.0;  // Default maxY jika sensor tidak dikenal
+  }
+}
+
+  FlTitlesData _buildTitles(String unit) {
+    return FlTitlesData(
+      bottomTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: true,
+          reservedSize: 22,
+        getTitlesWidget: (value, meta) {
+          // Format timestamp menjadi format waktu 24 jam
+          final timestamp = DateTime.fromMillisecondsSinceEpoch(value.toInt());
+          final formattedTime = '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}';
+          return Text(
+            formattedTime,
+            style: const TextStyle(fontSize: 10),
+          );
+        },
+      ),
+    ),
+      leftTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: true,
+          reservedSize: 32,
+          getTitlesWidget: (value, meta) => Text(
+            '${value.toInt()} $unit',
+            style: const TextStyle(fontSize: 10),
           ),
-        )
-      ],
+        ),
+      ),
+      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
     );
   }
 }
@@ -63,184 +198,14 @@ class CustomCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.all(20),
-        height: 400,
-        width: double.infinity,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Color.fromARGB(255, 253, 241, 216).withOpacity(0.5)),
-        child: child);
-  }
-}
-
-Widget _isiContainer(
-    String title, Map<int, String> bottomTitles, Map<int, String> leftTitles) {
-  return SizedBox(
-    height: 200,
-    width: double.infinity,
-    child: CustomCard(
-        child: Column(
-      children: [
-        Text(title,
-            style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-                fontFamily: 'Outfit')),
-        SizedBox(
-          height: 20,
-        ),
-        Expanded(child: LineChart(_dekorasiChart(bottomTitles, leftTitles)))
-      ],
-    )),
-  );
-}
-
-LineChartData _dekorasiChart(
-    Map<int, String> bottomTitles, Map<int, String> leftTitles) {
-  return LineChartData(
-      minX: 0,
-      maxX: 120,
-      minY: -5,
-      maxY: 105,
-      gridData: FlGridData(show: false),
-      borderData: FlBorderData(
-        show: false,
+      padding: const EdgeInsets.all(20),
+      height: 400,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: const Color.fromARGB(255, 253, 241, 216).withOpacity(0.5),
       ),
-      titlesData: _ketentuanData(bottomTitles, leftTitles),
-      lineBarsData: [
-        LineChartBarData(
-            isCurved: true,
-            gradient: const LinearGradient(colors: [
-              Color.fromARGB(255, 120, 163, 235),
-              Color.fromARGB(255, 251, 194, 235),
-            ]),
-            barWidth: 5,
-            belowBarData: BarAreaData(
-                show: true,
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color.fromARGB(255, 120, 163, 235)
-                          .withAlpha((0.5 * 255).toInt()),
-                      Color.fromARGB(255, 251, 194, 235)
-                          .withAlpha((0.3 * 255).toInt()),
-                    ])),
-            spots: LineData().spots),
-      ]);
-}
-
-FlTitlesData _ketentuanData(
-    Map<int, String> bottomTitles, Map<int, String> leftTitles) {
-  return FlTitlesData(
-      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-              showTitles: true,
-              getTitlesWidget: (value, meta) =>
-                  _TitleWidget(bottomTitles, value))),
-      leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-        showTitles: true,
-        interval: 1,
-        reservedSize: 50,
-        getTitlesWidget: (value, meta) => _TitleWidget(leftTitles, value),
-      )));
-}
-
-Widget _TitleWidget(Map<int, String> titles, double value) {
-  return titles[value.toInt()] != null
-      ? Text(
-          titles[value.toInt()]!,
-          style: TextStyle(fontSize: 10, color: Colors.black),
-        )
-      : SizedBox();
-}
-
-class LineData {
-  final spots = [
-    FlSpot(1.68, 28.04),
-    FlSpot(30.84, 30.23),
-    FlSpot(40.19, 27.82),
-    FlSpot(50.01, 26.49),
-    FlSpot(60.81, 35.82),
-    FlSpot(70.49, 25.50),
-    FlSpot(80.26, 30.57),
-    FlSpot(90.26, 30.57),
-    FlSpot(100.26, 32.57),
-  ];
-
-  final leftTitleSuhu = {
-    0: '0°C',
-    20: '20°C',
-    40: '40°C',
-    60: '60°C',
-    80: '80°C',
-    100: '100°C'
-  };
-
-  final bottomTitleSuhu = {
-    0: '00:00',
-    10: '01:00',
-    20: '02:00',
-    30: '03:00',
-    40: '04:00',
-    50: '05:00',
-    60: '06:00',
-    70: '07:00',
-    80: '08:00',
-    90: '09:00',
-    100: '10:00',
-    110: '11:00',
-    120: '12:00',
-    130: '13:00',
-    140: '14:00',
-  };
-
-  final leftTitleAir = {
-    0: '0ml',
-    20: '200ml',
-    40: '400ml',
-    60: '600ml',
-    80: '800ml',
-    100: '1000ml'
-  };
-
-  final bottomTitleAir = {
-    0: '00:00',
-    10: '01:00',
-    20: '02:00',
-    30: '03:00',
-    40: '04:00',
-    50: '05:00',
-  };
-
-  final leftTitleDO = {
-    0: '0 mg/L',
-    20: '2 mg/L',
-    40: '4 mg/L',
-    60: '6 mg/L',
-    80: '8 mg/L',
-    100: '10 mg/L'
-  };
-
-  final bottomTitleDO = {
-    0: '00:00',
-    10: '01:00',
-    20: '02:00',
-    30: '03:00',
-    40: '04:00',
-    50: '05:00',
-    60: '06:00',
-    70: '07:00',
-    80: '08:00',
-    90: '09:00',
-    100: '10:00',
-    110: '11:00',
-    120: '12:00',
-    130: '13:00',
-    140: '14:00',
-  };
+      child: child,
+    );
+  }
 }
