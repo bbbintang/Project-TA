@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: RegisScreen(Udang: '', Tambak: '',),
+      home: StartPage(),
       initialRoute: '/',
       routes: {
         '/welcome_screen': (context) => WelcomeScreen(),
