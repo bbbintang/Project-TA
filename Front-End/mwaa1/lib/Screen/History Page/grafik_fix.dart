@@ -19,7 +19,7 @@ class GrafikFix extends StatelessWidget {
         if (snapshot.hasData) {
           final data = snapshot.data!.docs;
 
-          return FutureBuilder<List<List<FlSpot>>>(
+          return FutureBuilder<List<List<FlSpot>>>( 
             future: Future.wait([
               _fetchSensorData(data, 'pH'),
               _fetchSensorData(data, 'TDS'),
@@ -69,32 +69,34 @@ class GrafikFix extends StatelessWidget {
     );
   }
 
-// Fetch data for each sensor from Firestore
-Future<List<FlSpot>> _fetchSensorData(List<QueryDocumentSnapshot> docs, String sensorType) async {
-  List<FlSpot> spots = [];
+  // Fetch data for each sensor from Firestore
+  Future<List<FlSpot>> _fetchSensorData(List<QueryDocumentSnapshot> docs, String sensorType) async {
+    List<FlSpot> spots = [];
 
-  final now = DateTime.now();
-  final sixHoursAgo = now.subtract(const Duration(hours: 6)); // Waktu 6 jam yang lalu
+    for (var doc in docs) {
+      final data = doc.data() as Map<String, dynamic>;
+      final timestamp = data['timestamp']?.toDate() as DateTime?;
+      
+      if (timestamp == null) {
+        continue; // Lewati jika timestamp kosong
+      }
 
-  for (var doc in docs) {
-    final data = doc.data() as Map<String, dynamic>;
-    final timestamp = data['timestamp']?.toDate() as DateTime?;
+      final value = data[sensorType]?.toDouble();
+      if (value == null) {
+        continue; // Lewati jika nilai sensor tidak ada
+      }
 
-    if (timestamp == null || timestamp.isBefore(sixHoursAgo)) {
-      continue; // Lewati data yang lebih lama dari 6 jam
+      // Mengkonversi timestamp menjadi millisecondsSinceEpoch dan menyimpannya sebagai sumbu X
+      final xValue = timestamp.millisecondsSinceEpoch.toDouble();
+
+      spots.add(FlSpot(xValue, value));
     }
 
-    final value = data[sensorType]?.toDouble() ?? 0.0;
+    // Sort spots berdasarkan nilai X (timestamp) agar urut
+    spots.sort((a, b) => a.x.compareTo(b.x));
 
-    // Mengkonversi timestamp menjadi millisecondsSinceEpoch dan menyimpannya sebagai sumbu X
-    final xValue = timestamp.millisecondsSinceEpoch.toDouble();
-
-    spots.add(FlSpot(xValue, value));
+    return spots;
   }
-
-  return spots;
-}
-
 
   Widget _buildGraph(String title, List<FlSpot> spots, String unit, String sensorType) {
     double maxY = _getMaxYForSensor(sensorType);
@@ -122,7 +124,7 @@ Future<List<FlSpot>> _fetchSensorData(List<QueryDocumentSnapshot> docs, String s
                   maxY: maxY,
                   gridData: FlGridData(show: false),
                   borderData: FlBorderData(show: true),
-                  titlesData: _buildTitles(unit),
+                  titlesData: _buildTitles(unit, spots, sensorType),
                   lineBarsData: [
                     LineChartBarData(
                       isCurved: true,
@@ -141,39 +143,55 @@ Future<List<FlSpot>> _fetchSensorData(List<QueryDocumentSnapshot> docs, String s
     );
   }
 
-// Fungsi untuk menentukan maxY berdasarkan sensor type
-double _getMaxYForSensor(String sensorType) {
-  switch (sensorType) {
-    case 'pH':
-      return 14.0;  // Batas maksimal untuk pH
-    case 'TDS':
-      return 500.0;  // Batas maksimal untuk TDS
-    case 'DO':
-      return 5000.0;  // Batas maksimal untuk DO
-    case 'temperature':
-      return 50.0;  // Batas maksimal untuk Temperature
-    default:
-      return 100.0;  // Default maxY jika sensor tidak dikenal
+  // Fungsi untuk menentukan maxY berdasarkan sensor type
+  double _getMaxYForSensor(String sensorType) {
+    switch (sensorType) {
+      case 'pH':
+        return 14.0;  // Batas maksimal untuk pH
+      case 'TDS':
+        return 500.0;  // Batas maksimal untuk TDS
+      case 'DO':
+        return 5000.0;  // Batas maksimal untuk DO
+      case 'temperature':
+        return 50.0;  // Batas maksimal untuk Temperature
+      default:
+        return 100.0;  // Default maxY jika sensor tidak dikenal
+    }
   }
-}
 
-  FlTitlesData _buildTitles(String unit) {
+  FlTitlesData _buildTitles(String unit,  List<FlSpot> spots, String sensorType) {
+    if (spots.isEmpty) return FlTitlesData();
+
     return FlTitlesData(
       bottomTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
           reservedSize: 22,
-        getTitlesWidget: (value, meta) {
-          // Format timestamp menjadi format waktu 24 jam
-          final timestamp = DateTime.fromMillisecondsSinceEpoch(value.toInt());
-          final formattedTime = '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}';
-          return Text(
-            formattedTime,
-            style: const TextStyle(fontSize: 10),
-          );
-        },
+          getTitlesWidget: (value, meta) {
+            final spot = spots.firstWhere(
+              (spot) => (spot.x - value).abs() < 1e-3, // Pencocokan dengan toleransi
+              orElse: () => FlSpot(0, 0),
+            );
+
+            if (spot.x == 0) {
+              return const SizedBox.shrink(); // Jangan tampilkan jika tidak ada titik
+            }
+
+            final timestamp = DateTime.fromMillisecondsSinceEpoch(spot.x.toInt());
+
+            // Format timestamp menjadi waktu yang terbaca (jam:menit)
+            final formattedTime = '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}';
+
+            return SideTitleWidget(
+              axisSide: meta.axisSide,
+              child: Text(
+                formattedTime, // Menampilkan waktu di sumbu X
+                style: const TextStyle(fontSize: 10),
+              ),
+            );
+          },
+        ),
       ),
-    ),
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
