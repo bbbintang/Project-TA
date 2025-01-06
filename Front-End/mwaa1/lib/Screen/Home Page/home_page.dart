@@ -5,6 +5,7 @@ import 'package:mwaa1/Screen/Home%20Page/custom_category.dart';
 import 'package:mwaa1/Screen/Home%20Page/custom_category2.dart';
 import 'package:mwaa1/Screen/Home%20Page/custom_parameter.dart';
 import 'package:mwaa1/Screen/Location%20Page/Location_page.dart';
+import 'package:mwaa1/Services/notification_service.dart';
 import 'package:mwaa1/widget/theme.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -97,6 +98,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  NotificationServices notificationServices = NotificationServices.instance;
+
   Map<String, String> userData = {};
   final AuthService _authService = AuthService();
   late TabController _tabController; // Menambahkan TabController
@@ -106,6 +109,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
+    notificationServices.initialize();
+    notificationServices.getDeviceToken().then((value) {
+      print('Device Token: $value');
+    });
+
     _tabController =
         TabController(length: 2, vsync: this); // Mengatur jumlah tab
     _loadUserData();
@@ -165,36 +174,44 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     try {
       final value = (snapshot.data!.snapshot.value as num).toDouble();
-      
+
       Color valueColor;
-    
-    if (title == "Suhu Air") {
-      if (value < 27 || value > 32) {
-        valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
+
+      if (title == "Suhu Air") {
+        if (value < 27 || value > 32) {
+          valueColor =
+              const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
+        } else {
+          valueColor = const Color.fromARGB(
+              255, 255, 255, 255); // Jika suhu dalam rentang normal
+        }
+      } else if (title == "PH Air") {
+        if (value < 7.5 || value > 8.5) {
+          valueColor =
+              const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
+        } else {
+          valueColor = const Color.fromARGB(
+              255, 255, 255, 255); // Jika pH dalam rentang normal
+        }
+      } else if (title == "Oksigen") {
+        if (value < 3.5) {
+          valueColor =
+              const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
+        } else {
+          valueColor = const Color.fromARGB(
+              255, 255, 255, 255); // Jika DO dalam rentang normal
+        }
+      } else if (title == "TDS") {
+        if (value > 500.0) {
+          valueColor =
+              const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
+        } else {
+          valueColor = const Color.fromARGB(
+              255, 255, 255, 255); // Jika TDS dalam rentang normal
+        }
       } else {
-        valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika suhu dalam rentang normal
+        valueColor = Colors.white; // Default color for unknown titles
       }
-    } else if (title == "PH Air") {
-      if (value < 7.5 || value > 8.5) {
-        valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
-      } else {
-        valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika pH dalam rentang normal
-      }
-    } else if (title == "Oksigen") {
-      if (value < 3.5) {
-        valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
-      } else {
-        valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika DO dalam rentang normal
-      }
-    } else if (title == "TDS") {
-      if (value > 500.0) {
-        valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
-      } else {
-        valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika TDS dalam rentang normal
-      }
-    } else {
-      valueColor = Colors.white; // Default color for unknown titles
-    }
 
       return CustomParameter(
         imagePath: imagePath,
@@ -396,7 +413,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => LocationPage(isFromButton: true,),
+                          builder: (context) => LocationPage(
+                            isFromButton: true,
+                          ),
                         ));
                   },
                   child: Container(

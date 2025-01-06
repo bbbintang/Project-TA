@@ -49,7 +49,7 @@ class _HistoryPageState extends State<HistoryPage> {
             }).toList());
 
     final alat2Stream = FirebaseFirestore.instance
-        .collection('dummy')
+        .collection('Alat2')
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) {
@@ -225,7 +225,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                     ),
                                     CustomHistory(
                                       nilaiSuhu:
-                                          (data['Suhu']?.toDouble() ?? 0.0),
+                                          (data['temperature']?.toDouble() ?? 0.0),
                                       nilaiPH: (data['pH']?.toDouble() ?? 0.0),
                                       nilaiTDS:
                                           (data['TDS']?.toDouble() ?? 0.0),
@@ -249,7 +249,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                     ),
                                     CustomHistory(
                                       nilaiSuhu:
-                                          (data['Suhu']?.toDouble() ?? 0.0),
+                                          (data['temperature']?.toDouble() ?? 0.0),
                                       nilaiPH: (data['pH']?.toDouble() ?? 0.0),
                                       nilaiTDS:
                                           (data['TDS']?.toDouble() ?? 0.0),

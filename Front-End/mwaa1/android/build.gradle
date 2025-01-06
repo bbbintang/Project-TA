@@ -1,13 +1,13 @@
 buildscript {
     repositories {
-        google()
+        google() // Required for Android Gradle Plugin
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.6.3' // Versi AGP terbaru
-        classpath 'com.google.gms:google-services:4.4.2'
+        classpath 'com.google.gms:google-services:4.3.10' // Google Services plugin
     }
 }
+
 
 allprojects {
     repositories {
