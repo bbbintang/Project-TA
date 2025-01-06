@@ -176,42 +176,34 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       final value = (snapshot.data!.snapshot.value as num).toDouble();
 
       Color valueColor;
-
-      if (title == "Suhu Air") {
-        if (value < 27 || value > 32) {
-          valueColor =
-              const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
-        } else {
-          valueColor = const Color.fromARGB(
-              255, 255, 255, 255); // Jika suhu dalam rentang normal
-        }
-      } else if (title == "PH Air") {
-        if (value < 7.5 || value > 8.5) {
-          valueColor =
-              const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
-        } else {
-          valueColor = const Color.fromARGB(
-              255, 255, 255, 255); // Jika pH dalam rentang normal
-        }
-      } else if (title == "Oksigen") {
-        if (value < 3.5) {
-          valueColor =
-              const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
-        } else {
-          valueColor = const Color.fromARGB(
-              255, 255, 255, 255); // Jika DO dalam rentang normal
-        }
-      } else if (title == "TDS") {
-        if (value > 500.0) {
-          valueColor =
-              const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
-        } else {
-          valueColor = const Color.fromARGB(
-              255, 255, 255, 255); // Jika TDS dalam rentang normal
-        }
+    
+    if (title == "Suhu Air") {
+      if (value < 27 || value > 32) {
+        valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
       } else {
-        valueColor = Colors.white; // Default color for unknown titles
+        valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika suhu dalam rentang normal
       }
+    } else if (title == "PH Air") {
+      if (value < 7.5 || value > 8.5) {
+        valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
+      } else {
+        valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika pH dalam rentang normal
+      }
+    } else if (title == "Oksigen") {
+      if (value < 3.5) {
+        valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
+      } else {
+        valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika DO dalam rentang normal
+      }
+    } else if (title == "TDS") {
+      if (value > 500.0) {
+        valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
+      } else {
+        valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika TDS dalam rentang normal
+      }
+    } else {
+      valueColor = Colors.white; // Default color for unknown titles
+    }
 
       return CustomParameter(
         imagePath: imagePath,

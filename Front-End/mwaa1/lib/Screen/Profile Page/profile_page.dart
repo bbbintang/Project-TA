@@ -27,7 +27,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _userName = prefs.getString('displayName') ?? 'Login Yuk';
-      _userEmail = prefs.getString('email') ?? 'mwaaa@gmail.com';
+      _userEmail = prefs.getString('email') ?? 'mwaa@gmail.com';
       _userPhotoUrl = prefs.getString('photoUrl') ?? '';
     });
   }
@@ -71,10 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       // Sign out from Google
       await _googleSignIn.signOut();
-      
-      // Clear SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.clear();
+      print('logout berhasil');
       
       // Navigate to sign in page and remove all previous routes
       if (!mounted) return;
