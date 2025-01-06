@@ -187,7 +187,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika DO dalam rentang normal
       }
     } else if (title == "TDS") {
-      if (value > 500.0) {
+      if (value < 100 || value > 175) {
         valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
       } else {
         valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika TDS dalam rentang normal

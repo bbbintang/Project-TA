@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mwaa1/Screen/Registrasi%20Page/regis_screen.dart';
-import 'package:mwaa1/Authentications/authentication.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -13,34 +12,61 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  final AuthService _authService = AuthService();
-  bool _isLoading = false;
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: ['email', 'profile'],
+  );
+  bool _isGoogleSignInLoading = false;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<void> _handleGoogleSignIn() async {
+  Future<void> _signInWithGoogle() async {
+    if (_isGoogleSignInLoading) return;
     setState(() {
-      _isLoading = true;
+      _isGoogleSignInLoading = true;
     });
 
     try {
-      UserCredential? userCredential = await _authService.signInWithGoogle();
+      // Sign out any existing Google session
+      await _googleSignIn.signOut();
+      await _auth.signOut();
 
-      if (userCredential != null && mounted) {
+      // Initiate Google sign-in
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        throw FirebaseAuthException(
+          code: 'sign_in_canceled',
+          message: 'Sign in was canceled by user.',
+        );
+      }
+
+      // Authenticate the user
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase
+      final UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+      final User? user = userCredential.user;
+      if (user != null && mounted) {
         // Navigate to the registration screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const RegisScreen(Udang: '', Tambak: '',)),
+          MaterialPageRoute(
+            builder: (context) => const RegisScreen(Udang: '', Tambak: ''),
+          ),
         );
-      } else if (mounted) {
-        _showErrorDialog(context, 'Login gagal. Silakan coba lagi.');
       }
+    } on FirebaseAuthException catch (e) {
+      _showErrorDialog(context, 'Login gagal: ${e.message}');
     } catch (e) {
-      if (mounted) {
-        _showErrorDialog(context, 'Error ketika login. Alasan: $e');
-      }
+      _showErrorDialog(context, 'Terjadi kesalahan: $e');
     } finally {
       if (mounted) {
         setState(() {
-          _isLoading = false;
+          _isGoogleSignInLoading = false;
         });
       }
     }
@@ -68,9 +94,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     child: Text(
                       'Welcome To',
                       style: TextStyle(
-                          fontSize: 27,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                        fontSize: 27,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -89,15 +116,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   Text(
                     'Pantau Terus Kualitas dan Kondisi Air pada Pertambakan Mu!',
                     style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
-                  SizedBox(height: 5,),
+                  SizedBox(height: 5),
                   Text(
-                      'MWA System merupakan sistem pengawasan dan pengoptimasi kualitas \nair berbasis Internet of Things',
-                      style: TextStyle(fontSize: 15, color: Colors.white54),
-                    )
+                    'MWA System merupakan sistem pengawasan dan pengoptimasi kualitas \nair berbasis Internet of Things',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.white54,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -112,24 +143,24 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  elevation: 10
+                  elevation: 10,
                 ),
-                onPressed: _isLoading ? null : _handleGoogleSignIn,
-                child: _isLoading
-        ? CircularProgressIndicator(color: Colors.white)
-        : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Image.asset(
-                      "assets/logo_google.jpg",
-                      width: 30,
-                    ),
-                    Text(
-                      'Login With Google',
-                      style: TextStyle(fontSize: 17),
-                    ),
-                  ],
-                ),
+                onPressed: _isGoogleSignInLoading ? null : _signInWithGoogle,
+                child: _isGoogleSignInLoading
+                    ? CircularProgressIndicator(color: Colors.black)
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Image.asset(
+                            "assets/logo_google.jpg",
+                            width: 30,
+                          ),
+                          Text(
+                            'Login With Google',
+                            style: TextStyle(fontSize: 17),
+                          ),
+                        ],
+                      ),
               ),
             ),
           ],

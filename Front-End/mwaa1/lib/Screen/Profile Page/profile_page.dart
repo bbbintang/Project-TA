@@ -72,9 +72,6 @@ class _ProfilePageState extends State<ProfilePage> {
       // Sign out from Google
       await _googleSignIn.signOut();
       print('logout berhasil');
-      // Clear SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.clear();
       
       // Navigate to sign in page and remove all previous routes
       if (!mounted) return;
