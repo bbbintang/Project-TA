@@ -5,6 +5,7 @@ import 'package:mwaa1/Screen/Home%20Page/custom_category.dart';
 import 'package:mwaa1/Screen/Home%20Page/custom_category2.dart';
 import 'package:mwaa1/Screen/Home%20Page/custom_parameter.dart';
 import 'package:mwaa1/Screen/Location%20Page/Location_page.dart';
+import 'package:mwaa1/Screen/Profile%20Page/profile_page.dart';
 import 'package:mwaa1/widget/theme.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -181,13 +182,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika pH dalam rentang normal
       }
     } else if (title == "Oksigen") {
-      if (value < 3.5) {
+      if (value < 3000) {
         valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
       } else {
         valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika DO dalam rentang normal
       }
     } else if (title == "TDS") {
-      if (value < 100 || value > 175) {
+      if (value < 100 || value > 200) {
         valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
       } else {
         valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika TDS dalam rentang normal
@@ -267,19 +268,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ),
                     const SizedBox(width: 10),
                     Container(
-                      alignment: Alignment.centerRight,
-                      child: userData['photoUrl']?.isNotEmpty == true
-                          ? CircleAvatar(
-                              backgroundImage:
-                                  NetworkImage(userData['photoUrl']!),
-                              radius: 20,
-                            )
-                          : Image.asset(
-                              "assets/LOGOaja.png",
-                              height: 85,
-                              width: 85,
-                            ),
-                    ),
+  alignment: Alignment.centerRight,
+  child: GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProfilePage(), // Navigasi ke ProfilePage
+        ),
+      );
+    },
+    child: userData['photoUrl']?.isNotEmpty == true
+        ? CircleAvatar(
+            backgroundImage: NetworkImage(userData['photoUrl']!),
+            radius: 20,
+          )
+        : Image.asset(
+            "assets/LOGOaja.png", // Gambar default jika tidak ada foto profil
+            height: 85,
+            width: 85,
+          ),
+  ),
+),
                   ],
                 ),
               ),

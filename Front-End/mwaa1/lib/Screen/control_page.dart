@@ -34,23 +34,23 @@ class _ControlPageState extends State<ControlPage> {
     String S = "Tak ada Nilai", P = "Tak ada Nilai", T = "Tak ada Nilai", D = "Tak ada Nilai";
 
     if (udang == "Vaname" && tambak == "Tradisional") {
-      S = "28-32°C"; T = "11.1 - 12"; P = "7,5-8,5"; D = ">3,0";
+      S = "28-32°C"; T = "100-250"; P = "7,5-8,5"; D = ">3,0";
     } else if (udang == "Vaname" && tambak == "Intensif") {
-      S = ">27°C"; T = "15.0"; P = "7,5-8,5.8"; D = ">4 mg/l";
+      S = ">27°C"; T = "100-150"; P = "7,5-8,5"; D = ">4 mg/l";
     } else if (udang == "Vaname" && tambak == "Super Intensif") {
-      S = "29-32°C"; T = "11.20"; P = "7,5-8,5.2"; D = ">4 mg/l";
+      S = "29-32°C"; T = "100-150"; P = "7,5-8,5"; D = ">4 mg/l";
     } else if (udang == "Udang Galah" && tambak == "Tradisional") {
-      S = "20.20"; T = "11.1"; P = "30.3"; D = "4.14";
+      S = "28-32°C"; T = "100-250"; P = "7,0-8,5"; D = ">3 mg/l";
     } else if (udang == "Udang Galah" && tambak == "Intensif") {
-      S = "20"; T = "11"; P = "3"; D = "4";
+      S = "28-32°C"; T = "100-250"; P = "7,5-8,5"; D = ">3 mg/l";
     } else if (udang == "Udang Galah" && tambak == "Super Intensif") {
-      S = "25"; T = "15"; P = "33"; D = "40";
+      S = ">27°C"; T = "100-200"; P = "7,5-8,5"; D = ">3 mg/l";
     } else if (udang == "Udang Windu" && tambak == "Tradisional") {
-      S = "20.20"; T = "11.1"; P = "30.3"; D = "4.14";
+      S = "28-35°C"; T = "100-150"; P = "7,0-8,5"; D = ">3 mg/l";
     } else if (udang == "Udang Windu" && tambak == "Intensif") {
-      S = "27"; T = "12"; P = "39"; D = "14";
+      S = "28-35°C"; T = "100-200"; P = "7,0-8,5"; D = ">3 mg/l";
     } else if (udang == "Udang Windu" && tambak == "Super Intensif") {
-      S = "50"; T = "30"; P = "20"; D = "50";
+      S = "28-35°C"; T = "100-200"; P = "7,5-8,5"; D = ">3 mg/l";
     }
 
     return {'Suhu': S, 'TDS': T, 'pH': P, 'DO': D};
