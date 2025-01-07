@@ -12,9 +12,7 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: ['email', 'profile'],
-  );
+  final GoogleSignIn _googleSignIn = GoogleSignIn(); // Inisialisasi Google Sign-In
   bool _isGoogleSignInLoading = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -25,11 +23,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     });
 
     try {
-      // Sign out any existing Google session
+      // Logout jika ada sesi Google yang sudah ada
       await _googleSignIn.signOut();
       await _auth.signOut();
 
-      // Initiate Google sign-in
+      // Google Sign-In
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
         throw FirebaseAuthException(
@@ -38,7 +36,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         );
       }
 
-      // Authenticate the user
+      // Ambil data autentikasi dari Google
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
@@ -46,16 +44,21 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         idToken: googleAuth.idToken,
       );
 
-      // Sign in to Firebase
+      // Login Firebase
       final UserCredential userCredential =
           await _auth.signInWithCredential(credential);
       final User? user = userCredential.user;
+
       if (user != null && mounted) {
-        // Navigate to the registration screen
+        // Navigasi ke RegisPage dengan data pengguna
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const RegisScreen(Udang: '', Tambak: ''),
+            builder: (context) => RegisScreen(
+              displayName: user.displayName ?? "User", // Default jika nama kosong
+              email: user.email ?? "",
+              photoUrl: user.photoURL ?? "",
+            ),
           ),
         );
       }

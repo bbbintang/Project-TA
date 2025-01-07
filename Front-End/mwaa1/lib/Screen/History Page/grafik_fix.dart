@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 class GrafikFix extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<QuerySnapshot>(
-      future: FirebaseFirestore.instance.collection('Alat1').get(),
+    return FutureBuilder<List<List<List<FlSpot>>>>(
+      future: Future.wait([
+        _fetchAllSensorData('Alat2', FirebaseFirestore.instance),
+        _fetchAllSensorData('Alat1_2', FirebaseFirestore.instance),
+      ]),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -17,50 +20,44 @@ class GrafikFix extends StatelessWidget {
         }
 
         if (snapshot.hasData) {
-          final data = snapshot.data!.docs;
+          final alat1Data = snapshot.data![0];
+          final alat2Data = snapshot.data![1];
 
-          return FutureBuilder<List<List<FlSpot>>>( 
-            future: Future.wait([
-              _fetchSensorData(data, 'pH'),
-              _fetchSensorData(data, 'TDS'),
-              _fetchSensorData(data, 'DO'),
-              _fetchSensorData(data, 'temperature'),
-            ]),
-            builder: (context, sensorSnapshot) {
-              if (sensorSnapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              if (sensorSnapshot.hasError) {
-                return Center(child: Text("Error: ${sensorSnapshot.error}"));
-              }
-
-              if (sensorSnapshot.hasData) {
-                final phSpots = sensorSnapshot.data![0];
-                final tdsSpots = sensorSnapshot.data![1];
-                final doSpots = sensorSnapshot.data![2];
-                final suhuSpots = sensorSnapshot.data![3];
-
-                return SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        _buildGraph('pH', phSpots, '', 'pH'),
-                        const SizedBox(height: 20),
-                        _buildGraph('TDS', tdsSpots, 'ppm', 'TDS'),
-                        const SizedBox(height: 20),
-                        _buildGraph('DO', doSpots, 'mg/L', 'DO'),
-                        const SizedBox(height: 20),
-                        _buildGraph('Temperature', suhuSpots, '°C', 'temperature'),
-                      ],
-                    ),
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  _buildMultiLineGraph(
+                    'pH',
+                    alat1Data[0],
+                    alat2Data[0],
+                    '',
                   ),
-                );
-              }
-
-              return const Center(child: Text("No data available"));
-            },
+                  const SizedBox(height: 20),
+                  _buildMultiLineGraph(
+                    'TDS',
+                    alat1Data[1],
+                    alat2Data[1],
+                    'ppm',
+                  ),
+                  const SizedBox(height: 20),
+                  _buildMultiLineGraph(
+                    'DO',
+                    alat1Data[2],
+                    alat2Data[2],
+                    'mg/L',
+                  ),
+                  const SizedBox(height: 20),
+                  _buildMultiLineGraph(
+                    'Temperature',
+                    alat1Data[3],
+                    alat2Data[3],
+                    '°C',
+                  ),
+                ],
+              ),
+            ),
           );
         }
 
@@ -69,37 +66,55 @@ class GrafikFix extends StatelessWidget {
     );
   }
 
-  // Fetch data for each sensor from Firestore
+  Future<List<List<FlSpot>>> _fetchAllSensorData(
+      String collection, FirebaseFirestore firestore) async {
+    try {
+      final snapshot = await firestore.collection(collection).get();
+      final data = snapshot.docs;
+
+      return Future.wait([
+        _fetchSensorData(data, 'pH'),
+        _fetchSensorData(data, 'TDS'),
+        _fetchSensorData(data, 'DO'),
+        _fetchSensorData(data, 'temperature'),
+      ]);
+    } catch (e) {
+      print("Error fetching data from Firestore: $e");
+      return [[], [], [], []]; // Return empty lists if error occurs
+    }
+  }
+
   Future<List<FlSpot>> _fetchSensorData(List<QueryDocumentSnapshot> docs, String sensorType) async {
     List<FlSpot> spots = [];
+    final now = DateTime.now();
+    final twentyFourHoursAgo = now.subtract(const Duration(hours: 24)); // Data dalam 24 jam terakhir
 
     for (var doc in docs) {
       final data = doc.data() as Map<String, dynamic>;
       final timestamp = data['timestamp']?.toDate() as DateTime?;
-      
-      if (timestamp == null) {
-        continue; // Lewati jika timestamp kosong
-      }
-
       final value = data[sensorType]?.toDouble();
-      if (value == null) {
-        continue; // Lewati jika nilai sensor tidak ada
+
+      if (timestamp != null &&
+          value != null &&
+          timestamp.isAfter(twentyFourHoursAgo)) {
+        // Gunakan jam (format 24 jam) sebagai X
+        final xValue = timestamp.hour.toDouble() + (timestamp.minute / 60);
+        spots.add(FlSpot(xValue, value));
       }
-
-      // Mengkonversi timestamp menjadi millisecondsSinceEpoch dan menyimpannya sebagai sumbu X
-      final xValue = timestamp.millisecondsSinceEpoch.toDouble();
-
-      spots.add(FlSpot(xValue, value));
     }
 
-    // Sort spots berdasarkan nilai X (timestamp) agar urut
+    // Sort spots berdasarkan nilai X (jam)
     spots.sort((a, b) => a.x.compareTo(b.x));
-
     return spots;
   }
 
-  Widget _buildGraph(String title, List<FlSpot> spots, String unit, String sensorType) {
-    double maxY = _getMaxYForSensor(sensorType);
+  Widget _buildMultiLineGraph(
+    String title,
+    List<FlSpot> alat1Spots,
+    List<FlSpot> alat2Spots,
+    String unit,
+  ) {
+    double maxY = _getMaxYForSensor(title);
 
     return AspectRatio(
       aspectRatio: 1.5,
@@ -118,18 +133,68 @@ class GrafikFix extends StatelessWidget {
             Expanded(
               child: LineChart(
                 LineChartData(
-                  minX: spots.isNotEmpty ? spots.first.x : 0,
-                  maxX: spots.isNotEmpty ? spots.last.x : 1000,
+                  minX: 0, // Mulai dari jam 00:00
+                  maxX: 24, // Sampai jam 24:00
                   minY: 0,
                   maxY: maxY,
-                  gridData: FlGridData(show: false),
-                  borderData: FlBorderData(show: true),
-                  titlesData: _buildTitles(unit, spots, sensorType),
+                  
+                  borderData: FlBorderData(
+                    show: true,
+                    border: const Border.symmetric(
+                      horizontal: BorderSide(width: 1),
+                      vertical: BorderSide(width: 1),
+                    ),
+                  ),
+                  titlesData: FlTitlesData(
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 22,
+                        interval: 6, // Interval setiap 6 jam
+                        getTitlesWidget: (value, meta) {
+                          final hour = value.toInt();
+                          if (hour % 6 == 0) { // Hanya menampilkan label setiap 6 jam
+                            return Text(
+                              '$hour:00',
+                              style: const TextStyle(fontSize: 10),
+                            );
+                          } else {
+                            return const SizedBox.shrink();
+                          }
+                        },
+                      ),
+                    ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 32,
+                        interval: maxY / 5, // Interval nilai pada sisi kiri
+                        getTitlesWidget: (value, meta) {
+                          return Text('${value.toInt()}', style: const TextStyle(fontSize: 10));
+                        },
+                      ),
+                    ),
+                    topTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false), // Hilangkan angka di atas grafik
+                    ),
+                    rightTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false), // Hilangkan angka di kanan grafik
+                    ),
+                  ),
                   lineBarsData: [
                     LineChartBarData(
                       isCurved: true,
-                      spots: spots,
-                      barWidth: 4,
+                      spots: alat1Spots,
+                      barWidth: 2,
+                      isStrokeCapRound: true,
+                      color: Colors.red,
+                      belowBarData: BarAreaData(show: false),
+                    ),
+                    LineChartBarData(
+                      isCurved: true,
+                      spots: alat2Spots,
+                      barWidth: 2,
+                      isStrokeCapRound: true,
                       color: Colors.blue,
                       belowBarData: BarAreaData(show: false),
                     ),
@@ -143,68 +208,19 @@ class GrafikFix extends StatelessWidget {
     );
   }
 
-  // Fungsi untuk menentukan maxY berdasarkan sensor type
   double _getMaxYForSensor(String sensorType) {
     switch (sensorType) {
       case 'pH':
-        return 14.0;  // Batas maksimal untuk pH
+        return 14.0;
       case 'TDS':
-        return 500.0;  // Batas maksimal untuk TDS
+        return 300.0;
       case 'DO':
-        return 5000.0;  // Batas maksimal untuk DO
+        return 3000.0;
       case 'temperature':
-        return 50.0;  // Batas maksimal untuk Temperature
+        return 50.0;
       default:
-        return 100.0;  // Default maxY jika sensor tidak dikenal
+        return 100.0;
     }
-  }
-
-  FlTitlesData _buildTitles(String unit,  List<FlSpot> spots, String sensorType) {
-    if (spots.isEmpty) return FlTitlesData();
-
-    return FlTitlesData(
-      bottomTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 22,
-          getTitlesWidget: (value, meta) {
-            final spot = spots.firstWhere(
-              (spot) => (spot.x - value).abs() < 1e-3, // Pencocokan dengan toleransi
-              orElse: () => FlSpot(0, 0),
-            );
-
-            if (spot.x == 0) {
-              return const SizedBox.shrink(); // Jangan tampilkan jika tidak ada titik
-            }
-
-            final timestamp = DateTime.fromMillisecondsSinceEpoch(spot.x.toInt());
-
-            // Format timestamp menjadi waktu yang terbaca (jam:menit)
-            final formattedTime = '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}';
-
-            return SideTitleWidget(
-              axisSide: meta.axisSide,
-              child: Text(
-                formattedTime, // Menampilkan waktu di sumbu X
-                style: const TextStyle(fontSize: 10),
-              ),
-            );
-          },
-        ),
-      ),
-      leftTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 32,
-          getTitlesWidget: (value, meta) => Text(
-            '${value.toInt()} $unit',
-            style: const TextStyle(fontSize: 10),
-          ),
-        ),
-      ),
-      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-    );
   }
 }
 
