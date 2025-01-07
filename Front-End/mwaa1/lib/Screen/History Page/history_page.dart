@@ -224,8 +224,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                       ),
                                     ),
                                     CustomHistory(
-                                      nilaiSuhu:
-                                          (data['Suhu']?.toDouble() ?? 0.0),
+                                      nilaiSuhu: data['temperature'].toDouble(),
                                       nilaiPH: (data['pH']?.toDouble() ?? 0.0),
                                       nilaiTDS:
                                           (data['TDS']?.toDouble() ?? 0.0),
@@ -249,7 +248,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                     ),
                                     CustomHistory(
                                       nilaiSuhu:
-                                          (data['Suhu']?.toDouble() ?? 0.0),
+                                          data['temperature'].toDouble() ,
                                       nilaiPH: (data['pH']?.toDouble() ?? 0.0),
                                       nilaiTDS:
                                           (data['TDS']?.toDouble() ?? 0.0),
