@@ -5,11 +5,8 @@ import 'package:mwaa1/Screen/Home%20Page/custom_category.dart';
 import 'package:mwaa1/Screen/Home%20Page/custom_category2.dart';
 import 'package:mwaa1/Screen/Home%20Page/custom_parameter.dart';
 import 'package:mwaa1/Screen/Location%20Page/Location_page.dart';
-<<<<<<< HEAD
 import 'package:mwaa1/Screen/Profile%20Page/profile_page.dart';
-=======
 import 'package:mwaa1/Services/notification_service.dart';
->>>>>>> dd3211f702e1a5f68f256bd85bbd944935f04e9b
 import 'package:mwaa1/widget/theme.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -200,11 +197,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika DO dalam rentang normal
       }
     } else if (title == "TDS") {
-<<<<<<< HEAD
       if (value < 100 || value > 200) {
-=======
-      if (value > 500.0) {
->>>>>>> dd3211f702e1a5f68f256bd85bbd944935f04e9b
         valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
       } else {
         valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika TDS dalam rentang normal
