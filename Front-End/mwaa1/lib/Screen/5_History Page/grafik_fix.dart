@@ -7,8 +7,8 @@ class GrafikFix extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder<List<List<List<FlSpot>>>>(
       future: Future.wait([
-        _fetchAllSensorData('Alat2', FirebaseFirestore.instance),
-        _fetchAllSensorData('Alat1_2', FirebaseFirestore.instance),
+        _fetchAllSensorData('pameran1', FirebaseFirestore.instance),
+        _fetchAllSensorData('pameran2', FirebaseFirestore.instance),
       ]),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -213,7 +213,7 @@ class GrafikFix extends StatelessWidget {
       case 'pH':
         return 14.0;
       case 'TDS':
-        return 300.0;
+        return 900.0;
       case 'DO':
         return 3000.0;
       case 'temperature':

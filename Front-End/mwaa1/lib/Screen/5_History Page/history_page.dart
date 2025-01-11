@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:mwaa1/Screen/History%20Page/button_historypage.dart';
-import 'package:mwaa1/Screen/History%20Page/custom_BulanTanggal.dart';
+import 'package:mwaa1/Screen/5_History%20Page/button_historypage.dart';
+import 'package:mwaa1/Screen/5_History%20Page/custom_BulanTanggal.dart';
 import 'package:rxdart/rxdart.dart';
 
 class HistoryPage extends StatefulWidget {
@@ -39,7 +39,7 @@ class _HistoryPageState extends State<HistoryPage> {
   ];
   Stream<List<Map<String, dynamic>>> getCombinedStream() {
     final alat1Stream = FirebaseFirestore.instance
-        .collection('Alat1')
+        .collection('pameran1')
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) {
@@ -49,7 +49,7 @@ class _HistoryPageState extends State<HistoryPage> {
             }).toList());
 
     final alat2Stream = FirebaseFirestore.instance
-        .collection('Alat2')
+        .collection('pameran2')
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) {

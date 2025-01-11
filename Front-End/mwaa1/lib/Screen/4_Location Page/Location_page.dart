@@ -41,6 +41,14 @@ class LocationPage extends StatelessWidget {
                   size: 40,
                 ),
               ),
+              Marker(
+                point: LatLng(-6.9694847,107.6320582),
+                child: Icon(
+                  Icons.location_pin,
+                  color: Colors.blue,
+                  size: 40,
+                ),
+              ),
             ],
           ),
         ],

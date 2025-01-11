@@ -10,7 +10,7 @@ class CustomParameter extends StatelessWidget {
     super.key,
     required this.imagePath,
     required this.title,
-    required this.number, 
+    required this.number,
     required this.valueColor,
   });
 
@@ -45,22 +45,28 @@ class CustomParameter extends StatelessWidget {
                     ),
                     Text(
                       title,
-                      style: outfit15normal.copyWith(fontSize: 17, fontWeight: FontWeight.bold),
+                      style: outfit15normal.copyWith(
+                          fontSize: 17, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(
                       height: 10,
                     ),
                     Text(
-                      number.toString(),
-                      style: outfit20bold.copyWith(fontSize: 20, color: valueColor),
-                      overflow: TextOverflow.fade,
+                      number.toStringAsFixed(
+                          2), // Membatasi hingga 2 angka desimal
+                      style: outfit20bold.copyWith(
+                          fontSize: 20, color: valueColor),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                   ],
                 )
               ],
             ),
           ),
-          const SizedBox(width: 10,)
+          const SizedBox(
+            width: 10,
+          )
         ],
       ),
     );

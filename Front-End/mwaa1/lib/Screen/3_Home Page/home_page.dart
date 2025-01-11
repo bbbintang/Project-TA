@@ -1,18 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:mwaa1/Screen/Home%20Page/custom_category.dart';
-import 'package:mwaa1/Screen/Home%20Page/custom_category2.dart';
-import 'package:mwaa1/Screen/Home%20Page/custom_parameter.dart';
-import 'package:mwaa1/Screen/Location%20Page/Location_page.dart';
-<<<<<<< HEAD
-import 'package:mwaa1/Screen/Profile%20Page/profile_page.dart';
-=======
-import 'package:mwaa1/Services/notification_service.dart';
->>>>>>> dd3211f702e1a5f68f256bd85bbd944935f04e9b
-import 'package:mwaa1/widget/theme.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mwaa1/Screen/3_Home%20Page/custom_category.dart';
+import 'package:mwaa1/Screen/3_Home%20Page/custom_category2.dart';
+import 'package:mwaa1/Screen/3_Home%20Page/custom_parameter.dart';
+import 'package:mwaa1/Screen/4_Location%20Page/Location_page.dart';
+import 'package:mwaa1/Screen/6_Profile%20Page/profile_page.dart';
+import 'package:mwaa1/Services/notification_service.dart';
+import 'package:mwaa1/widget/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
@@ -140,8 +137,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    _tabController.dispose(); // Pastikan untuk mendispose TabController
-    _controller!.forward();
+    _tabController.dispose();
+    _controller?.dispose(); // Properly dispose of animation controller
     super.dispose();
   }
 
@@ -153,77 +150,79 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Widget buildParameterWidget(
-      AsyncSnapshot<DatabaseEvent> snapshot, String imagePath, String title) {
-    if (snapshot.hasError) {
-      return CustomParameter(
-        imagePath: imagePath,
-        title: title,
-        number: 0.0,
-        valueColor: Colors.white,
-      );
-    }
-
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (!snapshot.hasData || snapshot.data?.snapshot.value == null) {
-      return CustomParameter(
-        imagePath: imagePath,
-        title: title,
-        number: 0.0,
-        valueColor: Colors.white,
-      );
-    }
-
-    try {
-      final value = (snapshot.data!.snapshot.value as num).toDouble();
-
-      Color valueColor;
-    
-    if (title == "Suhu Air") {
-      if (value < 27 || value > 32) {
-        valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
-      } else {
-        valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika suhu dalam rentang normal
-      }
-    } else if (title == "PH Air") {
-      if (value < 7.5 || value > 8.5) {
-        valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
-      } else {
-        valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika pH dalam rentang normal
-      }
-    } else if (title == "Oksigen") {
-      if (value < 3.5) {
-        valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
-      } else {
-        valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika DO dalam rentang normal
-      }
-    } else if (title == "TDS") {
-      if (value > 500.0) {
-        valueColor = const Color.fromARGB(255, 255, 17, 0); // Jika TDS terlalu tinggi
-      } else {
-        valueColor = const Color.fromARGB(255, 255, 255, 255); // Jika TDS dalam rentang normal
-      }
-    } else {
-      valueColor = Colors.white; // Default color for unknown titles
-    }
-
-      return CustomParameter(
-        imagePath: imagePath,
-        title: title,
-        number: value,
-        valueColor: valueColor,
-      );
-    } catch (e) {
-      return CustomParameter(
-        imagePath: imagePath,
-        title: title,
-        number: 0.0,
-        valueColor: Colors.white,
-      );
-    }
+    AsyncSnapshot<DatabaseEvent> snapshot, String imagePath, String title) {
+  // Jika terjadi error pada snapshot
+  if (snapshot.hasError) {
+    print("Error pada $title: ${snapshot.error}");
+    return CustomParameter(
+      imagePath: imagePath,
+      title: title,
+      number: 0.0,
+      valueColor: Colors.white,
+    );
   }
+
+  // Jika masih menunggu data dari Firebase
+  if (snapshot.connectionState == ConnectionState.waiting) {
+    return const Center(child: CircularProgressIndicator());
+  }
+
+  // Jika data snapshot kosong atau null
+  final snapshotValue = snapshot.data?.snapshot.value;
+  if (snapshotValue == null) {
+    print("Data kosong untuk $title");
+    return CustomParameter(
+      imagePath: imagePath,
+      title: title,
+      number: 0.0,
+      valueColor: Colors.white,
+    );
+  }
+
+  // Parsing nilai data dari Firebase
+  try {
+    final value = (snapshotValue as num).toDouble();
+    print("Data untuk $title: $value");
+
+    // Tentukan warna berdasarkan nilai (contoh untuk suhu air)
+    Color valueColor;
+    if (title == "Suhu Air") {
+      valueColor = (value < 27 || value > 32)
+          ? const Color.fromARGB(255, 255, 17, 0) // Warna merah jika tidak normal
+          : Colors.white; // Warna putih jika normal
+    } else if (title == "PH Air") {
+      valueColor = (value < 7.5 || value > 8.5)
+          ? const Color.fromARGB(255, 255, 17, 0)
+          : Colors.white;
+    } else if (title == "Oksigen") {
+      valueColor = (value < 3.5)
+          ? const Color.fromARGB(255, 255, 17, 0)
+          : Colors.white;
+    } else if (title == "TDS") {
+      valueColor = (value > 500.0)
+          ? const Color.fromARGB(255, 255, 17, 0)
+          : Colors.white;
+    } else {
+      valueColor = Colors.white; // Warna default jika tidak ada aturan
+    }
+
+    return CustomParameter(
+      imagePath: imagePath,
+      title: title,
+      number: value,
+      valueColor: valueColor,
+    );
+  } catch (e) {
+    // Jika terjadi kesalahan saat parsing data
+    print("Error parsing data untuk $title: $e");
+    return CustomParameter(
+      imagePath: imagePath,
+      title: title,
+      number: 0.0,
+      valueColor: Colors.white,
+    );
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -231,25 +230,49 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       app: Firebase.app(),
       databaseURL:
           "https://mwas-95df5-default-rtdb.asia-southeast1.firebasedatabase.app/",
-    ).ref().child('Temperature');
+    ).ref().child('Temperature').onValue.asBroadcastStream();
 
     final database2 = FirebaseDatabase.instanceFor(
       app: Firebase.app(),
       databaseURL:
           "https://mwas-95df5-default-rtdb.asia-southeast1.firebasedatabase.app/",
-    ).ref().child('DO');
+    ).ref().child('DO').onValue.asBroadcastStream();
 
     final database3 = FirebaseDatabase.instanceFor(
       app: Firebase.app(),
       databaseURL:
           "https://mwas-95df5-default-rtdb.asia-southeast1.firebasedatabase.app/",
-    ).ref().child('TDS');
+    ).ref().child('TDS').onValue.asBroadcastStream();
 
     final database4 = FirebaseDatabase.instanceFor(
       app: Firebase.app(),
       databaseURL:
           "https://mwas-95df5-default-rtdb.asia-southeast1.firebasedatabase.app/",
-    ).ref().child('pH');
+    ).ref().child('pH').onValue.asBroadcastStream();
+
+    final database5 = FirebaseDatabase.instanceFor(
+      app: Firebase.app(),
+      databaseURL:
+          "https://mwas-95df5-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    ).ref().child('Temperature2').onValue.asBroadcastStream();
+
+    final database6 = FirebaseDatabase.instanceFor(
+      app: Firebase.app(),
+      databaseURL:
+          "https://mwas-95df5-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    ).ref().child('DO2').onValue.asBroadcastStream();
+
+    final database7 = FirebaseDatabase.instanceFor(
+      app: Firebase.app(),
+      databaseURL:
+          "https://mwas-95df5-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    ).ref().child('TDS2').onValue.asBroadcastStream();
+
+    final database8 = FirebaseDatabase.instanceFor(
+      app: Firebase.app(),
+      databaseURL:
+          "https://mwas-95df5-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    ).ref().child('pH2').onValue.asBroadcastStream();
 
     return Scaffold(
       backgroundColor: Colors.orange,
@@ -280,28 +303,30 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ),
                     const SizedBox(width: 10),
                     Container(
-  alignment: Alignment.centerRight,
-  child: GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ProfilePage(), // Navigasi ke ProfilePage
-        ),
-      );
-    },
-    child: userData['photoUrl']?.isNotEmpty == true
-        ? CircleAvatar(
-            backgroundImage: NetworkImage(userData['photoUrl']!),
-            radius: 20,
-          )
-        : Image.asset(
-            "assets/LOGOaja.png", // Gambar default jika tidak ada foto profil
-            height: 85,
-            width: 85,
-          ),
-  ),
-),
+                      alignment: Alignment.centerRight,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ProfilePage(), // Navigasi ke ProfilePage
+                            ),
+                          );
+                        },
+                        child: userData['photoUrl']?.isNotEmpty == true
+                            ? CircleAvatar(
+                                backgroundImage:
+                                    NetworkImage(userData['photoUrl']!),
+                                radius: 20,
+                              )
+                            : Image.asset(
+                                "assets/LOGOaja.png", // Gambar default jika tidak ada foto profil
+                                height: 85,
+                                width: 85,
+                              ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -493,28 +518,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             child: Row(
                               children: [
                                 StreamBuilder<DatabaseEvent>(
-                                  stream: database.onValue,
+                                  stream: database,
                                   builder: (context, snapshot) {
                                     return buildParameterWidget(
                                         snapshot, "assets/3.png", "Suhu Air");
                                   },
                                 ),
                                 StreamBuilder<DatabaseEvent>(
-                                  stream: database4.onValue,
+                                  stream: database4,
                                   builder: (context, snapshot) {
                                     return buildParameterWidget(
                                         snapshot, "assets/2.png", "PH Air");
                                   },
                                 ),
                                 StreamBuilder<DatabaseEvent>(
-                                  stream: database2.onValue,
+                                  stream: database2,
                                   builder: (context, snapshot) {
                                     return buildParameterWidget(
                                         snapshot, "assets/4.png", "Oksigen");
                                   },
                                 ),
                                 StreamBuilder<DatabaseEvent>(
-                                  stream: database3.onValue,
+                                  stream: database3,
                                   builder: (context, snapshot) {
                                     return buildParameterWidget(
                                         snapshot, "assets/1.png", "TDS");
@@ -531,28 +556,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             child: Row(
                               children: [
                                 StreamBuilder<DatabaseEvent>(
-                                  stream: database.onValue,
+                                  stream: database5,
                                   builder: (context, snapshot) {
                                     return buildParameterWidget(
                                         snapshot, "assets/3.png", "Suhu Air");
                                   },
                                 ),
                                 StreamBuilder<DatabaseEvent>(
-                                  stream: database4.onValue,
+                                  stream: database6,
                                   builder: (context, snapshot) {
                                     return buildParameterWidget(
                                         snapshot, "assets/2.png", "PH Air");
                                   },
                                 ),
                                 StreamBuilder<DatabaseEvent>(
-                                  stream: database2.onValue,
+                                  stream: database7,
                                   builder: (context, snapshot) {
                                     return buildParameterWidget(
                                         snapshot, "assets/4.png", "Oksigen");
                                   },
                                 ),
                                 StreamBuilder<DatabaseEvent>(
-                                  stream: database3.onValue,
+                                  stream: database8,
                                   builder: (context, snapshot) {
                                     return buildParameterWidget(
                                         snapshot, "assets/1.png", "TDS");

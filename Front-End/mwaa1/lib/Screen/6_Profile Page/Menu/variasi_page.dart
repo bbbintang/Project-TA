@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mwaa1/Screen/Home%20Page/home_page.dart';
-import 'package:mwaa1/Screen/Registrasi%20Page/regis_screen.dart';
+import 'package:mwaa1/Screen/3_Home%20Page/home_page.dart';
+import 'package:mwaa1/Screen/2_Registrasi%20Page/regis_screen.dart';
 import 'package:mwaa1/Screen/control_page.dart';
 import 'package:mwaa1/widget/theme.dart';
 

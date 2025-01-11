@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:mwaa1/Screen/Profile%20Page/profile_menu.dart';
+import 'package:mwaa1/Screen/6_Profile%20Page/profile_menu.dart';
 import 'package:mwaa1/widget/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

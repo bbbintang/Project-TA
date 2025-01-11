@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:mwaa1/Screen/Profile%20Page/Menu/contact_page.dart';
-import 'package:mwaa1/Screen/Profile%20Page/Menu/faq_page.dart';
+import 'package:mwaa1/Screen/6_Profile%20Page/Menu/contact_page.dart';
+import 'package:mwaa1/Screen/6_Profile%20Page/Menu/faq_page.dart';
 import 'package:mwaa1/widget/theme.dart';
 
 class AboutUsPage extends StatelessWidget {

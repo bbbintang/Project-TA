@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:mwaa1/Screen/Profile%20Page/Menu/AutoFeeder.dart';
-import 'package:mwaa1/Screen/Profile%20Page/Menu/aboutus_page.dart';
-import 'package:mwaa1/Screen/Profile%20Page/Menu/variasi_page.dart';
+import 'package:mwaa1/Screen/6_Profile%20Page/Menu/AutoFeeder.dart';
+import 'package:mwaa1/Screen/6_Profile%20Page/Menu/aboutus_page.dart';
+import 'package:mwaa1/Screen/6_Profile%20Page/Menu/variasi_page.dart';
 import 'package:mwaa1/widget/theme.dart';
 
 class ProfileMenu extends StatefulWidget {

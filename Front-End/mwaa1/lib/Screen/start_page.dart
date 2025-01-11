@@ -1,6 +1,6 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:mwaa1/Screen/Welcome%20Page/welcome_screen.dart';
+import 'package:mwaa1/Screen/1_Welcome%20Page/welcome_screen.dart';
 import 'package:page_transition/page_transition.dart';
 
 class StartPage extends StatelessWidget {
@@ -11,7 +11,7 @@ class StartPage extends StatelessWidget {
     return AnimatedSplashScreen(
       splash: Column(
         children: [
-          Image.asset("assets/MWA.png", scale: 2.5,),
+          Image.asset("assets/LOGOaja.png", scale: 2.5,),
         ],
       ), 
       nextScreen: WelcomeScreen(),
