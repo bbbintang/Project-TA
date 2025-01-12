@@ -7,6 +7,12 @@ import 'package:mwaa1/Services/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp();
+    print("Firebase berhasil diinisialisasi");
+  } catch (e) {
+    print("Gagal inisialisasi Firebase: $e");
+  }
   if (Firebase.apps.isEmpty) {
     await Firebase.initializeApp( 
       name: "mwas-95df5",

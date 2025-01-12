@@ -1,6 +1,6 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:mwaa1/Screen/1_Welcome%20Page/welcome_screen.dart';
+import 'package:mwaa1/Screen/1_Welcome%20Page/opening.dart';
 import 'package:page_transition/page_transition.dart';
 
 class StartPage extends StatelessWidget {
@@ -14,7 +14,7 @@ class StartPage extends StatelessWidget {
           Image.asset("assets/LOGOaja.png", scale: 2.5,),
         ],
       ), 
-      nextScreen: WelcomeScreen(),
+      nextScreen: Opening(),
       backgroundColor: Colors.orange,
       duration: 3000,
       splashTransition: SplashTransition.fadeTransition,
