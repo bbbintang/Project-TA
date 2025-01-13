@@ -1,8 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mwaa1/Screen/1_Welcome%20Page/signup_page.dart';
+import 'package:mwaa1/Screen/2_Registrasi%20Page/regis_screen.dart';
 import 'package:simple_animations/animation_builder/play_animation_builder.dart';
 import 'package:simple_animations/movie_tween/movie_tween.dart';
+import 'package:flutter/cupertino.dart';
 
 class AppAssets {
   static String kAppLogo = 'assets/LOGOaja.png';
@@ -29,6 +33,100 @@ class _FoochiSignInViewState extends State<SigninPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool isEmailCorrect = false;
+
+  // Added Google Sign In functionality
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _isGoogleSignInLoading = false;
+
+  // Implement Google Sign In method
+  Future<void> _signInWithGoogle() async {
+    if (_isGoogleSignInLoading) return;
+    setState(() {
+      _isGoogleSignInLoading = true;
+    });
+
+    try {
+      // Clear existing sessions
+      await _googleSignIn.signOut();
+      await _auth.signOut();
+
+      // Start Google Sign In flow
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        throw FirebaseAuthException(
+          code: 'sign_in_canceled',
+          message: 'Sign in was canceled by user.',
+        );
+      }
+
+      // Get authentication details
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase
+      final UserCredential userCredential = await _auth.signInWithCredential(credential);
+      final User? user = userCredential.user;
+
+      if (user != null && mounted) {
+        // Navigate to registration screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RegisScreen(
+              displayName: user.displayName ?? "User",
+              email: user.email ?? "",
+              photoUrl: user.photoURL ?? "",
+            ),
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      _showErrorDialog(context, 'Login gagal: ${e.message}');
+    } catch (e) {
+      _showErrorDialog(context, 'Terjadi kesalahan: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isGoogleSignInLoading = false;
+        });
+      }
+    }
+  }
+
+  // Error dialog implementation
+  void _showErrorDialog(BuildContext context, String message) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: const Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: "Inter",
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          message,
+          style: const TextStyle(
+            fontFamily: "Inter",
+            fontWeight: FontWeight.normal,
+          ),
+        ),
+        actions: <CupertinoDialogAction>[
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,12 +157,11 @@ class _FoochiSignInViewState extends State<SigninPage> {
                         color: AppColors.kSecondary)),
                 const SizedBox(height: 24),
                 SocialIconRow(
+                  // Updated callbacks
                   facebookCallback: () {
                     debugPrint('Facebook');
                   },
-                  googleCallback: () {
-                    debugPrint('Google');
-                  },
+                  googleCallback: _signInWithGoogle, // Integrated Google Sign In
                   twitterCallback: () {
                     debugPrint('Twitter');
                   },
@@ -103,7 +200,7 @@ class _FoochiSignInViewState extends State<SigninPage> {
                       return 'Please enter your password';
                     } else if (value.length < 6) {
                       return 'Password should be at least 6 characters';
-                    } else if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*d).+$')
+                    } else if (!RegExp(r'^(?=.[a-z])(?=.[A-Z])(?=.*\d).+$')
                         .hasMatch(value)) {
                       return 'Password should contain at least one uppercase letter, one lowercase letter, and one digit';
                     }
@@ -158,6 +255,7 @@ class _FoochiSignInViewState extends State<SigninPage> {
   }
 }
 
+// Remaining widget classes stay the same
 class SocialIcons extends StatefulWidget {
   final VoidCallback onTap;
   final Widget child;
@@ -178,6 +276,7 @@ class _SocialIconsState extends State<SocialIcons>
   late AnimationController _controller;
   final Duration _animationDuration = const Duration(milliseconds: 300);
   final Tween<double> _tween = Tween<double>(begin: 1.0, end: 0.95);
+
   @override
   void initState() {
     _controller = AnimationController(
@@ -238,11 +337,15 @@ class SocialIconRow extends StatelessWidget {
   final VoidCallback googleCallback;
   final VoidCallback facebookCallback;
   final VoidCallback twitterCallback;
+  final bool isGoogleSignInLoading;
+
   const SocialIconRow(
       {super.key,
       required this.googleCallback,
       required this.facebookCallback,
-      required this.twitterCallback});
+      required this.twitterCallback,
+      this.isGoogleSignInLoading = false,
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -252,18 +355,20 @@ class SocialIconRow extends StatelessWidget {
             child: SocialIcons(
                 onTap: googleCallback,
                 isGoogleIcon: true,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(AppAssets.kGoogle),
-                    const SizedBox(width: 10),
-                    const Text(
-                      'with Google',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
-                    )
-                  ],
-                ))),
+                child: isGoogleSignInLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(AppAssets.kGoogle),
+                          const SizedBox(width: 10),
+                          const Text(
+                            'with Google',
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w300),
+                          )
+                        ],
+                      ))),
       ],
     );
   }

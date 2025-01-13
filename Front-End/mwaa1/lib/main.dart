@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       home: StartPage(),
       initialRoute: '/',
       routes: {
-        '/welcome_screen': (context) => WelcomeScreen(),
+        '/welcome_screen': (context) => StartPage(),
       },
       theme: ThemeData(
           scaffoldBackgroundColor: Colors.orange,

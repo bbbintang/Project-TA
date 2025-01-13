@@ -1,22 +1,12 @@
-import 'dart:ui';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mwaa1/Screen/1_Welcome%20Page/signin_page.dart';
+import 'package:mwaa1/Screen/2_Registrasi%20Page/regis_screen.dart';
 import 'package:simple_animations/animation_builder/play_animation_builder.dart';
 import 'package:simple_animations/movie_tween/movie_tween.dart';
-
-class AppAssets {
-  static String kAppLogo = 'assets/LOGOaja.png';
-  static String kGoogle = 'assets/google.png';
-}
-
-class AppColors {
-  static const Color kPrimary = Colors.orange;
-  static const Color kSecondary = Color(0xFF3F2D20);
-  static const Color kBackground = Color(0xFFFFF5E0);
-  static const Color kOrange = Colors.orange;
-  static const Color kLine = Color(0xFFE6DCCD);
-}
+import 'package:flutter/cupertino.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -32,6 +22,100 @@ class _SignupPageState extends State<SignupPage> {
   final _passwordController = TextEditingController();
   bool isEmailCorrect = false;
   bool isNameCorrect = false;
+
+  // Added Google Sign In functionality
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _isGoogleSignInLoading = false;
+
+  // Implement Google Sign In method
+  Future<void> _signInWithGoogle() async {
+    if (_isGoogleSignInLoading) return;
+    setState(() {
+      _isGoogleSignInLoading = true;
+    });
+
+    try {
+      // Clear existing sessions
+      await _googleSignIn.signOut();
+      await _auth.signOut();
+
+      // Start Google Sign In flow
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        throw FirebaseAuthException(
+          code: 'sign_in_canceled',
+          message: 'Sign in was canceled by user.',
+        );
+      }
+
+      // Get authentication details
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase
+      final UserCredential userCredential = await _auth.signInWithCredential(credential);
+      final User? user = userCredential.user;
+
+      if (user != null && mounted) {
+        // Navigate to registration screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RegisScreen(
+              displayName: user.displayName ?? "User",
+              email: user.email ?? "",
+              photoUrl: user.photoURL ?? "",
+            ),
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      _showErrorDialog(context, 'Login gagal: ${e.message}');
+    } catch (e) {
+      _showErrorDialog(context, 'Terjadi kesalahan: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isGoogleSignInLoading = false;
+        });
+      }
+    }
+  }
+
+  // Error dialog implementation
+  void _showErrorDialog(BuildContext context, String message) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: const Text(
+          'Error',
+          style: TextStyle(
+            fontFamily: "Inter",
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          message,
+          style: const TextStyle(
+            fontFamily: "Inter",
+            fontWeight: FontWeight.normal,
+          ),
+        ),
+        actions: <CupertinoDialogAction>[
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,12 +149,11 @@ class _SignupPageState extends State<SignupPage> {
                   facebookCallback: () {
                     debugPrint('Facebook');
                   },
-                  googleCallback: () {
-                    debugPrint('Google');
-                  },
+                  googleCallback: _signInWithGoogle,
                   twitterCallback: () {
                     debugPrint('Twitter');
                   },
+                  isGoogleSignInLoading: _isGoogleSignInLoading,
                 ),
                 const SizedBox(height: 30),
                 AuthField(
@@ -117,7 +200,7 @@ class _SignupPageState extends State<SignupPage> {
                       return 'Please enter your email';
                     } else if (value.length < 6) {
                       return 'Password should be at least 6 characters';
-                    } else if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*d).+$')
+                    } else if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$')
                         .hasMatch(value)) {
                       return 'Password should contain at least one uppercase letter, one lowercase letter, and one digit';
                     }
@@ -177,12 +260,13 @@ class _SignupPageState extends State<SignupPage> {
       return false;
     } else {
       final emailRegex = RegExp(
-        r'^[w-]+(.[w-]+)*@([w-]+.)+[a-zA-Z]{2,7}$',
+        r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$',
       );
       return emailRegex.hasMatch(value);
     }
   }
 }
+
 
 class SocialIcons extends StatefulWidget {
   final VoidCallback onTap;
@@ -264,11 +348,15 @@ class SocialIconRow extends StatelessWidget {
   final VoidCallback googleCallback;
   final VoidCallback facebookCallback;
   final VoidCallback twitterCallback;
+  final bool isGoogleSignInLoading;
+
   const SocialIconRow(
       {super.key,
       required this.googleCallback,
       required this.facebookCallback,
-      required this.twitterCallback});
+      required this.twitterCallback,
+      this.isGoogleSignInLoading = false,
+      });
 
   @override
   Widget build(BuildContext context) {
