@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:mwaa1/Screen/6_Profile%20Page/Menu/AutoFeeder.dart';
 import 'package:mwaa1/Screen/6_Profile%20Page/Menu/aboutus_page.dart';
 import 'package:mwaa1/Screen/6_Profile%20Page/Menu/variasi_page.dart';
 import 'package:mwaa1/widget/theme.dart';
@@ -45,7 +44,14 @@ class _ProfileMenuState extends State<ProfileMenu> {
   );
   }
 
-  void _toggleAerator(bool value) {
+  Future<void> _toggleAerator(bool value) async {
+    String message = value
+        ? "Apakah Anda yakin untuk menyalakan aerator?"
+        : "Apakah Anda yakin untuk mematikan aerator?";
+
+    bool? confirm = await _showConfirmationDialog(message);
+
+    if (confirm == true) {
     print('Attempting to toggle aerator to: $value'); // Debug print
     // Update the value in Firebase
     _database.child('aerator').set(value).then((_) {
@@ -53,6 +59,13 @@ class _ProfileMenuState extends State<ProfileMenu> {
       setState(() {
         statusSwitch = value;
       });
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(value
+                ? 'Aerator berhasil dinyalakan.'
+                : 'Aerator berhasil dimatikan.'),
+          ),
+        );
     }).catchError((error) {
       // Handle any errors
       print('Error updating aerator: $error'); // Debug print
@@ -60,6 +73,38 @@ class _ProfileMenuState extends State<ProfileMenu> {
         SnackBar(content: Text('Error updating aerator: $error')),
       );
     });
+  }
+  }
+
+  Future<bool?> _showConfirmationDialog(String message) async {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: false, // Dialog tidak bisa ditutup dengan klik di luar
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Konfirmasi"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false); // Batal
+              },
+              style: TextButton.styleFrom(
+              foregroundColor: const Color.fromARGB(255, 12, 146, 255),),
+              child: Text("Batal"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true); // Konfirmasi
+              },
+              style: TextButton.styleFrom(
+              foregroundColor: const Color.fromARGB(255, 12, 146, 255),),
+              child: Text("Ya"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -116,6 +161,8 @@ class _ProfileMenuState extends State<ProfileMenu> {
           trailing: Switch(
             value: statusSwitch,
             onChanged: _toggleAerator,
+            activeColor: Colors.white, // Warna tombol bulat saat ON
+            activeTrackColor: const Color.fromARGB(255, 12, 146, 255), // Warna track saat ON
           ),
         ),
         Padding(

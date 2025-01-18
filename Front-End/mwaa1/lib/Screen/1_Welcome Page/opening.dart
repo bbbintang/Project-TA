@@ -34,7 +34,6 @@ class _OpeningState extends State<Opening> {
         statusBarBrightness: Brightness.dark,
         statusBarIconBrightness: Brightness.dark));
     return Scaffold(
-      backgroundColor: AppColors.kBackground,
       body: SafeArea(
         child: Column(
           children: [

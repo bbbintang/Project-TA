@@ -24,13 +24,28 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _loadUserData() async {
-    final prefs = await SharedPreferences.getInstance();
+  final prefs = await SharedPreferences.getInstance();
+
+  // Cek apakah ada data dari Google
+  String googleUserName = prefs.getString('displayName') ?? '';
+  String googleEmail = prefs.getString('email') ?? '';
+  String googlePhotoUrl = prefs.getString('photoUrl') ?? '';
+
+  // Cek apakah ada data dari SignUp manual
+  if (googleUserName.isEmpty || googleEmail.isEmpty) {
     setState(() {
-      _userName = prefs.getString('displayName') ?? 'Login Yuk';
-      _userEmail = prefs.getString('email') ?? 'mwaa@gmail.com';
+      _userName = prefs.getString('displayName') ?? 'Login Dulu Yuk';
+      _userEmail = prefs.getString('email') ?? 'mwa_system@gmail.com';
       _userPhotoUrl = prefs.getString('photoUrl') ?? '';
     });
+  } else {
+    setState(() {
+      _userName = googleUserName;
+      _userEmail = googleEmail;
+      _userPhotoUrl = googlePhotoUrl;
+    });
   }
+}
 
   Future<void> _showSignOutConfirmation() async {
     return showDialog(

@@ -37,11 +37,7 @@ class MyApp extends StatelessWidget {
         '/welcome_screen': (context) => StartPage(),
       },
       theme: ThemeData(
-          scaffoldBackgroundColor: Colors.orange,
-          elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blueAccent[400],
-          ))),
+          scaffoldBackgroundColor: Colors.orange,),
     );
   }
 }

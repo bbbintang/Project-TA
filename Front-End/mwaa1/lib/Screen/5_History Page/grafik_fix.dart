@@ -2,13 +2,48 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-class GrafikFix extends StatelessWidget {
+class GrafikFix extends StatefulWidget {
+  @override
+  _GrafikFixState createState() => _GrafikFixState();
+}
+class _GrafikFixState extends State<GrafikFix> {
+  String _selectedPeriod = '24 jam terakhir'; // Default pilihan
+  DateTime _periodStartDate = DateTime.now().subtract(Duration(hours: 24));
+
+  @override
+  void initState() {
+    super.initState();
+    _periodStartDate = DateTime.now().subtract(Duration(hours: 24));}
+
+  void _updateStartDate() {
+    final now = DateTime.now();
+    setState(() {
+    switch (_selectedPeriod) {
+      case '24 jam terakhir':
+        _periodStartDate = now.subtract(Duration(hours: 24));
+        break;
+      case '3 hari terakhir':
+        _periodStartDate = now.subtract(Duration(days: 3));
+        break;
+      case '7 hari terakhir':
+        _periodStartDate = now.subtract(Duration(days: 7));
+        break;
+      case '1 bulan terakhir':
+        _periodStartDate = now.subtract(Duration(days: 30));
+        break;
+      default:
+        _periodStartDate = now.subtract(Duration(hours: 24));
+    }
+    });
+    print('Period Start Date Updated: $_periodStartDate');
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<List<List<FlSpot>>>>(
       future: Future.wait([
-        _fetchAllSensorData('pameran1', FirebaseFirestore.instance),
-        _fetchAllSensorData('pameran2', FirebaseFirestore.instance),
+        _fetchAllSensorData('Alat1', FirebaseFirestore.instance),
+        _fetchAllSensorData('Alat2', FirebaseFirestore.instance),
       ]),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -28,6 +63,26 @@ class GrafikFix extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
+                  DropdownButton<String>(
+                    value: _selectedPeriod,
+                    onChanged: (newValue) {
+                      setState(() {
+                        _selectedPeriod = newValue!;
+                        _updateStartDate(); // Update tanggal mulai
+                      });
+                    },
+                    items: <String>['24 jam terakhir',
+                      '3 hari terakhir',
+                      '7 hari terakhir',
+                      '1 bulan terakhir']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 20),
                   _buildMultiLineGraph(
                     'pH',
                     alat1Data[0],
@@ -86,8 +141,6 @@ class GrafikFix extends StatelessWidget {
 
   Future<List<FlSpot>> _fetchSensorData(List<QueryDocumentSnapshot> docs, String sensorType) async {
     List<FlSpot> spots = [];
-    final now = DateTime.now();
-    final twentyFourHoursAgo = now.subtract(const Duration(hours: 24)); // Data dalam 24 jam terakhir
 
     for (var doc in docs) {
       final data = doc.data() as Map<String, dynamic>;
@@ -95,8 +148,7 @@ class GrafikFix extends StatelessWidget {
       final value = data[sensorType]?.toDouble();
 
       if (timestamp != null &&
-          value != null &&
-          timestamp.isAfter(twentyFourHoursAgo)) {
+    value != null && timestamp.isAfter(_periodStartDate)) {
         // Gunakan jam (format 24 jam) sebagai X
         final xValue = timestamp.hour.toDouble() + (timestamp.minute / 60);
         spots.add(FlSpot(xValue, value));
@@ -115,6 +167,17 @@ class GrafikFix extends StatelessWidget {
     String unit,
   ) {
     double maxY = _getMaxYForSensor(title);
+    double maxX = 24; // X-axis 24 jam untuk interval harian
+    double minX = 0;
+
+    // Sesuaikan batas X untuk rentang waktu yang lebih panjang
+    if (_selectedPeriod == '3 hari terakhir') {
+      maxX = 72; // 72 jam untuk 3 hari
+    } else if (_selectedPeriod == '7 hari terakhir') {
+      maxX = 168; // 168 jam untuk 7 hari
+    } else if (_selectedPeriod == '1 bulan terakhir') {
+      maxX = 720; // 720 jam untuk 1 bulan (estimasi)
+    }
 
     return AspectRatio(
       aspectRatio: 1.5,
@@ -133,8 +196,8 @@ class GrafikFix extends StatelessWidget {
             Expanded(
               child: LineChart(
                 LineChartData(
-                  minX: 0, // Mulai dari jam 00:00
-                  maxX: 24, // Sampai jam 24:00
+                  minX: minX, // Mulai dari jam 00:00
+                  maxX: maxX, // Sampai jam 24:00
                   minY: 0,
                   maxY: maxY,
                   
@@ -150,18 +213,14 @@ class GrafikFix extends StatelessWidget {
                       sideTitles: SideTitles(
                         showTitles: true,
                         reservedSize: 22,
-                        interval: 6, // Interval setiap 6 jam
+                        interval: maxX/6, // Interval setiap 6 jam
                         getTitlesWidget: (value, meta) {
                           final hour = value.toInt();
-                          if (hour % 6 == 0) { // Hanya menampilkan label setiap 6 jam
-                            return Text(
+                          return Text(
                               '$hour:00',
                               style: const TextStyle(fontSize: 10),
                             );
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                        },
+                          },
                       ),
                     ),
                     leftTitles: AxisTitles(
@@ -199,6 +258,7 @@ class GrafikFix extends StatelessWidget {
                       belowBarData: BarAreaData(show: false),
                     ),
                   ],
+                  
                 ),
               ),
             ),
@@ -215,7 +275,7 @@ class GrafikFix extends StatelessWidget {
       case 'TDS':
         return 900.0;
       case 'DO':
-        return 3000.0;
+        return 5000.0;
       case 'temperature':
         return 50.0;
       default:

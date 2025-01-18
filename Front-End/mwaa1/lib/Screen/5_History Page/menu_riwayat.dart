@@ -1,13 +1,137 @@
 import 'package:flutter/material.dart';
+import 'package:mwaa1/Screen/3_Home%20Page/home_page.dart';
 import 'package:mwaa1/Screen/5_History%20Page/grafik_page.dart';
 import 'package:mwaa1/Screen/5_History%20Page/history_page.dart';
 import 'package:mwaa1/Screen/5_History%20Page/tab_item.dart';
+import 'package:mwaa1/Screen/6_Profile%20Page/profile_page.dart';
+import 'package:mwaa1/Screen/control_page.dart';
 
-class MenuRiwayat extends StatelessWidget {
+class MenuRiwayat extends StatefulWidget {
   const MenuRiwayat({super.key});
 
   @override
+  State<MenuRiwayat> createState() => _MenuRiwayatState();
+}
+
+class _MenuRiwayatState extends State<MenuRiwayat> {
+  bool _isAuthorized = false; // Status validasi kode unik
+  final TextEditingController _kodeUnikController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showKodeUnikDialog(); // Tampilkan dialog validasi saat halaman dimulai
+    });
+  }
+
+  Future<void> _showKodeUnikDialog() async {
+  const String validKodeUnik = "12345"; // Kode unik yang valid
+
+  await showDialog(
+    context: context,
+    barrierDismissible: false, // Dialog tidak bisa ditutup dengan klik di luar
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text("Masukkan Kode Unik"),
+        content: TextField(
+          controller: _kodeUnikController,
+          decoration: InputDecoration(hintText: "Kode Unik"),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Tutup dialog
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfilePage()// Arahkan ke homepage
+                ),
+              );
+              },
+              style: TextButton.styleFrom(
+              foregroundColor: const Color.fromARGB(255, 12, 146, 255),),
+            child: Text("Batal"),
+          ),
+          TextButton(
+            onPressed: () {
+              if (_kodeUnikController.text == validKodeUnik) {
+                setState(() {
+                  _isAuthorized = true; // Jika kode valid, izinkan akses
+                });
+                Navigator.of(context).pop(); // Tutup dialog
+                  _showSuccessDialog(); // Tampilkan dialog sukses
+                } else {
+                  _showErrorDialog(); // Tampilkan dialog error
+                }
+              },
+              style: TextButton.styleFrom(
+              foregroundColor: const Color.fromARGB(255, 12, 146, 255),),
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+            Future<void> _showSuccessDialog() async {
+            await showDialog(
+              context: context,
+              barrierDismissible: false, // Dialog tidak bisa ditutup dengan klik di luar
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("Kode Unik Valid"),
+                  content: Text("Kode unik yang anda masukan valid, anda dapat melihat riwayat dan grafik dari pemantauan tambak mu!"),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Tutup dialog sukses
+                      },
+                      style: TextButton.styleFrom(
+              foregroundColor: const Color.fromARGB(255, 12, 146, 255),),
+                      child: Text("OK"),
+                    ),
+                  ],
+                );
+              },
+            );
+          }
+
+  Future<void> _showErrorDialog() async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false, // Dialog tidak bisa ditutup dengan klik di luar
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Kode Unik Salah"),
+          content: Text(
+              "Kode unik yang anda masukkan salah. Silahkan hubungi pengembang aplikasi untuk mendapatkan kode unik."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Tutup dialog error
+              },
+              style: TextButton.styleFrom(
+              foregroundColor: const Color.fromARGB(255, 12, 146, 255),),
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (!_isAuthorized) {
+      // Tampilkan indikator loading sementara validasi belum selesai
+      return Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+
     return DefaultTabController(
         length: 2,
         child: Scaffold(

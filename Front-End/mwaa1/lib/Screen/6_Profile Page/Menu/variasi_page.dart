@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mwaa1/Screen/3_Home%20Page/home_page.dart';
 import 'package:mwaa1/Screen/2_Registrasi%20Page/regis_screen.dart';
 import 'package:mwaa1/Screen/control_page.dart';
+import 'package:mwaa1/Screen/6_Profile%20Page/profile_page.dart';
 import 'package:mwaa1/widget/theme.dart';
 
 class VariasiPage extends StatefulWidget {
@@ -15,10 +16,153 @@ class _VariasiPageState extends State<VariasiPage> {
   String? selectedValue;
   String? pilihanValue;
   var isChecked = false;
-  bool _isObscure = true;
+  bool _obscureText = true;
+  bool _isAuthorized = false; // Status validasi kode unik
+  final TextEditingController _kodeUnikController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showKodeUnikDialog(); // Tampilkan dialog validasi saat halaman dimulai
+    });
+  }
+
+  Future<void> _showKodeUnikDialog() async {
+    const String validKodeUnik = "12345"; // Kode unik yang valid
+
+    await showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Dialog tidak bisa ditutup dengan klik di luar
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Masukkan Kode Unik"),
+          content: StatefulBuilder(builder: (BuildContext context, setState) {
+            return Column(
+              children: [
+                TextField(
+                  controller: _kodeUnikController,
+                  obscureText: _obscureText,
+                  decoration: InputDecoration(
+                    hintText: "Kode Unik",
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureText ? Icons.visibility_off : Icons.visibility,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureText =
+                              !_obscureText; // Toggle antara menyembunyikan dan menampilkan password
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Tutup dialog
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ProfilePage(), // Navigasi ke ProfilePage
+                  ),
+                );
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: const Color.fromARGB(255, 12, 146, 255),
+              ),
+              child: Text("Batal"),
+            ),
+            TextButton(
+              onPressed: () {
+                if (_kodeUnikController.text == validKodeUnik) {
+                  setState(() {
+                    _isAuthorized = true; // Jika kode valid, izinkan akses
+                  });
+                  Navigator.of(context).pop(); // Tutup dialog
+                  _showSuccessDialog(); // Tampilkan dialog sukses
+                } else {
+                  _showErrorDialog(); // Tampilkan dialog error
+                }
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: const Color.fromARGB(255, 12, 146, 255),
+              ),
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showSuccessDialog() async {
+    await showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Dialog tidak bisa ditutup dengan klik di luar
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Kode Unik Valid"),
+          content: Text(
+              "Kode unik yang anda masukan valid, silahkan ubah variasi budidaya mu!"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Tutup dialog sukses
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: const Color.fromARGB(255, 12, 146, 255),
+              ),
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showErrorDialog() async {
+    await showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Dialog tidak bisa ditutup dengan klik di luar
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Kode Unik Salah"),
+          content: Text(
+              "Kode unik yang anda masukkan salah. Silahkan hubungi pengembang aplikasi untuk mendapatkan kode unik."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Tutup dialog error
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: const Color.fromARGB(255, 12, 146, 255),
+              ),
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (!_isAuthorized) {
+      // Tampilkan indikator loading sementara validasi belum selesai
+      return Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(

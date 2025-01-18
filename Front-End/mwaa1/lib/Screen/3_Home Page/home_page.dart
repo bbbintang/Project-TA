@@ -150,79 +150,80 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Widget buildParameterWidget(
-    AsyncSnapshot<DatabaseEvent> snapshot, String imagePath, String title) {
-  // Jika terjadi error pada snapshot
-  if (snapshot.hasError) {
-    print("Error pada $title: ${snapshot.error}");
-    return CustomParameter(
-      imagePath: imagePath,
-      title: title,
-      number: 0.0,
-      valueColor: Colors.white,
-    );
-  }
-
-  // Jika masih menunggu data dari Firebase
-  if (snapshot.connectionState == ConnectionState.waiting) {
-    return const Center(child: CircularProgressIndicator());
-  }
-
-  // Jika data snapshot kosong atau null
-  final snapshotValue = snapshot.data?.snapshot.value;
-  if (snapshotValue == null) {
-    print("Data kosong untuk $title");
-    return CustomParameter(
-      imagePath: imagePath,
-      title: title,
-      number: 0.0,
-      valueColor: Colors.white,
-    );
-  }
-
-  // Parsing nilai data dari Firebase
-  try {
-    final value = (snapshotValue as num).toDouble();
-    print("Data untuk $title: $value");
-
-    // Tentukan warna berdasarkan nilai (contoh untuk suhu air)
-    Color valueColor;
-    if (title == "Suhu Air") {
-      valueColor = (value < 27 || value > 32)
-          ? const Color.fromARGB(255, 255, 17, 0) // Warna merah jika tidak normal
-          : Colors.white; // Warna putih jika normal
-    } else if (title == "PH Air") {
-      valueColor = (value < 7.5 || value > 8.5)
-          ? const Color.fromARGB(255, 255, 17, 0)
-          : Colors.white;
-    } else if (title == "Oksigen") {
-      valueColor = (value < 3.5)
-          ? const Color.fromARGB(255, 255, 17, 0)
-          : Colors.white;
-    } else if (title == "TDS") {
-      valueColor = (value > 500.0)
-          ? const Color.fromARGB(255, 255, 17, 0)
-          : Colors.white;
-    } else {
-      valueColor = Colors.white; // Warna default jika tidak ada aturan
+      AsyncSnapshot<DatabaseEvent> snapshot, String imagePath, String title) {
+    // Jika terjadi error pada snapshot
+    if (snapshot.hasError) {
+      print("Error pada $title: ${snapshot.error}");
+      return CustomParameter(
+        imagePath: imagePath,
+        title: title,
+        number: 0.0,
+        valueColor: Colors.white,
+      );
     }
 
-    return CustomParameter(
-      imagePath: imagePath,
-      title: title,
-      number: value,
-      valueColor: valueColor,
-    );
-  } catch (e) {
-    // Jika terjadi kesalahan saat parsing data
-    print("Error parsing data untuk $title: $e");
-    return CustomParameter(
-      imagePath: imagePath,
-      title: title,
-      number: 0.0,
-      valueColor: Colors.white,
-    );
+    // Jika masih menunggu data dari Firebase
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    // Jika data snapshot kosong atau null
+    final snapshotValue = snapshot.data?.snapshot.value;
+    if (snapshotValue == null) {
+      print("Data kosong untuk $title");
+      return CustomParameter(
+        imagePath: imagePath,
+        title: title,
+        number: 0.0,
+        valueColor: Colors.white,
+      );
+    }
+
+    // Parsing nilai data dari Firebase
+    try {
+      final value = (snapshotValue as num).toDouble();
+      print("Data untuk $title: $value");
+
+      // Tentukan warna berdasarkan nilai (contoh untuk suhu air)
+      Color valueColor;
+      if (title == "Suhu Air") {
+        valueColor = (value < 27 || value > 32)
+            ? const Color.fromARGB(
+                255, 255, 17, 0) // Warna merah jika tidak normal
+            : Colors.white; // Warna putih jika normal
+      } else if (title == "PH Air") {
+        valueColor = (value < 7.5 || value > 8.5)
+            ? const Color.fromARGB(255, 255, 17, 0)
+            : Colors.white;
+      } else if (title == "Oksigen") {
+        valueColor = (value < 3.5)
+            ? const Color.fromARGB(255, 255, 17, 0)
+            : Colors.white;
+      } else if (title == "TDS") {
+        valueColor = (value > 500.0)
+            ? const Color.fromARGB(255, 255, 17, 0)
+            : Colors.white;
+      } else {
+        valueColor = Colors.white; // Warna default jika tidak ada aturan
+      }
+
+      return CustomParameter(
+        imagePath: imagePath,
+        title: title,
+        number: value,
+        valueColor: valueColor,
+      );
+    } catch (e) {
+      // Jika terjadi kesalahan saat parsing data
+      print("Error parsing data untuk $title: $e");
+      return CustomParameter(
+        imagePath: imagePath,
+        title: title,
+        number: 0.0,
+        valueColor: Colors.white,
+      );
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -306,12 +307,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       alignment: Alignment.centerRight,
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.push(
+                          Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  ProfilePage(), // Navigasi ke ProfilePage
+                              builder: (context) => ProfilePage(),
                             ),
+                            (Route<dynamic> route) =>
+                                true, // Hapus semua halaman sebelumnya
                           );
                         },
                         child: userData['photoUrl']?.isNotEmpty == true
