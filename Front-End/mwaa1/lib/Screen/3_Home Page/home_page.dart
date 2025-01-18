@@ -8,7 +8,6 @@ import 'package:mwaa1/Screen/3_Home%20Page/custom_category2.dart';
 import 'package:mwaa1/Screen/3_Home%20Page/custom_parameter.dart';
 import 'package:mwaa1/Screen/4_Location%20Page/Location_page.dart';
 import 'package:mwaa1/Screen/6_Profile%20Page/profile_page.dart';
-import 'package:mwaa1/Services/notification_service.dart';
 import 'package:mwaa1/widget/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -99,7 +98,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  NotificationServices notificationServices = NotificationServices.instance;
 
   Map<String, String> userData = {};
   final AuthService _authService = AuthService();
@@ -110,11 +108,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-
-    notificationServices.initialize();
-    notificationServices.getDeviceToken().then((value) {
-      print('Device Token: $value');
-    });
 
     _tabController =
         TabController(length: 2, vsync: this); // Mengatur jumlah tab
