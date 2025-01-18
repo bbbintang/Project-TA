@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mwaa1/Screen/6_Profile%20Page/profile_menu.dart';
+import 'package:mwaa1/Screen/start_page.dart';
+import 'package:mwaa1/Services/notification_service.dart';
 import 'package:mwaa1/widget/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -51,7 +54,12 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                NotificationController.stopOnLogout();
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => StartPage()));
+              },
               child: Text(
                 'Sign Out',
                 style: outfit17normal.copyWith(color: Colors.red),
@@ -72,7 +80,7 @@ class _ProfilePageState extends State<ProfilePage> {
       // Sign out from Google
       await _googleSignIn.signOut();
       print('logout berhasil');
-      
+
       // Navigate to sign in page and remove all previous routes
       if (!mounted) return;
       Navigator.of(context).pushNamedAndRemoveUntil(
