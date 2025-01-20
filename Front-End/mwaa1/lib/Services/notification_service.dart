@@ -1,8 +1,7 @@
-import 'dart:developer';
-import 'dart:isolate';
-import 'dart:math';
-import 'dart:ui';
 import 'dart:async';
+import 'dart:developer';
+import 'dart:math';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:awesome_notifications_fcm/awesome_notifications_fcm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -63,41 +62,66 @@ class NotificationController {
     _sensorRef = FirebaseDatabase.instance.ref();
 
     // Memantau perubahan data di Firebase Realtime Database
-    _sensorRef.onValue.listen((event) {
+    _sensorRef.onValue.listen((event) async {
       var data = event.snapshot.value;
 
-      // Periksa status login sebelum memproses data
-      if (!isUserLoggedIn()) {
-        print('Pengguna belum login, data tidak diproses.');
+      // Tunggu status login diperbarui
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        print('Notifikasi: Pengguna belum login, data tidak diproses.');
         return;
       }
 
       if (data != null && data is Map<dynamic, dynamic>) {
+        print('Data Firebase diterima: $data');
         checkSensorData(data);
+      } else {
+        print('Data Firebase tidak valid: $data');
       }
     });
 
-    // Mulai timer untuk menjalankan looping setiap 5 menit
-    startScheduledTask();
+    // Pantau status login secara real-time
+    monitorAuthState();
+  }
+
+  static void monitorAuthState() {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user != null) {
+        print('Pengguna login: ${user.email}');
+        startScheduledTask(); // Mulai ulang tugas terjadwal setelah login
+      } else {
+        print('Pengguna logout');
+        stopScheduledTask(); // Hentikan semua tugas jika pengguna logout
+      }
+    });
   }
 
   static void startScheduledTask() {
-    print("Starting scheduled task...");
+    print("Starting scheduled task at ${DateTime.now()}");
     _timer?.cancel(); // Batalkan timer sebelumnya jika ada
     _timer = Timer.periodic(Duration(minutes: 5), (timer) async {
-      print("Timer triggered...");
-      await _sensorRef.once().then((event) {
+      print("Timer triggered at ${DateTime.now()}");
+
+      // Periksa status login
+      if (!isUserLoggedIn()) {
+        print('Timer: Pengguna belum login.');
+        return;
+      }
+
+      try {
+        // Ambil data dari Firebase
+        var event = await _sensorRef.once();
         var data = event.snapshot.value;
+
         if (data != null && data is Map<dynamic, dynamic>) {
-          checkSensorData({
-            'DO': Random().nextDouble() * 10,
-            'TDS': Random().nextDouble() * 1000,
-            'Temperature': Random().nextDouble() * 40,
-            'pH': Random().nextDouble() * 14,
-            'aerator': Random().nextBool(),
-          });
+          print('Timer: Data Firebase diproses: $data');
+          await checkSensorData(data);
+        } else {
+          print('Timer: Data Firebase tidak valid.');
         }
-      });
+      } catch (e) {
+        print('Timer: Error saat mengambil data: $e');
+      }
     });
   }
 
@@ -172,98 +196,10 @@ class NotificationController {
   }
 
   static void stopScheduledTask() {
-    // Metode untuk menghentikan timer
+    print('Stopping scheduled task at ${DateTime.now()}');
     _timer?.cancel();
   }
 
-  static void stopOnLogout() {
-    stopScheduledTask();
-    print('Pengguna logout, semua notifikasi dihentikan.');
-  }
-
-  ///  *********************************************
-  ///     NOTIFICATION EVENTS LISTENER
-  ///  *********************************************
-  ///  Notifications events are only delivered after call this method
-  static Future<void> startListeningNotificationEvents() async {
-    AwesomeNotifications().setListeners(
-        onActionReceivedMethod: onActionReceivedMethod,
-        onNotificationDisplayedMethod: onNotificationDisplayedMethod,
-        onNotificationCreatedMethod: onNotificationCreatedMethod,
-        onDismissActionReceivedMethod: onDismissActionReceivedMethod);
-  }
-
-  ///  *********************************************
-  ///     NOTIFICATION EVENTS
-  ///  *********************************************
-  ///
-  @pragma('vm:entry-point')
-  static Future<void> onActionReceivedMethod(
-      ReceivedAction receivedAction) async {
-    String type = receivedAction.payload!['type'] ?? '';
-    String id = receivedAction.payload!['id'] ?? '';
-    print(receivedAction);
-  }
-
-  @pragma("vm:entry-point")
-  static Future<void> mySilentDataHandle(FcmSilentData silentData) async {
-    int id = Random().nextInt(1000);
-
-    inspect(silentData);
-
-    AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: id,
-        channelKey: 'basic_channel',
-        title: silentData.data!['title'],
-        body: silentData.data!['message'],
-        bigPicture: silentData.data!['image'],
-        notificationLayout: silentData.data!['image'] == null
-            ? NotificationLayout.BigText
-            : NotificationLayout.BigPicture,
-        fullScreenIntent: true,
-        wakeUpScreen: true,
-        locked: false,
-        autoDismissible: true,
-        actionType: ActionType.Default,
-      ),
-    );
-    inspect(silentData);
-    if (silentData.createdLifeCycle == NotificationLifeCycle.Foreground) {
-      // String? token = PreferenceService.getToken();
-      // if (token != null) {
-      //   Get.find<NotificatioController>().onGetNotif();
-      // }
-    }
-  }
-
-  @pragma("vm:entry-point")
-  static Future<void> myFcmTokenHandle(String token) async {
-    print('FCM Token:"$token"');
-  }
-
-  @pragma('vm:entry-point')
-  static Future<void> onNotificationDisplayedMethod(
-      ReceivedNotification receivedNotification) async {
-    print('NOTIFIKASI MUNCUL');
-  }
-
-  @pragma('vm:entry-point')
-  static Future<void> onNotificationCreatedMethod(
-      ReceivedNotification receivedNotification) async {
-    print('NOTIFIKASI DIBUAT');
-  }
-
-  @pragma('vm:entry-point')
-  static Future<void> onDismissActionReceivedMethod(
-      ReceivedNotification receivedNotification) async {
-    print('NOTIFIKASI DITUTUP');
-  }
-
-  ///  *********************************************
-  ///     REQUESTING NOTIFICATION PERMISSIONS
-  ///  *********************************************
-  ///
   static Future<bool> displayNotificationRationale() async {
     bool userAuthorized = false;
     BuildContext context = MyApp.navigatorKey.currentContext!;
@@ -275,20 +211,9 @@ class NotificationController {
                 style: Theme.of(context).textTheme.titleLarge),
             content: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [
-                // Row(
-                //   children: [
-                //     Expanded(
-                //       child: Image.asset(
-                //         'assets/images/animated-bell.gif',
-                //         height: MediaQuery.of(context).size.height * 0.3,
-                //         fit: BoxFit.fitWidth,
-                //       ),
-                //     ),
-                //   ],
-                // ),
-                const SizedBox(height: 20),
-                const Text(
+              children: const [
+                SizedBox(height: 20),
+                Text(
                     'Allow Awesome Notifications to send you beautiful notifications!'),
               ],
             ),
@@ -321,5 +246,42 @@ class NotificationController {
         });
     return userAuthorized &&
         await AwesomeNotifications().requestPermissionToSendNotifications();
+  }
+
+  @pragma("vm:entry-point")
+  static Future<void> myFcmTokenHandle(String token) async {
+    print('FCM Token:"$token"');
+  }
+
+  @pragma("vm:entry-point")
+  static Future<void> mySilentDataHandle(FcmSilentData silentData) async {
+    int id = Random().nextInt(1000);
+
+    inspect(silentData);
+
+    AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: id,
+        channelKey: 'basic_channel',
+        title: silentData.data!['title'],
+        body: silentData.data!['message'],
+        bigPicture: silentData.data!['image'],
+        notificationLayout: silentData.data!['image'] == null
+            ? NotificationLayout.BigText
+            : NotificationLayout.BigPicture,
+        fullScreenIntent: true,
+        wakeUpScreen: true,
+        locked: false,
+        autoDismissible: true,
+        actionType: ActionType.Default,
+      ),
+    );
+    inspect(silentData);
+    if (silentData.createdLifeCycle == NotificationLifeCycle.Foreground) {
+      // String? token = PreferenceService.getToken();
+      // if (token != null) {
+      //   Get.find<NotificatioController>().onGetNotif();
+      // }
+    }
   }
 }

@@ -71,7 +71,6 @@ class _ProfilePageState extends State<ProfilePage> {
             TextButton(
               onPressed: () async {
                 await FirebaseAuth.instance.signOut();
-                NotificationController.stopOnLogout();
                 Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (context) => StartPage()));
               },

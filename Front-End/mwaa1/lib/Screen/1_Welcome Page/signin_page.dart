@@ -25,10 +25,10 @@ class SigninPage extends StatefulWidget {
   const SigninPage({Key? key}) : super(key: key);
 
   @override
-  State<SigninPage> createState() => _FoochiSignInViewState();
+  State<SigninPage> createState() => _SignInViewState();
 }
 
-class _FoochiSignInViewState extends State<SigninPage> {
+class _SignInViewState extends State<SigninPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
