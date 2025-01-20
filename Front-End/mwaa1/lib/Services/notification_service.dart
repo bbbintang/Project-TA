@@ -84,7 +84,7 @@ class NotificationController {
   static void startScheduledTask() {
     print("Starting scheduled task...");
     _timer?.cancel(); // Batalkan timer sebelumnya jika ada
-    _timer = Timer.periodic(Duration(minutes: 5), (timer) async {
+    _timer = Timer.periodic(Duration(minutes: 1), (timer) async {
       print("Timer triggered...");
       await _sensorRef.once().then((event) {
         var data = event.snapshot.value;
