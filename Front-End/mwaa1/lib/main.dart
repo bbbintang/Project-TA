@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mwaa1/Authentications/firebase_options.dart';
+import 'package:mwaa1/Screen/control_page.dart';
 import 'package:mwaa1/Screen/start_page.dart';
 import 'package:mwaa1/Services/notification_service.dart';
 
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/welcome_screen': (context) => StartPage(),
+        '/control_page': (context) => ControlPage(Suhu: '', pH: '', DO: '', TDS: '', Udang: '', Tambak: '',),
       },
       theme: ThemeData(
           scaffoldBackgroundColor: Colors.orange,),

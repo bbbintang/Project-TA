@@ -16,7 +16,7 @@ class _VariasiPageState extends State<VariasiPage> {
   String? selectedValue;
   String? pilihanValue;
   var isChecked = false;
-  bool _obscureText = true;
+  bool _isObscure = true;
   bool _isAuthorized = false; // Status validasi kode unik
   final TextEditingController _kodeUnikController = TextEditingController();
 
@@ -38,42 +38,51 @@ class _VariasiPageState extends State<VariasiPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Masukkan Kode Unik"),
-          content: StatefulBuilder(builder: (BuildContext context, setState) {
-            return Column(
-              children: [
-                TextField(
-                  controller: _kodeUnikController,
-                  obscureText: _obscureText,
-                  decoration: InputDecoration(
-                    hintText: "Kode Unik",
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureText ? Icons.visibility_off : Icons.visibility,
-                        color: Colors.grey,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureText =
-                              !_obscureText; // Toggle antara menyembunyikan dan menampilkan password
-                        });
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            );
-          }),
+          content: TextField(
+            controller: _kodeUnikController,
+            decoration: InputDecoration(hintText: "Kode Unik"),
+          ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Tutup dialog
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        ProfilePage(), // Navigasi ke ProfilePage
-                  ),
-                );
+                if (selectedValue != null && pilihanValue != null) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ControlPage(
+                        Suhu: '',
+                        pH: '',
+                        DO: '',
+                        TDS: '',
+                        Udang: '',
+                        Tambak: '',
+                      ), // Ganti dengan halaman utama Anda
+                    ),
+                    (Route<dynamic> route) =>
+                        false, // Hapus semua rute sebelumnya
+                  );
+                } else {
+                  // Tampilkan pesan error atau lakukan penanganan lain jika nilai null
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text("Peringatan"),
+                      content: const Text(
+                          "Kembali ke Halaman Utama"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          },
+                          child: const Text("Ok"),
+                        ),
+                      ],
+                      backgroundColor: Colors.grey[350],
+                    ),
+                  );
+                }
               },
               style: TextButton.styleFrom(
                 foregroundColor: const Color.fromARGB(255, 12, 146, 255),

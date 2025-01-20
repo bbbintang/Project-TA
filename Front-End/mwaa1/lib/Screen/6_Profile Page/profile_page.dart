@@ -1,9 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mwaa1/Screen/6_Profile%20Page/profile_menu.dart';
-import 'package:mwaa1/Screen/start_page.dart';
-import 'package:mwaa1/Services/notification_service.dart';
 import 'package:mwaa1/widget/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,28 +24,13 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _loadUserData() async {
-  final prefs = await SharedPreferences.getInstance();
-
-  // Cek apakah ada data dari Google
-  String googleUserName = prefs.getString('displayName') ?? '';
-  String googleEmail = prefs.getString('email') ?? '';
-  String googlePhotoUrl = prefs.getString('photoUrl') ?? '';
-
-  // Cek apakah ada data dari SignUp manual
-  if (googleUserName.isEmpty || googleEmail.isEmpty) {
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _userName = prefs.getString('displayName') ?? 'Login Dulu Yuk';
-      _userEmail = prefs.getString('email') ?? 'mwa_system@gmail.com';
+      _userName = prefs.getString('displayName') ?? 'Login Yuk';
+      _userEmail = prefs.getString('email') ?? 'mwaa@gmail.com';
       _userPhotoUrl = prefs.getString('photoUrl') ?? '';
     });
-  } else {
-    setState(() {
-      _userName = googleUserName;
-      _userEmail = googleEmail;
-      _userPhotoUrl = googlePhotoUrl;
-    });
   }
-}
 
   Future<void> _showSignOutConfirmation() async {
     return showDialog(
@@ -69,11 +51,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             TextButton(
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => StartPage()));
-              },
+              onPressed: () => Navigator.of(context).pop(true),
               child: Text(
                 'Sign Out',
                 style: outfit17normal.copyWith(color: Colors.red),
@@ -94,7 +72,7 @@ class _ProfilePageState extends State<ProfilePage> {
       // Sign out from Google
       await _googleSignIn.signOut();
       print('logout berhasil');
-
+      
       // Navigate to sign in page and remove all previous routes
       if (!mounted) return;
       Navigator.of(context).pushNamedAndRemoveUntil(
