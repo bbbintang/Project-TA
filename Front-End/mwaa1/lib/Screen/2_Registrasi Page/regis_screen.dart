@@ -71,7 +71,7 @@ class _RegisScreenState extends State<RegisScreen> {
               ),
               child: DropdownButton<String?>(
                 value: selectedValue,
-                items: ["Vaname", "Udang Galah", "Udang Windu"]
+                items: ["Udang Vaname", "Udang Galah", "Udang Windu"]
                     .map<DropdownMenuItem<String?>>((e) => DropdownMenuItem(
                           value: e,
                           child: Text(e.toString()),

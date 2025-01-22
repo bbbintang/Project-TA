@@ -41,17 +41,17 @@ class _ControlPageState extends State<ControlPage> {
         T = "Tak ada Nilai",
         D = "Tak ada Nilai";
 
-    if (udang == "Vaname" && tambak == "Tradisional") {
+    if (udang == "Udang Vaname" && tambak == "Tradisional") {
       S = "28-32°C";
       T = "100-250";
       P = "7,5-8,5";
       D = ">3,0";
-    } else if (udang == "Vaname" && tambak == "Intensif") {
+    } else if (udang == "Udang Vaname" && tambak == "Intensif") {
       S = ">27°C";
       T = "100-150";
       P = "7,5-8,5";
       D = ">4 mg/l";
-    } else if (udang == "Vaname" && tambak == "Super Intensif") {
+    } else if (udang == "Udang Vaname" && tambak == "Super Intensif") {
       S = "29-32°C";
       T = "100-150";
       P = "7,5-8,5";

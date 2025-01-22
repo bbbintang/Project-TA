@@ -112,7 +112,13 @@ class _FoochiSignInViewState extends State<SigninPage> {
   }
   // Verify OTP
   Future<void> _verifyOtp() async {
-    if (_otpController.text == otp) {
+    if (_otpController.text.isEmpty) {
+    // Show a snackbar if OTP is empty
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('please enter your OTP')),
+    );
+    return; // Exit the function if OTP is empty
+  } if (_otpController.text == otp) {
       if (DateTime.now().isBefore(otpExpiryTime!)) {
         setState(() {
           isOtpVerified = true;
@@ -358,19 +364,25 @@ class _FoochiSignInViewState extends State<SigninPage> {
                 ),
                 const SizedBox(height: 30),
                 if (isOtpSent && !isOtpVerified) ...[
-                  const Text('Enter OTP sent to your email'),
+                  const Text('please enter the OTP sent to your email'),
                   TextFormField(
                     controller: _otpController,
                     decoration: const InputDecoration(hintText: 'OTP'),
                     validator: (value) =>
-                        value!.isEmpty ? 'Please enter the OTP' : null,
+                        value!.isEmpty ? 'please enter your OTP' : null,
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                      onPressed: _verifyOtp, child: const Text('Verify OTP')),
-                       const SizedBox(height: 10),
+                      onPressed: _verifyOtp, 
+                      style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white, backgroundColor: Colors.orange,),
+                      child: const Text('Verify OTP')),
+                      const SizedBox(height: 10),
                   ElevatedButton(
-                      onPressed: _resendOtp, child: const Text('Kirim Ulang OTP')),
+                      onPressed: _resendOtp, 
+                      style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white, backgroundColor: Colors.orange,),
+                      child: const Text('Kirim Ulang OTP')),
                 ] else ...[
                   Card(
                     elevation: 0,
