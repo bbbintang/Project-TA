@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mwaa1/Screen/control_page.dart';
@@ -32,7 +34,16 @@ class _RegisScreenState extends State<RegisScreen> {
     await prefs.setString('Udang', selectedValue ?? ''); // Jenis udang
     await prefs.setString('Tambak', pilihanValue ?? ''); // Jenis tambak
   }
-
+  Future<void> _saveToFirestore() async {
+  User? user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+      'displayName': widget.displayName,
+      'email': widget.email,
+      'photoUrl': widget.photoUrl,
+    }, SetOptions(merge: true)); // merge agar tidak overwrite jika sudah ada data
+  }
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -163,6 +174,7 @@ class _RegisScreenState extends State<RegisScreen> {
                           pilihanValue != null &&
                           isChecked) {
                         await _savePreferences(); // Simpan data ke SharedPreferences
+                         await _saveToFirestore(); // Simpan ke Firestore
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(

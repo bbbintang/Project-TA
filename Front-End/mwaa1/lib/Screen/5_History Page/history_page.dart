@@ -39,7 +39,7 @@ class _HistoryPageState extends State<HistoryPage> {
   ];
   Stream<List<Map<String, dynamic>>> getCombinedStream() {
     final alat1Stream = FirebaseFirestore.instance
-        .collection('pameran1')
+        .collection('Alat1_FIX')
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) {
@@ -49,7 +49,7 @@ class _HistoryPageState extends State<HistoryPage> {
             }).toList());
 
     final alat2Stream = FirebaseFirestore.instance
-        .collection('pameran2')
+        .collection('Alat2_UJI')
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) {
@@ -62,7 +62,17 @@ class _HistoryPageState extends State<HistoryPage> {
         List<Map<String, dynamic>>, List<Map<String, dynamic>>>(
       alat1Stream,
       alat2Stream,
-      (alat1Data, alat2Data) => [...alat1Data, ...alat2Data],
+    (alat1Data, alat2Data) {
+      final combinedData = [...alat1Data, ...alat2Data];
+      // Urutkan data berdasarkan timestamp, dengan yang terbaru di atas
+      combinedData.sort((a, b) {
+        final timestampA = (a['timestamp'] as Timestamp).toDate();
+        final timestampB = (b['timestamp'] as Timestamp).toDate();
+        return timestampB.compareTo(timestampA); // Urutkan menurun
+      });
+
+      return combinedData;
+    },
     );
   }
 
@@ -208,57 +218,31 @@ class _HistoryPageState extends State<HistoryPage> {
                             ...entry.value.map((data) {
                               final timestamp =
                                   (data['timestamp'] as Timestamp).toDate();
-                              // Menampilkan data dari masing-masing alat
-                              return Column(
+                        return Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  if (data['device'] == 'Alat 1') ...[
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 17,
-                                          top: 10), // Geser sedikit ke kanan
-                                      child: Text(
-                                        "Alat 1",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 10, right: 10),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            data['device'],
+                                            style: TextStyle(fontWeight: FontWeight.bold),
+                                          ),
+                                          CustomHistory(
+                                            nilaiSuhu: data['temperature'].toDouble(),
+                                            nilaiPH: (data['pH']?.toDouble() ?? 0.0),
+                                            nilaiTDS: (data['TDS']?.toDouble() ?? 0.0),
+                                            nilaiDO: (data['DO']?.toDouble() ?? 0.0),
+                                            jamke: DateFormat('HH:mm').format(timestamp),
+                                            tanggalke: DateFormat('dd MMM, yyyy').format(timestamp),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    CustomHistory(
-                                      nilaiSuhu: data['temperature'].toDouble(),
-                                      nilaiPH: (data['pH']?.toDouble() ?? 0.0),
-                                      nilaiTDS:
-                                          (data['TDS']?.toDouble() ?? 0.0),
-                                      nilaiDO: (data['DO']?.toDouble() ?? 0.0),
-                                      jamke:
-                                          DateFormat('HH:mm').format(timestamp),
-                                      tanggalke: DateFormat('dd MMM, yyyy')
-                                          .format(timestamp),
-                                    ),
-                                  ],
-                                  if (data['device'] == 'Alat 2') ...[
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 17,
-                                          top: 10), // Geser sedikit ke kanan
-                                      child: Text(
-                                        "Alat 2",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    CustomHistory(
-                                      nilaiSuhu:
-                                          data['temperature'].toDouble() ,
-                                      nilaiPH: (data['pH']?.toDouble() ?? 0.0),
-                                      nilaiTDS:
-                                          (data['TDS']?.toDouble() ?? 0.0),
-                                      nilaiDO: (data['DO']?.toDouble() ?? 0.0),
-                                      jamke:
-                                          DateFormat('HH:mm').format(timestamp),
-                                      tanggalke: DateFormat('dd MMM, yyyy')
-                                          .format(timestamp),
-                                    ),
-                                  ],
+                                  ),
                                 ],
                               );
                             }).toList(),

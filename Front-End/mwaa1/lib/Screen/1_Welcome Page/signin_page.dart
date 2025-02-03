@@ -128,7 +128,7 @@ class _FoochiSignInViewState extends State<SigninPage> {
           MaterialPageRoute(
               builder: (context) => RegisScreen(displayName: '', photoUrl: '', email: '',)), // Ganti dengan halaman tujuan setelah OTP valid
         );
-      } else {
+        } else {
         _showErrorDialog('OTP telah kedaluwarsa');
       }
     } else {
@@ -143,44 +143,59 @@ class _FoochiSignInViewState extends State<SigninPage> {
       });
 
       try {
+      // Cek apakah OTP sudah dikirim
+      if (!isOtpSent) {
+        String generatedOtp = _generateOtp();
+        await _sendOtpEmail(_emailController.text.trim(), generatedOtp);
+        return; // Jangan lanjut sebelum OTP diverifikasi
+      }
+
+      // Jika OTP sudah diverifikasi, lanjutkan login
+      if (isOtpVerified) {
         final UserCredential userCredential =
             await _auth.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text,
         );
+        final User? user = userCredential.user;
 
-        if (userCredential.user != null) {
-          otp = _generateOtp();
-          await _sendOtpEmail(_emailController.text.trim(), otp!);
-        }
-      } on FirebaseAuthException catch (e) {
-        String message;
-        switch (e.code) {
-          case 'user-not-found':
-            message = 'No user found with this email';
-            break;
-          case 'wrong-password':
-            message = 'Wrong password provided';
-            break;
-          case 'invalid-email':
-            message = 'The email address is invalid';
-            break;
-          case 'user-disabled':
-            message = 'This user account has been disabled';
-            break;
-          default:
-            message = 'An error occurred: ${e.message}';
-        }
-        _showErrorDialog(message);
-      } catch (e) {
-        _showErrorDialog('An unexpected error occurred: $e');
-      } finally {
-        setState(() {
-          isLoading = false;
-        });
+        if (user != null) {
+          // Ambil data user dari Firestore
+          DocumentSnapshot userDoc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+        }}else {
+        _showErrorDialog('Please verify OTP before logging in');
       }
+    } on FirebaseAuthException catch (e) {
+      String message;
+      switch (e.code) {
+        case 'user-not-found':
+          message = 'No user found with this email';
+          break;
+        case 'wrong-password':
+          message = 'Wrong password provided';
+          break;
+        case 'invalid-email':
+          message = 'The email address is invalid';
+          break;
+        case 'user-disabled':
+          message = 'This user account has been disabled';
+          break;
+        default:
+          message = 'An error occurred: ${e.message}';
+      }
+      _showErrorDialog(message);
+    } catch (e) {
+      _showErrorDialog('An unexpected error occurred: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
+}
 
   // Google Sign In
   Future<void> _signInWithGoogle() async {
@@ -367,9 +382,9 @@ class _FoochiSignInViewState extends State<SigninPage> {
                   const Text('please enter the OTP sent to your email'),
                   TextFormField(
                     controller: _otpController,
-                    decoration: const InputDecoration(hintText: 'OTP'),
+                    decoration: const InputDecoration(hintText: 'input OTP'),
                     validator: (value) =>
-                        value!.isEmpty ? 'please enter your OTP' : null,
+                        value!.isEmpty ? 'please enter your email' : null,
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(

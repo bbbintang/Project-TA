@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mwaa1/Screen/1_Welcome%20Page/signin_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -57,6 +58,10 @@ class _SignupPageState extends State<SignupPage> {
         if (user != null) {
           await user.updateDisplayName(_usernameController.text);
 
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('email', _emailController.text);
+          await prefs.setString('displayName', _usernameController.text);
+          await prefs.setString('photoUrl', user.photoURL ?? '');
           // Show success message
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(

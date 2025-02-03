@@ -39,6 +39,7 @@ class _MenuRiwayatState extends State<MenuRiwayat> {
           title: Text("Masukkan Kode Unik"),
           content: TextField(
             controller: _kodeUnikController,
+            obscureText: true,
             decoration: InputDecoration(hintText: "Kode Unik"),
           ),
           actions: [

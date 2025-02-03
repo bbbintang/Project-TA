@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -20,12 +21,36 @@ class AuthService {
     scopes: ['email', 'profile'],
   );
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Singleton instance of GoogleSignIn to be used across the app
   GoogleSignIn get googleSignIn => _googleSignIn;
 
   // Get current user
   GoogleSignInAccount? get currentUser => _googleSignIn.currentUser;
+
+  Future<UserCredential?> signInWithEmailAndPassword(
+    String email, String password) async {
+  try {
+    UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email, password: password);
+
+    User? user = userCredential.user;
+
+    if (user != null) {
+      await _saveUserDataWithDetails(
+        email: user.email!,
+        displayName: user.displayName ?? 'User',
+        photoUrl: user.photoURL,
+      );
+    }
+
+    return userCredential;
+  } catch (e) {
+    print('Error signing in with email & password: $e');
+    return null;
+  }
+}
 
   Future<UserCredential?> signInWithGoogle() async {
     try {
@@ -67,14 +92,13 @@ class AuthService {
     await prefs.clear();
   }
 
-  Future<Map<String, String>> getUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    return {
-      'displayName': prefs.getString('displayName') ?? '',
-      'photoUrl': prefs.getString('photoUrl') ?? '',
-      'email': prefs.getString('email') ?? '',
-    };
-  }
+  Future<void> _saveUserDataWithDetails({String? displayName, required String email, String? photoUrl}) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('isLoggedIn', true);
+  await prefs.setString('email', email);
+  await prefs.setString('displayName', displayName ?? 'User');
+  if (photoUrl != null) await prefs.setString('photoUrl', photoUrl);
+}
 }
 
 class HomePage extends StatefulWidget {
@@ -136,11 +160,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> _loadUserData() async {
-    final data = await _authService.getUserData();
-    setState(() {
-      userData = data;
-    });
-  }
+  final prefs = await SharedPreferences.getInstance();
+  setState(() {
+    userData = {
+      'displayName': prefs.getString('displayName') ?? 'User',
+      'email': prefs.getString('email') ?? '',
+      'photoUrl': prefs.getString('photoUrl') ?? '',
+    };
+  });
+}
 
   Widget buildParameterWidget(
       AsyncSnapshot<DatabaseEvent> snapshot, String imagePath, String title) {
@@ -284,9 +312,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     RichText(
                       text: TextSpan(children: [
                         TextSpan(
-                          text: userData['displayName']?.isNotEmpty == true
-                              ? "Halo ${userData['displayName']}!\n"
-                              : "Halo User!\n",
+                          text:"Halo ${userData['displayName'] ?? 'User'}!\n",
+
                           style: poppin20bold,
                         ),
                         TextSpan(
@@ -555,20 +582,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   builder: (context, snapshot) {
                                     return buildParameterWidget(
                                         snapshot, "assets/3.png", "Suhu Air");
-                                  },
-                                ),
-                                StreamBuilder<DatabaseEvent>(
-                                  stream: database6,
-                                  builder: (context, snapshot) {
-                                    return buildParameterWidget(
-                                        snapshot, "assets/2.png", "PH Air");
-                                  },
-                                ),
-                                StreamBuilder<DatabaseEvent>(
-                                  stream: database7,
-                                  builder: (context, snapshot) {
-                                    return buildParameterWidget(
-                                        snapshot, "assets/4.png", "Oksigen");
                                   },
                                 ),
                                 StreamBuilder<DatabaseEvent>(

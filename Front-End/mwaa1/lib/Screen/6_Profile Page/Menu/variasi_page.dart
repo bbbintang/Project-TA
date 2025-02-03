@@ -40,6 +40,7 @@ class _VariasiPageState extends State<VariasiPage> {
           title: Text("Masukkan Kode Unik"),
           content: TextField(
             controller: _kodeUnikController,
+            obscureText: true,
             decoration: InputDecoration(hintText: "Kode Unik"),
           ),
           actions: [
@@ -223,7 +224,7 @@ class _VariasiPageState extends State<VariasiPage> {
                     borderRadius: BorderRadius.circular(10)),
                 child: DropdownButton<String?>(
                   value: selectedValue,
-                  items: ["Vaname", "Udang Galah", "Udang Windu"]
+                  items: ["Udang Vaname", "Udang Galah", "Udang Windu"]
                       .map<DropdownMenuItem<String?>>((e) => DropdownMenuItem(
                             value: e,
                             child: Text(e.toString()),

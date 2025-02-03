@@ -159,7 +159,7 @@ class _CustomOutlinedButtonState extends State<CustomOutlinedButton>
             alignment: Alignment.center,
             width: widget.width ?? double.maxFinite,
             decoration: BoxDecoration(
-              border: Border.all(color: widget.color ?? const Color.fromARGB(255, 255, 255, 255)),
+              border: Border.all(color: widget.color ?? const Color.fromARGB(255, 0, 0, 0)),
               borderRadius: BorderRadius.circular(
                 widget.borderRadius ?? 20,
               ),

@@ -42,8 +42,8 @@ class _GrafikFixState extends State<GrafikFix> {
   Widget build(BuildContext context) {
     return FutureBuilder<List<List<List<FlSpot>>>>(
       future: Future.wait([
-        _fetchAllSensorData('Alat1', FirebaseFirestore.instance),
-        _fetchAllSensorData('Alat2', FirebaseFirestore.instance),
+        _fetchAllSensorData('Alat1_FIX', FirebaseFirestore.instance),
+        _fetchAllSensorData('Alat2_UJI', FirebaseFirestore.instance),
       ]),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {

@@ -59,13 +59,13 @@ class _ControlPageState extends State<ControlPage> {
     } else if (udang == "Udang Galah" && tambak == "Tradisional") {
       S = "28-32°C";
       T = "100-250";
-      P = "7,0-8,5";
-      D = ">3 mg/l";
+      P = "7,5-8,5";
+      D = ">4 mg/l";
     } else if (udang == "Udang Galah" && tambak == "Intensif") {
       S = "28-32°C";
-      T = "100-250";
+      T = "100-200";
       P = "7,5-8,5";
-      D = ">3 mg/l";
+      D = ">4 mg/l";
     } else if (udang == "Udang Galah" && tambak == "Super Intensif") {
       S = ">27°C";
       T = "100-200";
@@ -73,13 +73,13 @@ class _ControlPageState extends State<ControlPage> {
       D = ">3 mg/l";
     } else if (udang == "Udang Windu" && tambak == "Tradisional") {
       S = "28-35°C";
-      T = "100-150";
-      P = "7,0-8,5";
+      T = "100-250";
+      P = "7,5-8,5";
       D = ">3 mg/l";
     } else if (udang == "Udang Windu" && tambak == "Intensif") {
       S = "28-35°C";
       T = "100-200";
-      P = "7,0-8,5";
+      P = "7,5-8,5";
       D = ">3 mg/l";
     } else if (udang == "Udang Windu" && tambak == "Super Intensif") {
       S = "28-35°C";
