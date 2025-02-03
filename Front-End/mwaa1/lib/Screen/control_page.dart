@@ -43,49 +43,49 @@ class _ControlPageState extends State<ControlPage> {
 
     if (udang == "Udang Vaname" && tambak == "Tradisional") {
       S = "28-32°C";
-      T = "100-250";
+      T = "150-200";
       P = "7,5-8,5";
       D = ">3,0";
     } else if (udang == "Udang Vaname" && tambak == "Intensif") {
-      S = ">27°C";
-      T = "100-150";
+      S = "27-32°C";
+      T = "150-200";
       P = "7,5-8,5";
       D = ">4 mg/l";
     } else if (udang == "Udang Vaname" && tambak == "Super Intensif") {
       S = "29-32°C";
-      T = "100-150";
+      T = "150-200";
       P = "7,5-8,5";
       D = ">4 mg/l";
     } else if (udang == "Udang Galah" && tambak == "Tradisional") {
       S = "28-32°C";
-      T = "100-250";
+      T = "150-200";
       P = "7,5-8,5";
-      D = ">4 mg/l";
+      D = ">3,0";
     } else if (udang == "Udang Galah" && tambak == "Intensif") {
-      S = "28-32°C";
-      T = "100-200";
+      S = "27-32°C";
+      T = "150-200";
       P = "7,5-8,5";
       D = ">4 mg/l";
     } else if (udang == "Udang Galah" && tambak == "Super Intensif") {
-      S = ">27°C";
-      T = "100-200";
+      S = "29-32°C";
+      T = "150-200";
       P = "7,5-8,5";
-      D = ">3 mg/l";
+      D = ">4 mg/l";
     } else if (udang == "Udang Windu" && tambak == "Tradisional") {
-      S = "28-35°C";
-      T = "100-250";
+      S = "28-32°C";
+      T = "150-200";
       P = "7,5-8,5";
-      D = ">3 mg/l";
+      D = ">3,0";
     } else if (udang == "Udang Windu" && tambak == "Intensif") {
-      S = "28-35°C";
-      T = "100-200";
+      S = "27-32°C";
+      T = "150-200";
       P = "7,5-8,5";
-      D = ">3 mg/l";
+      D = ">4 mg/l";
     } else if (udang == "Udang Windu" && tambak == "Super Intensif") {
-      S = "28-35°C";
-      T = "100-200";
+      S = "29-32°C";
+      T = "150-200";
       P = "7,5-8,5";
-      D = ">3 mg/l";
+      D = ">4 mg/l";
     }
 
     return {'Suhu': S, 'TDS': T, 'pH': P, 'DO': D};

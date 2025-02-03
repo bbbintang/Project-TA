@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class _SignupPageState extends State<SignupPage> {
 
   // Firebase Auth instance
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   void dispose() {
@@ -56,7 +58,13 @@ class _SignupPageState extends State<SignupPage> {
         // Set the username
         User? user = userCredential.user;
         if (user != null) {
-          await user.updateDisplayName(_usernameController.text);
+          await user.updateDisplayName(_usernameController.text.trim());
+
+          await _firestore.collection("users").doc(user.uid).set({
+            "uid": user.uid,
+            "displayName": _usernameController.text.trim(),
+            "email": _emailController.text.trim(),
+          });
 
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('email', _emailController.text);

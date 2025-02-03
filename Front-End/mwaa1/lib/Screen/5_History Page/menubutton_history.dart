@@ -24,14 +24,14 @@ class _MenubuttonHistoryState extends State<MenubuttonHistory> {
 
     // Ambil data dari coll alat 1
     final alat1Snapshot = await FirebaseFirestore.instance
-        .collectionGroup('Alat1')
+        .collectionGroup('Alat1_FIX')
         .where('timestamp', isGreaterThanOrEqualTo: start)
         .where('timestamp', isLessThanOrEqualTo: end)
         .get();
 
     // Ambil data dari coll Alat 2
     final alat2Snapshot = await FirebaseFirestore.instance
-        .collection('dummy') // sesuaikan nama
+        .collection('Alat2_UJI')
         .where('timestamp', isGreaterThanOrEqualTo: start)
         .where('timestamp', isLessThanOrEqualTo: end)
         .get();

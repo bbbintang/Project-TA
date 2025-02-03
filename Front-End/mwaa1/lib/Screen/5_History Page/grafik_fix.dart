@@ -217,7 +217,7 @@ class _GrafikFixState extends State<GrafikFix> {
                         getTitlesWidget: (value, meta) {
                           final hour = value.toInt();
                           return Text(
-                              '$hour:00',
+                              '$hour Jam',
                               style: const TextStyle(fontSize: 10),
                             );
                           },

@@ -205,23 +205,52 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       final value = (snapshotValue as num).toDouble();
       print("Data untuk $title: $value");
 
+        double minSuhu = 27, maxSuhu = 35;
+        double minPH = 7.5, maxPH = 8.5;
+        double minDO = 3000;
+        double minTDS = 100, maxTDS = 150;
+
+      if (widget.Tambak == "Tradisional") {
+      minSuhu = 28;
+      maxSuhu = 32;
+      minPH = 7.5;
+      maxPH = 8.5;
+      minDO = 3000;
+      minTDS = 150;
+      maxTDS = 200;
+    } else if (widget.Tambak == "Intensif") {
+      minSuhu = 27;
+      maxSuhu = 32;
+      minPH = 7.5;
+      maxPH = 8.5;
+      minDO = 4000;
+      minTDS = 150;
+      maxTDS = 200;
+    } else if (widget.Tambak == "Super Intensif") {
+      minSuhu = 29;
+      maxSuhu = 32;
+      minPH = 7.5;
+      maxPH = 8.5;
+      minDO = 4000;
+      minTDS = 150;
+      maxTDS = 200;
+    }
       // Tentukan warna berdasarkan nilai (contoh untuk suhu air)
       Color valueColor;
       if (title == "Suhu Air") {
-        valueColor = (value < 27 || value > 32)
-            ? const Color.fromARGB(
-                255, 255, 17, 0) // Warna merah jika tidak normal
+        valueColor = (value <  minSuhu || value > maxSuhu)
+            ? const Color.fromARGB(255, 255, 17, 0) // Warna merah jika tidak normal
             : Colors.white; // Warna putih jika normal
       } else if (title == "PH Air") {
-        valueColor = (value < 7.5 || value > 8.5)
+        valueColor = (value < minPH || value > maxPH)
             ? const Color.fromARGB(255, 255, 17, 0)
             : Colors.white;
       } else if (title == "Oksigen") {
-        valueColor = (value < 3.5)
+        valueColor = (value < minDO)
             ? const Color.fromARGB(255, 255, 17, 0)
             : Colors.white;
       } else if (title == "TDS") {
-        valueColor = (value > 500.0)
+        valueColor = (value < minTDS || value > maxTDS)
             ? const Color.fromARGB(255, 255, 17, 0)
             : Colors.white;
       } else {
